@@ -2,55 +2,190 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mémoires familiales</title>
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f5f0e7;
-            color: #453326;
-            font-family: Georgia, serif;
-            text-align: center;
-        }
-        main {
-            max-width: 600px;
-            padding: 40px 25px;
-        }
-        h1 { font-size: 40px; font-weight: normal; }
-        p { font-size: 18px; line-height: 1.7; }
-        hr {
-            width: 60px;
-            border: 0;
-            border-top: 1px solid #947657;
-            margin: 30px auto;
-        }
-        .subtitle {
-            font-style: italic;
-            color: #82715d;
-        }
-        footer {
-            margin-top: 50px;
-            font-size: 13px;
-            color: #82715d;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mamili — Mémoires familiales</title>
+
+<style>
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        background: #f7f3eb;
+        color: #514537;
+        font-family: Georgia, serif;
+    }
+
+    header {
+        padding: 25px;
+        border-bottom: 1px solid #d9cebe;
+        font-size: 12px;
+        letter-spacing: 3px;
+        text-align: center;
+    }
+
+    .hero {
+        padding: 65px 20px 45px;
+        text-align: center;
+    }
+
+    .eyebrow {
+        color: #86725b;
+        font-size: 11px;
+        letter-spacing: 3px;
+    }
+
+    h1 {
+        font-size: clamp(56px, 10vw, 90px);
+        font-weight: normal;
+        margin: 25px 0 10px;
+    }
+
+    .subtitle {
+        font-size: 23px;
+        font-style: italic;
+        color: #86725b;
+    }
+
+    .ornament {
+        margin: 30px 0;
+        color: #a28a66;
+    }
+
+    .countries {
+        font-size: 11px;
+        letter-spacing: 2px;
+        color: #86725b;
+    }
+
+    article {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 40px 30px;
+        background: #fffcf6;
+        border: 1px solid #e5dccf;
+    }
+
+    h2 {
+        font-size: 30px;
+        font-weight: normal;
+    }
+
+    p {
+        font-size: 18px;
+        line-height: 1.85;
+    }
+
+    .conclusion {
+        text-align: center;
+        font-size: 23px;
+        font-style: italic;
+        color: #86725b;
+        padding: 30px 0 10px;
+    }
+
+    .projects {
+        max-width: 760px;
+        padding: 35px 20px;
+        margin: auto;
+    }
+
+    .projects h2 {
+        text-align: center;
+    }
+
+    .project {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        margin: 12px 0;
+        border: 1px solid #d9cebe;
+        border-radius: 6px;
+        background: #fffcf6;
+    }
+
+    .status {
+        font-size: 12px;
+        color: #86725b;
+        white-space: nowrap;
+    }
+
+    footer {
+        text-align: center;
+        padding: 35px 20px;
+        border-top: 1px solid #d9cebe;
+        color: #86725b;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+</style>
 </head>
+
 <body>
-    <main>
-        <h1>Mémoires familiales</h1>
-        <p class="subtitle">
-            Préserver notre histoire, transmettre nos souvenirs.
-        </p>
-        <hr>
-        <p>Notre espace numérique familial est en préparation.</p>
-        <p>Retrouvez prochainement nos récits, photographies,
-        archives et projets de mémoire.</p>
-        <footer>Un héritage pour les générations futures.</footer>
-    </main>
+
+<header>MÉMOIRES FAMILIALES</header>
+
+<main>
+    <section class="hero">
+        <div class="eyebrow">HISTOIRES DE FAMILLE · 01</div>
+        <h1>Mamili</h1>
+        <div class="subtitle">Rosalie Luque, née Llerena</div>
+        <div class="ornament">──────── ◇ ────────</div>
+        <div class="countries">
+            ESPAGNE · ALGÉRIE · MAROC · FRANCE
+        </div>
+    </section>
+
+    <article>
+        <h2>La mémoire de la famille</h2>
+
+        <p>Mamili, Rosalie Luque, née Llerena, était la mémoire de la famille. Elle aimait raconter, et elle savait faire revivre l'histoire de ses grands-parents, partis d'Espagne pour l'Algérie par amour, celle de son enfance à Palissy, celle de chaque visage des boîtes de photos. Elle avait ses expressions, le sens du détail, et cette manière d'entraîner ceux qui l'écoutaient dans ses souvenirs.</p>
+
+        <p>Sa propre vie l'a menée de l'Algérie au Maroc, puis en France, où il a fallu tout recommencer en 1957.</p>
+
+        <p>Ces souvenirs, elle en a écrit une partie dans ses cahiers, entre une recette, une prière et une chanson. Le reste, elle le racontait, jusque dans ses dernières années.</p>
+
+        <div class="conclusion">
+            Ce livre réunit ses cahiers et ses récits.
+        </div>
+    </article>
+
+    <section class="projects">
+        <h2>Prolonger les souvenirs</h2>
+
+        <div class="project">
+            Le livre de Mamili
+            <span class="status">À venir</span>
+        </div>
+
+        <div class="project">
+            Les photographies de famille
+            <span class="status">À venir</span>
+        </div>
+
+        <div class="project">
+            Notre arbre généalogique
+            <span class="status">À venir</span>
+        </div>
+
+        <div class="project">
+            Les archives familiales
+            <span class="status">À venir</span>
+        </div>
+
+        <div class="project">
+            Les témoignages et enregistrements
+            <span class="status">À venir</span>
+        </div>
+    </section>
+</main>
+
+<footer>
+    Mémoires familiales<br>
+    <i>Préserver notre histoire, transmettre nos souvenirs.</i>
+</footer>
+
 </body>
 </html>
