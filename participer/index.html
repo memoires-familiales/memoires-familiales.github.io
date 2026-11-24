@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Participer — Mémoires familiales</title>
+<meta name="description" content="Aider à identifier les personnes, corriger une date, raconter un souvenir.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/rubriques.css">
+</head>
+<body data-racine="../" data-page="participer">
+
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale" data-nav><a href="../index.html">Accueil</a></nav>
+</header>
+
+<main class="page participer">
+  <div class="tete">
+    <h1>Participer</h1>
+    <p class="resume">Vous reconnaissez quelqu'un sur une photo, une date vous semble fausse, un souvenir vous revient ? Remplissez ce formulaire : il prépare un message que vous envoyez ensuite à Samuel, par SMS, WhatsApp ou e-mail.</p>
+  </div>
+
+  <p class="avis" id="avis" hidden></p>
+
+  <form class="formulaire" id="formulaire" novalidate>
+    <fieldset>
+      <legend>Que voulez-vous proposer ?</legend>
+      <div class="types-contribution">
+        <label><input type="radio" name="type" value="identifier" checked><span><strong>Mettre un nom sur un visage</strong><small>Vous reconnaissez une personne sur une photo.</small></span></label>
+        <label><input type="radio" name="type" value="corriger"><span><strong>Corriger une date ou un lieu</strong><small>Une information vous semble fausse ou incomplète.</small></span></label>
+        <label><input type="radio" name="type" value="souvenir"><span><strong>Raconter un souvenir</strong><small>Une anecdote liée à une photo, une personne, un lieu.</small></span></label>
+        <label><input type="radio" name="type" value="document"><span><strong>Signaler un document</strong><small>Vous avez une photo, une lettre, un film à partager.</small></span></label>
+      </div>
+    </fieldset>
+    <label><span>La photo ou le document concerné (facultatif)</span>
+      <input type="text" id="reference" placeholder="Par exemple P0123, ou « la photo du mariage de 1965 »"></label>
+    <label><span>Votre proposition</span>
+      <textarea id="proposition" required placeholder="Par exemple : à gauche, au premier rang, c'est tante Marie."></textarea></label>
+    <label><span>Comment le savez-vous ?</span>
+      <select id="certitude">
+        <option value="Je m'en souviens">Je m'en souviens</option>
+        <option value="C'est écrit au dos ou sur un document">C'est écrit au dos ou sur un document</option>
+        <option value="Quelqu'un me l'a dit">Quelqu'un me l'a dit</option>
+        <option value="Je n'en suis pas sûr">Je n'en suis pas sûr</option>
+      </select></label>
+    <label><span>Votre prénom</span>
+      <input type="text" id="auteur" autocomplete="given-name"></label>
+    <p class="confirmation" id="erreur" hidden></p>
+    <div><button type="submit" class="bouton">Préparer le message</button></div>
+  </form>
+
+  <section class="message-pret" id="message-pret" hidden aria-labelledby="titre-message">
+    <h2 id="titre-message">Votre message est prêt</h2>
+    <pre id="message"></pre>
+    <button type="button" class="bouton" id="copier">Copier le message</button>
+    <p class="confirmation" id="copie-ok" role="status"></p>
+    <p class="discret">Collez-le dans un SMS, un message WhatsApp ou un e-mail à Samuel. Rien n'est enregistré sur ce site.</p>
+  </section>
+</main>
+
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/participer.js"></script>
+</body>
+</html>

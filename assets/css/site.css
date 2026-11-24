@@ -56,6 +56,7 @@ a:hover { color: var(--encre); }
 /* ---------- Bandeau du site ---------- */
 
 .bandeau {
+  position: relative;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -67,6 +68,7 @@ a:hover { color: var(--encre); }
 }
 
 .bandeau__nom {
+  flex: none;
   font-size: 1rem;
   font-style: italic;
   color: var(--encre);
@@ -75,7 +77,9 @@ a:hover { color: var(--encre); }
 
 .bandeau nav ul {
   display: flex;
-  gap: 1.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.3rem 1.2rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -83,9 +87,79 @@ a:hover { color: var(--encre); }
   font-size: 0.9rem;
 }
 
-.bandeau nav a { color: var(--encre-douce); text-decoration: none; }
+.bandeau nav a { color: var(--encre-douce); text-decoration: none; white-space: nowrap; }
 .bandeau nav a:hover { color: var(--encre); text-decoration: underline; }
 .bandeau nav a[aria-current="page"] { color: var(--encre); text-decoration: underline; }
+
+.menu-bouton {
+  display: none;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--filet);
+  border-radius: 3px;
+  background: var(--carton);
+  color: var(--encre);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+@media (max-width: 62rem) {
+  .bandeau { align-items: center; }
+  .menu-bouton { display: inline-block; }
+  .bandeau nav ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.4rem 1.25rem 0.8rem;
+    background: var(--papier);
+    border-bottom: 1px solid var(--filet);
+    box-shadow: 0 8px 16px rgba(69, 55, 42, 0.12);
+    font-size: 1rem;
+  }
+  .bandeau nav ul.ouvert { display: flex; }
+  .bandeau nav li a { display: block; padding: 0.6rem 0; border-bottom: 1px solid var(--filet); }
+  .bandeau nav li:last-child a { border-bottom: 0; }
+}
+
+/* ---------- En-tête des pages intérieures ---------- */
+
+.page {
+  max-width: var(--large);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.tete { padding: 3rem 0 1.5rem; max-width: 46rem; }
+
+.tete h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: normal;
+  line-height: 1.15;
+}
+
+.resume { margin: 0.6rem 0 0; color: var(--encre-douce); }
+
+.avis {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  max-width: 46rem;
+  border-left: 3px solid var(--stylo);
+  background: var(--carton);
+  color: var(--stylo);
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+@media (max-width: 46rem) {
+  .tete { padding-top: 2rem; }
+}
 
 /* ---------- Pied de page ---------- */
 
@@ -126,6 +200,19 @@ a:hover { color: var(--encre); }
 }
 
 .bouton--discret:hover { background: var(--carton); color: var(--encre); border-color: var(--encre); }
+
+/* bouton qui a l'air d'un lien */
+.lien-effacer {
+  padding: 0.25rem 0.4rem;
+  border: 0;
+  background: none;
+  color: var(--cafe-fonce);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

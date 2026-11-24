@@ -1,0 +1,226 @@
+{
+ "modele": 1,
+ "mode": "demo",
+ "racine": "antoinette-ferrer",
+ "personnes": [
+  {
+   "id": "jean-ferrer",
+   "prenoms": "Jean",
+   "nom": "Ferrer",
+   "sexe": "M",
+   "naissance": {
+    "date": "vers 1890",
+    "lieu": "Mostaganem, Algérie"
+   },
+   "deces": {
+    "date": "1950",
+    "lieu": "Mostaganem, Algérie"
+   },
+   "conjoints": [
+    "marie-ferrer"
+   ],
+   "certitude": "à vérifier",
+   "bio": "Cultivateur près de Mostaganem."
+  },
+  {
+   "id": "marie-ferrer",
+   "prenoms": "Marie",
+   "nom": "Ruiz",
+   "sexe": "F",
+   "nom_usage": "Ferrer",
+   "naissance": {
+    "date": "vers 1894"
+   },
+   "conjoints": [
+    "jean-ferrer"
+   ],
+   "certitude": "à vérifier"
+  },
+  {
+   "id": "marcel-soler",
+   "prenoms": "Marcel",
+   "nom": "Soler",
+   "sexe": "M",
+   "naissance": {
+    "date": "vers 1895",
+    "lieu": "Valence, Espagne"
+   },
+   "deces": {
+    "date": "1961",
+    "lieu": "Perpignan, France"
+   },
+   "conjoints": [
+    "rose-soler"
+   ],
+   "photos": [
+    "Marcel Soler"
+   ],
+   "bio": "Parti de Valence pour l'Algérie vers 1914, il a travaillé au port d'Oran.",
+   "sources": [
+    "Acte de mariage (1921)"
+   ],
+   "certitude": "confirmé"
+  },
+  {
+   "id": "rose-soler",
+   "prenoms": "Rose",
+   "nom": "Martí",
+   "sexe": "F",
+   "nom_usage": "Soler",
+   "naissance": {
+    "date": "1899",
+    "lieu": "Oran, Algérie"
+   },
+   "deces": {
+    "date": "1975",
+    "lieu": "Perpignan, France"
+   },
+   "conjoints": [
+    "marcel-soler"
+   ],
+   "photos": [
+    "Rose Soler"
+   ],
+   "certitude": "confirmé"
+  },
+  {
+   "id": "joseph-ferrer",
+   "prenoms": "Joseph",
+   "nom": "Ferrer",
+   "sexe": "M",
+   "naissance": {
+    "date": "1920",
+    "lieu": "Mostaganem, Algérie"
+   },
+   "deces": {
+    "date": "1998",
+    "lieu": "Perpignan, France"
+   },
+   "parents": [
+    "jean-ferrer",
+    "marie-ferrer"
+   ],
+   "conjoints": [
+    "antoinette-ferrer"
+   ],
+   "photos": [
+    "Joseph Ferrer"
+   ],
+   "bio": "Mécanicien. Mobilisé en 1942, il épouse Antoinette à son retour.",
+   "sources": [
+    "Acte de mariage (1946)",
+    "Livret de famille"
+   ],
+   "certitude": "confirmé"
+  },
+  {
+   "id": "antoinette-ferrer",
+   "prenoms": "Antoinette",
+   "nom": "Soler",
+   "sexe": "F",
+   "nom_usage": "Ferrer",
+   "surnom": "Mamie Toinette",
+   "naissance": {
+    "date": "12 mars 1923",
+    "lieu": "Oran, Algérie"
+   },
+   "deces": {
+    "date": "2015",
+    "lieu": "Perpignan, France"
+   },
+   "parents": [
+    "marcel-soler",
+    "rose-soler"
+   ],
+   "conjoints": [
+    "joseph-ferrer"
+   ],
+   "photos": [
+    "Antoinette Ferrer (Mamie Toinette)"
+   ],
+   "bio": "C'est elle qui raconte le livre d'exemple : l'enfance à Oran, Casablanca, puis la France.",
+   "sources": [
+    "Livret de famille",
+    "Ses cahiers"
+   ],
+   "certitude": "confirmé"
+  },
+  {
+   "id": "helene-ferrer",
+   "prenoms": "Hélène",
+   "nom": "Ferrer",
+   "sexe": "F",
+   "naissance": {
+    "date": "1925",
+    "lieu": "Mostaganem, Algérie"
+   },
+   "deces": {
+    "date": "2004",
+    "lieu": "Montpellier, France"
+   },
+   "parents": [
+    "jean-ferrer",
+    "marie-ferrer"
+   ],
+   "photos": [
+    "Hélène Ferrer"
+   ],
+   "bio": "Sœur de Joseph et grande amie d'Antoinette.",
+   "certitude": "confirmé"
+  },
+  {
+   "id": "lucienne-vidal",
+   "prenoms": "Lucienne",
+   "nom": "Ferrer",
+   "sexe": "F",
+   "nom_usage": "Vidal",
+   "vivant": true,
+   "naissance": {
+    "lieu": "Casablanca, Maroc"
+   },
+   "parents": [
+    "joseph-ferrer",
+    "antoinette-ferrer"
+   ],
+   "conjoints": [
+    "pierre-vidal"
+   ],
+   "photos": [
+    "Lucienne Ferrer"
+   ],
+   "certitude": "confirmé"
+  },
+  {
+   "id": "paul-ferrer",
+   "prenoms": "Paul",
+   "nom": "Ferrer",
+   "sexe": "M",
+   "vivant": true,
+   "naissance": {
+    "lieu": "Casablanca, Maroc"
+   },
+   "parents": [
+    "joseph-ferrer",
+    "antoinette-ferrer"
+   ],
+   "photos": [
+    "Paul Ferrer"
+   ],
+   "certitude": "confirmé"
+  },
+  {
+   "id": "pierre-vidal",
+   "prenoms": "Pierre",
+   "nom": "Vidal",
+   "sexe": "M",
+   "vivant": true,
+   "conjoints": [
+    "lucienne-vidal"
+   ],
+   "photos": [
+    "Pierre Vidal"
+   ],
+   "certitude": "confirmé"
+  }
+ ]
+}

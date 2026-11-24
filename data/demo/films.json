@@ -1,0 +1,79 @@
+{
+ "modele": 1,
+ "mode": "demo",
+ "films": [
+  {
+   "id": "f01",
+   "titre": "Vacances à la plage",
+   "date": {
+    "libelle": "été 1956",
+    "annee": 1956
+   },
+   "lieu": "Mohammédia, Maroc",
+   "support": "Super 8",
+   "duree": "3 min 40",
+   "statut": "à numériser",
+   "description": "Une journée à la plage avec les enfants et Hélène.",
+   "sequences": [
+    {
+     "debut": "0:00",
+     "titre": "L'arrivée à la plage"
+    },
+    {
+     "debut": "1:10",
+     "titre": "Les enfants dans les vagues"
+    },
+    {
+     "debut": "2:30",
+     "titre": "Le pique-nique"
+    }
+   ],
+   "personnes": [
+    "Lucienne Ferrer",
+    "Paul Ferrer",
+    "Hélène Ferrer"
+   ],
+   "chapitre": {
+    "numero": 7,
+    "titre": "Les enfants grandissent"
+   }
+  },
+  {
+   "id": "f02",
+   "titre": "Le mariage de Lucienne et Pierre",
+   "date": {
+    "libelle": "20 avril 1968",
+    "annee": 1968
+   },
+   "lieu": "Montpellier, France",
+   "support": "Super 8",
+   "duree": "6 min",
+   "statut": "à numériser",
+   "description": "La sortie de la mairie, puis le repas.",
+   "sequences": [
+    {
+     "debut": "0:00",
+     "titre": "La sortie de la mairie"
+    },
+    {
+     "debut": "2:15",
+     "titre": "Les photos de groupe"
+    },
+    {
+     "debut": "3:50",
+     "titre": "Le repas"
+    }
+   ],
+   "personnes": [
+    "Lucienne Ferrer",
+    "Pierre Vidal",
+    "Antoinette Ferrer (Mamie Toinette)",
+    "Joseph Ferrer"
+   ],
+   "chapitre": {
+    "numero": 11,
+    "titre": "Les mariages des enfants"
+   }
+  }
+ ]
+}

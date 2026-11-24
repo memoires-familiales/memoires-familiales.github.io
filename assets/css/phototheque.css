@@ -1,34 +1,5 @@
 /* Photothèque */
 
-.phototheque {
-  max-width: var(--large);
-  margin: 0 auto;
-  padding: 0 1.25rem;
-}
-
-.tete { padding: 3rem 0 1.5rem; max-width: 46rem; }
-
-.tete h1 {
-  margin: 0;
-  font-size: clamp(2rem, 5vw, 2.8rem);
-  font-weight: normal;
-  line-height: 1.15;
-}
-
-.resume { margin: 0.6rem 0 0; color: var(--encre-douce); }
-
-.avis {
-  margin: 0 0 1.5rem;
-  padding: 0.75rem 1rem;
-  max-width: 46rem;
-  border-left: 3px solid var(--stylo);
-  background: var(--carton);
-  color: var(--stylo);
-  font-size: 1rem;
-  font-style: italic;
-  line-height: 1.5;
-}
-
 /* ---------- Recherche et filtres ---------- */
 
 .outils {
@@ -157,17 +128,7 @@
 .pastille:hover { border-color: var(--encre); }
 .pastille:hover::after { color: var(--encre); }
 
-.lien-effacer {
-  padding: 0.25rem 0.4rem;
-  border: 0;
-  background: none;
-  color: var(--cafe-fonce);
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-  cursor: pointer;
-}
+
 
 /* ---------- La grille, comme une page d'album ---------- */
 
@@ -384,8 +345,6 @@
 /* ---------- Petits écrans ---------- */
 
 @media (max-width: 46rem) {
-  .tete { padding-top: 2rem; }
-
   .bascule-filtres {
     display: inline-flex;
     justify-self: start;

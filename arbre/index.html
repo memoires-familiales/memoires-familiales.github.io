@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arbre généalogique — Mémoires familiales</title>
+<meta name="description" content="L'arbre généalogique de la famille : une fiche par personne, avec ses liens de parenté et ses photos.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/rubriques.css">
+</head>
+<body data-racine="../" data-page="arbre">
+
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale" data-nav><a href="../index.html">Accueil</a></nav>
+</header>
+
+<main class="page arbre">
+  <div class="tete">
+    <h1>Notre arbre généalogique</h1>
+    <p class="resume">Une fiche par personne : ses parents, son conjoint, ses enfants, ses dates et ses lieux, et le lien vers ses photos. Choisissez une personne pour vous déplacer dans l'arbre.</p>
+  </div>
+
+  <p class="avis" id="avis" hidden></p>
+
+  <div class="arbre-grille">
+    <details class="index-personnes" id="index-personnes" open>
+      <summary>Toutes les personnes</summary>
+      <div class="champ-recherche">
+        <label for="q-personne">Chercher une personne</label>
+        <input id="q-personne" type="search" autocomplete="off" placeholder="Un prénom, un nom, un surnom…">
+      </div>
+      <ul class="liste-personnes" id="liste-personnes"></ul>
+    </details>
+    <div>
+      <div class="famille" id="famille" aria-live="polite"></div>
+      <article class="fiche-personne" id="fiche-personne"></article>
+    </div>
+  </div>
+</main>
+
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../data/demo/arbre.js"></script>
+<script src="../prive/arbre.js" onerror="this.remove()"></script>
+<script src="../data/demo/photos.js"></script>
+<script src="../prive/photos.js" onerror="this.remove()"></script>
+<script src="../assets/js/arbre.js"></script>
+</body>
+</html>

@@ -12,7 +12,8 @@ Site familial publié par GitHub Pages depuis la branche principale, sans étape
 
 - Français partout : textes, noms de variables, commentaires, messages.
 - HTML, CSS et JavaScript sans dépendance ni framework ; le site doit marcher en ouvrant les fichiers directement (`file://`) comme sur GitHub Pages. Liens internes vers `…/index.html`.
-- Les données de la photothèque sont chargées par des balises `<script>` qui définissent `window.PHOTOTHEQUE` (pas de `fetch`, pour le mode `file://`).
+- Les données de chaque rubrique sont chargées par des balises `<script>` qui définissent une variable globale (`window.PHOTOTHEQUE`, `window.LIVRE`, `window.ARBRE`, `window.VOIX`, `window.ARCHIVES`, `window.FILMS`) : d'abord `data/demo/<rubrique>.js`, puis `prive/<rubrique>.js` s'il existe. Pas de `fetch`, pour le mode `file://`.
+- Le menu est construit par `assets/js/site.js` à partir de la liste `RUBRIQUES` : une nouvelle page s'y ajoute en une ligne. Chaque page déclare `<body data-racine="../" data-page="<id>">` et `<nav data-nav>`.
 - Python 3.9+, bibliothèque standard, plus `openpyxl` et `Pillow` seulement.
 - L'import doit rester idempotent : deux imports identiques ne changent rien. Le tester après toute modification de `outils/importer_photos.py`.
 - Identité visuelle : papier `#f6f0e4`, encre `#45372a`, café au lait `#7a5a3c`, bleu stylo `#34506e` pour ce qui est écrit au dos des photos ; serif de livre pour les textes, police système pour les commandes. Voir `assets/css/site.css`.
@@ -21,3 +22,4 @@ Site familial publié par GitHub Pages depuis la branche principale, sans étape
 
 - `README.md` : vue d'ensemble et règle de confidentialité.
 - `docs/phototheque.md` : import, règles de fusion, modèle de données.
+- `docs/rubriques.md` : format des données du livre, de l'arbre, de la voix, des archives et des films.

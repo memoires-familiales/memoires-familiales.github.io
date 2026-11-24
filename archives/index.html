@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Archives — Mémoires familiales</title>
+<meta name="description" content="Actes, lettres, articles et cartes qui éclairent l'histoire de la famille.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/rubriques.css">
+</head>
+<body data-racine="../" data-page="archives">
+
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale" data-nav><a href="../index.html">Accueil</a></nav>
+</header>
+
+<main class="page archives">
+  <div class="tete">
+    <h1>Les archives familiales</h1>
+    <p class="resume">Actes d'état civil, lettres, papiers de famille, articles et cartes : les documents qui éclairent son histoire, chacun relié aux personnes et aux chapitres du livre.</p>
+  </div>
+
+  <p class="avis" id="avis" hidden></p>
+
+  <div class="champ-recherche">
+    <label for="q-archives">Chercher un document</label>
+    <input id="q-archives" type="search" autocomplete="off" placeholder="Un titre, un lieu, une année, un nom…">
+  </div>
+  <div class="choix-type" id="choix-type" role="group" aria-label="Type de document"></div>
+  <p class="discret" id="compte-archives" role="status"></p>
+  <ul class="grille-documents" id="documents"></ul>
+</main>
+
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../data/demo/archives.js"></script>
+<script src="../prive/archives.js" onerror="this.remove()"></script>
+<script src="../assets/js/archives.js"></script>
+</body>
+</html>

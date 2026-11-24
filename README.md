@@ -6,9 +6,14 @@ L'espace numérique qui prolonge le livre *Mamili*, Rosalie Luque, née Llerena.
 
 | Page | Adresse | État |
 |---|---|---|
-| Accueil : présentation et rubriques à venir | `index.html` | En ligne |
-| Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Premier aperçu, avec des photos d'exemple |
-| Le livre, l'arbre généalogique, la voix de Mamili, les archives, les films, participer | — | À venir |
+| Accueil : présentation et sommaire des rubriques | `index.html` | En ligne |
+| Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Premier aperçu ; import des vraies données prêt |
+| Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Structure, avec un exemple fictif |
+| L'arbre : une personne au centre, ses parents, son conjoint, ses enfants | `arbre/` | Structure, avec un exemple fictif |
+| La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Structure, avec un exemple fictif |
+| Les archives : documents par type, avec recherche | `archives/` | Structure, avec un exemple fictif |
+| Les films : un écran par film, et ses séquences | `films/` | Structure, avec un exemple fictif |
+| Participer : prépare un message de correction ou de souvenir à envoyer à Samuel | `participer/` | Utilisable |
 
 Le site est fait de pages HTML simples, sans outil de construction : ce qui est dans le dépôt est ce qui est publié par GitHub Pages.
 
@@ -16,22 +21,25 @@ Le site est fait de pages HTML simples, sans outil de construction : ce qui est 
 
 **Aucune photo, aucun nom, aucune donnée de la famille ne doit entrer dans ce dépôt.** Le dépôt est public et GitHub Pages ne sait pas réserver une page à certaines personnes.
 
-- La photothèque publiée montre un **jeu d'exemple fictif** (`data/demo/`).
-- Les vraies données sont fabriquées sur l'ordinateur, dans le dossier **`prive/`**, que `.gitignore` exclut de Git. La page de la photothèque les charge automatiquement quand elles sont présentes : la photothèque complète se consulte donc en local, en ouvrant `phototheque/index.html`.
+- Les rubriques publiées montrent un **jeu d'exemple fictif** (`data/demo/`), une famille inventée.
+- Les vraies données sont fabriquées sur l'ordinateur, dans le dossier **`prive/`**, que `.gitignore` exclut de Git. Chaque page les charge automatiquement quand elles sont présentes : le site complet se consulte donc en local, en ouvrant les pages par double-clic.
 - L'accès familial en ligne (photos privées, comptes sur invitation) fera l'objet d'une étape à part, avec un stockage privé.
 
 ## Organisation du dépôt
 
 ```
 index.html                  accueil
-phototheque/index.html      photothèque
-assets/css/                 styles (communs, accueil, photothèque)
-assets/js/phototheque.js    recherche, filtres, galerie, fiche
+phototheque/ livre/ arbre/ voix/ archives/ films/ participer/   une page par rubrique
+assets/css/                 styles (communs, accueil, photothèque, rubriques)
+assets/js/site.js           menu commun (liste des rubriques) et outils partagés
+assets/js/<rubrique>.js     le fonctionnement de chaque page
 data/demo/                  jeu d'exemple fictif (données + images)
 outils/importer_photos.py   import des photos depuis Apple Photos → prive/
 outils/mettre-a-jour-phototheque.command   lanceur Mac : import + ouverture
-outils/creer_demo.py        fabrique le jeu d'exemple
-docs/phototheque.md         mode d'emploi de l'import et modèle de données
+outils/creer_demo.py        fabrique les photos d'exemple
+outils/creer_demo_rubriques.py   fabrique les exemples des autres rubriques
+docs/phototheque.md         import des photos et modèle de données
+docs/rubriques.md           format des données de chaque rubrique
 prive/                      (non suivi par Git) données réelles de la famille
 ```
 

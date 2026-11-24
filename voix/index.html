@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La voix de Mamili — Mémoires familiales</title>
+<meta name="description" content="Des extraits des enregistrements de Mamili, avec leur transcription, rangés selon les chapitres du livre.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/rubriques.css">
+</head>
+<body data-racine="../" data-page="voix">
+
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale" data-nav><a href="../index.html">Accueil</a></nav>
+</header>
+
+<main class="page voix">
+  <div class="tete">
+    <h1>La voix de Mamili</h1>
+    <p class="resume">Des extraits de ses enregistrements, avec leur transcription, rangés selon les chapitres du livre. On garde sa voix telle qu'elle est : les silences, les rires, ses expressions.</p>
+  </div>
+
+  <p class="avis" id="avis" hidden></p>
+
+  <div class="champ-recherche">
+    <label for="q-voix">Chercher dans les transcriptions</label>
+    <input id="q-voix" type="search" autocomplete="off" placeholder="Un mot, un lieu, un prénom…">
+  </div>
+  <p class="discret" id="compte-voix" role="status"></p>
+  <div id="extraits"></div>
+</main>
+
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../data/demo/voix.js"></script>
+<script src="../prive/voix.js" onerror="this.remove()"></script>
+<script src="../assets/js/voix.js"></script>
+</body>
+</html>

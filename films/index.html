@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Films de famille — Mémoires familiales</title>
+<meta name="description" content="Les films tournés en famille, numérisés, avec leurs séquences.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/rubriques.css">
+</head>
+<body data-racine="../" data-page="films">
+
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale" data-nav><a href="../index.html">Accueil</a></nav>
+</header>
+
+<main class="page films">
+  <div class="tete">
+    <h1>Les films de famille</h1>
+    <p class="resume">Les bobines tournées en famille, une fois numérisées. Chaque film est découpé en séquences pour retrouver un moment, une personne, un lieu.</p>
+  </div>
+
+  <p class="avis" id="avis" hidden></p>
+
+  <div id="films"></div>
+</main>
+
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../data/demo/films.js"></script>
+<script src="../prive/films.js" onerror="this.remove()"></script>
+<script src="../assets/js/films.js"></script>
+</body>
+</html>

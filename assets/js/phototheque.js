@@ -404,6 +404,10 @@
       : [p.numero, p.titre ? "« " + p.titre + " »" : ""].filter(Boolean).join(" ");
     if (date.enregistree) tech += (tech ? ". " : "") + "Date enregistrée dans Photos : " + date.enregistree + ", sans doute celle de la numérisation";
     ligne(dl, "Référence", el("span", { classe: "technique", texte: tech }));
+    ligne(dl, "Vous reconnaissez quelqu'un ? Une date est fausse ?", el("a", {
+      href: racine + "participer/index.html?photo=" + encodeURIComponent(p.numero || p.id),
+      texte: "Proposer une correction"
+    }));
 
     $("fiche-position").textContent = "Photo " + nf.format(courante + 1) + " sur " + nf.format(resultats.length);
     $("precedente").disabled = courante <= 0;

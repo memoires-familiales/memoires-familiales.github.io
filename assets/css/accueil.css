@@ -177,6 +177,9 @@
   font-weight: normal;
 }
 
+.sommaire h3 a { color: var(--encre); text-decoration-color: var(--cafe); }
+.sommaire h3 a:hover { color: var(--cafe-fonce); }
+
 /* points de conduite, comme dans le sommaire du livre */
 .sommaire .ligne::after {
   content: "";
