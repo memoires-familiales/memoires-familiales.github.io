@@ -20,6 +20,15 @@
 <main class="page phototheque">
   <div class="tete">
     <h1>Les photographies de famille</h1>
+    <p class="resume">La photothèque rassemble les photos numérisées des boîtes, des albums et des CD de la famille. Vous pouvez rechercher un cliché par personne, lieu, décennie, événement ou chapitre du livre, puis ouvrir sa fiche pour en lire la légende et les détails.</p>
+  </div>
+  <p><a class="bouton" href="https://espace-famille.pages.dev/">Se connecter à l’espace famille</a></p>
+</main>
+
+<template data-rubrique-famille>
+<main class="page phototheque">
+  <div class="tete">
+    <h1>Les photographies de famille</h1>
     <p class="resume" id="resume"></p>
   </div>
 
@@ -103,17 +112,16 @@
     </div>
   </div>
 </dialog>
+<script data-src="../data/demo/photos.js"></script>
+<script data-src="../prive/photos.js"></script>
+<script data-src="../assets/js/phototheque.js"></script>
+</template>
 
 <footer class="pied">
   <p>Mémoires familiales</p>
   <em>Préserver notre histoire, transmettre nos souvenirs.</em>
 </footer>
 
-<!-- Les données : le jeu d'exemple, puis les données privées si elles sont présentes
-     sur l'ordinateur (dossier prive/, jamais publié). -->
-<script src="../data/demo/photos.js"></script>
-<script src="../prive/photos.js" onerror="this.remove()"></script>
 <script src="../assets/js/site.js"></script>
-<script src="../assets/js/phototheque.js"></script>
 </body>
 </html>

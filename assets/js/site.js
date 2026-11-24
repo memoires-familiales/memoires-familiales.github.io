@@ -79,6 +79,7 @@
 
   // Dans l'espace famille : retour au site public et déconnexion de Cloudflare Access
   if (ESPACE_FAMILLE) {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-lien-public]"), function (n) { n.remove(); });
     [["https://memoires-familiales.github.io/", "Site public", "accueil"], ["/cdn-cgi/access/logout", "Se déconnecter", "famille"]].forEach(function (l) {
       var li = document.createElement("li");
       li.className = "lien-espace";
@@ -172,4 +173,19 @@
       return reel(a) === reel(b);
     }
   };
+  // Le site public présente la rubrique. La vue complète est utilisée dans
+  // la copie protégée et quand les pages sont ouvertes depuis le disque.
+  var rubriqueFamille = document.querySelector("template[data-rubrique-famille]");
+  if (rubriqueFamille && (ESPACE_FAMILLE || location.protocol === "file:")) {
+    var vue = rubriqueFamille.content.cloneNode(true);
+    var sources = vue.querySelectorAll("script[data-src]");
+    Array.prototype.forEach.call(sources, function (source) { source.remove(); });
+    document.querySelector("main").replaceWith(vue);
+    Array.prototype.forEach.call(sources, function (source) {
+      var script = document.createElement("script");
+      script.async = false;
+      script.src = source.getAttribute("data-src");
+      document.body.appendChild(script);
+    });
+  }
 })();

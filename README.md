@@ -7,12 +7,12 @@ L'espace numérique qui prolonge le livre *Mamili*, Rosalie Luque, née Llerena.
 | Page | Adresse | État |
 |---|---|---|
 | Accueil : présentation et sommaire des rubriques | `index.html` | En ligne |
-| Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Premier aperçu ; import des vraies données prêt |
+| Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Présentation publique et accès à l’espace famille |
 | Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Sommaire réel en ligne (14 parties, 108 chapitres), avec les pages du livre imprimé |
-| L'arbre : une personne au centre, ses parents, son conjoint, ses enfants | `arbre/` | Structure, avec un exemple fictif |
-| La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Exemple fictif ici ; 99 extraits réels dans l'espace famille |
-| Les archives : documents par type, avec recherche | `archives/` | Structure, avec un exemple fictif |
-| Les films : un écran par film, et ses séquences | `films/` | Structure, avec un exemple fictif |
+| L'arbre : une personne au centre, ses parents, son conjoint, ses enfants | `arbre/` | Présentation publique et accès à l’espace famille |
+| La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Présentation publique et extraits dans l’espace famille |
+| Les archives : documents par type, avec recherche | `archives/` | Présentation publique et accès à l’espace famille |
+| Les films : un écran par film, et ses séquences | `films/` | Présentation publique et accès à l’espace famille |
 | Participer : envoie par e-mail à Samuel une identification, une correction, un souvenir, des photos (pièces jointes) | `participer/` | Utilisable, après activation de FormSubmit (voir docs/rubriques.md) |
 
 Le site est fait de pages HTML simples, sans outil de construction : ce qui est dans le dépôt est ce qui est publié par GitHub Pages.
@@ -21,7 +21,7 @@ Le site est fait de pages HTML simples, sans outil de construction : ce qui est 
 
 **Aucune photo, aucun nom, aucune donnée de la famille ne doit entrer dans ce dépôt.** Le dépôt est public et GitHub Pages ne sait pas réserver une page à certaines personnes.
 
-- Les rubriques publiées montrent un **jeu d'exemple fictif** (`data/demo/`), une famille inventée. Seule exception, choisie par Samuel : le sommaire du livre (`data/livre.js`).
+- Les rubriques publiques présentent leur contenu et renvoient vers l’espace famille. Le sommaire réel du livre (`data/livre.js`) reste public avec l’accord de la famille. Les jeux d’exemple (`data/demo/`) servent à la consultation locale.
 - Les vraies données sont fabriquées sur l'ordinateur, dans le dossier **`prive/`**, que `.gitignore` exclut de Git. Chaque page les charge automatiquement quand elles sont présentes : le site complet se consulte donc en local, en ouvrant les pages par double-clic.
 - L'**espace famille** en ligne est une copie du site avec ces données, dans un dépôt privé publié par Cloudflare Pages et protégé par Cloudflare Access (accès par adresse e-mail et code). Voir `docs/espace-famille.md`.
 

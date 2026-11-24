@@ -20,6 +20,15 @@
 <main class="page arbre">
   <div class="tete">
     <h1>Notre arbre généalogique</h1>
+    <p class="resume">Parcourez les branches de la famille de Mamili en passant d’une fiche à l’autre. Chaque fiche permet de retrouver les liens de parenté, les dates et les lieux connus, ainsi que les photos et les documents associés lorsqu’ils sont disponibles.</p>
+  </div>
+  <p><a class="bouton" href="https://espace-famille.pages.dev/">Se connecter à l’espace famille</a></p>
+</main>
+
+<template data-rubrique-famille>
+<main class="page arbre">
+  <div class="tete">
+    <h1>Notre arbre généalogique</h1>
     <p class="resume">Une fiche par personne : ses parents, son conjoint, ses enfants, ses dates et ses lieux, et le lien vers ses photos. Choisissez une personne pour vous déplacer dans l'arbre.</p>
   </div>
 
@@ -40,6 +49,12 @@
     </div>
   </div>
 </main>
+<script data-src="../data/demo/arbre.js"></script>
+<script data-src="../prive/arbre.js"></script>
+<script data-src="../data/demo/photos.js"></script>
+<script data-src="../prive/photos.js"></script>
+<script data-src="../assets/js/arbre.js"></script>
+</template>
 
 <footer class="pied">
   <p>Mémoires familiales</p>
@@ -47,10 +62,5 @@
 </footer>
 
 <script src="../assets/js/site.js"></script>
-<script src="../data/demo/arbre.js"></script>
-<script src="../prive/arbre.js" onerror="this.remove()"></script>
-<script src="../data/demo/photos.js"></script>
-<script src="../prive/photos.js" onerror="this.remove()"></script>
-<script src="../assets/js/arbre.js"></script>
 </body>
 </html>

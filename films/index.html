@@ -20,6 +20,15 @@
 <main class="page films">
   <div class="tete">
     <h1>Les films de famille</h1>
+    <p class="resume">Cette rubrique accueillera les films tournés en famille au fur et à mesure de leur numérisation. Les séquences aideront à retrouver un moment, un lieu ou une personne.</p>
+  </div>
+  <p><a class="bouton" href="https://espace-famille.pages.dev/">Se connecter à l’espace famille</a></p>
+</main>
+
+<template data-rubrique-famille>
+<main class="page films">
+  <div class="tete">
+    <h1>Les films de famille</h1>
     <p class="resume">Les bobines tournées en famille, une fois numérisées. Chaque film est découpé en séquences pour retrouver un moment, une personne, un lieu.</p>
   </div>
 
@@ -27,6 +36,10 @@
 
   <div id="films"></div>
 </main>
+<script data-src="../data/demo/films.js"></script>
+<script data-src="../prive/films.js"></script>
+<script data-src="../assets/js/films.js"></script>
+</template>
 
 <footer class="pied">
   <p>Mémoires familiales</p>
@@ -34,8 +47,5 @@
 </footer>
 
 <script src="../assets/js/site.js"></script>
-<script src="../data/demo/films.js"></script>
-<script src="../prive/films.js" onerror="this.remove()"></script>
-<script src="../assets/js/films.js"></script>
 </body>
 </html>
