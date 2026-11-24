@@ -44,12 +44,22 @@ ok "$(python3 --version 2>&1), openpyxl et Pillow présents"
 
 # ------------------------------------------------------------------ 3. Drive
 etape "3. Google Drive"
-DRIVE=""
-for d in "$HOME"/Library/CloudStorage/GoogleDrive-*/"Mon Drive" "$HOME"/Library/CloudStorage/GoogleDrive-*/"My Drive"; do
-  [ -d "$d" ] && { DRIVE="$d"; break; }
-done
-[ -n "$DRIVE" ] || stop "Google Drive pour ordinateur introuvable dans ~/Library/CloudStorage." \
-  "ouvrir l'app Google Drive et attendre que « Mon Drive » apparaisse dans le Finder."
+# Ordre de recherche : DRIVE=… donné au lancement, puis le Drive déjà noté dans prive/config-import.json
+# (utile quand un programme comme Codex ne peut pas parcourir ~/Library/CloudStorage), puis la recherche.
+DRIVE="${DRIVE:-}"
+if [ -z "$DRIVE" ] && [ -f prive/config-import.json ]; then
+  DRIVE="$(python3 -c 'import json,sys; v=json.load(open("prive/config-import.json")).get("images",""); i=v.find("/03 - MEMOIRES MAMILI/"); print(v[:i] if i > 0 else "")' 2>/dev/null)"
+  DRIVE="${DRIVE/#\~/$HOME}"
+fi
+if [ -z "$DRIVE" ] || [ ! -d "$DRIVE" ]; then
+  DRIVE=""
+  for d in "$HOME"/Library/CloudStorage/GoogleDrive-*/"Mon Drive" "$HOME"/Library/CloudStorage/GoogleDrive-*/"My Drive" \
+           "/Volumes/GoogleDrive/Mon Drive" "/Volumes/GoogleDrive/My Drive"; do
+    [ -d "$d" ] && { DRIVE="$d"; break; }
+  done
+fi
+[ -n "$DRIVE" ] || stop "Google Drive pour ordinateur introuvable." \
+  "ouvrir l'app Google Drive et attendre « Mon Drive » dans le Finder ; ou donner le chemin : DRIVE=\"\$HOME/Library/CloudStorage/GoogleDrive-<adresse>/Mon Drive\" bash outils/import-complet-mac.command"
 PHOTOTHEQUE="$DRIVE/03 - MEMOIRES MAMILI/02 - Site internet/04 - Photothèque - espace famille"
 EXPORT="$PHOTOTHEQUE/EXPORT ALBUM ANCIENNES PHOTOS"
 TABLEAU="$DRIVE/08 - NUMÉRISATION PHOTOS/TABLEAU"

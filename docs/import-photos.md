@@ -61,7 +61,7 @@ Le kit privé `phototheque-prive-essai-30-photos-2026-11-24.zip` (dossier `04 - 
 | `prive/ n'est pas ignoré par Git` | clone ancien ou `.gitignore` modifié | `git pull`, vérifier `git check-ignore prive/photos.js` |
 | `openpyxl ou Pillow manquent et l'installation a échoué` | pas de réseau (c'est le cas dans le bac à sable de Codex) | dans le Terminal, soi-même : `python3 -m pip install --user openpyxl pillow` |
 | `python3 introuvable` | outils de développement absents | `xcode-select --install` |
-| `Google Drive pour ordinateur introuvable` | app Google Drive fermée ou non installée | ouvrir Google Drive, attendre « Mon Drive » dans le Finder |
+| `Google Drive pour ordinateur introuvable` | app Google Drive fermée, ou programme (Codex) qui ne peut pas parcourir `~/Library/CloudStorage` | ouvrir Google Drive ; ou donner le chemin : `DRIVE="$HOME/Library/CloudStorage/GoogleDrive-<adresse>/Mon Drive" bash outils/import-complet-mac.command` (une fois `prive/config-import.json` écrit, le script reprend ce chemin tout seul) |
 | `dossier introuvable : …` | dossier renommé ou déplacé sur le Drive | remettre le nom attendu, ou corriger le chemin dans `prive/config-import.json` |
 | `l'export depuis Photos est encore en cours` | Photos écrit encore des fichiers | attendre la fin ; sinon `FORCER=1` |
 | `les images du Drive ne se lisent pas depuis ce programme`, `Resource deadlock avoided`, `Operation not permitted` | images restées dans le nuage, ou programme (Codex) sans droit sur `~/Library/CloudStorage` | Finder : clic droit sur « EXPORT ALBUM ANCIENNES PHOTOS » → Disponible hors connexion, attendre ; ou lancer le script dans le Terminal plutôt que dans Codex |
@@ -83,6 +83,10 @@ Pour Codex : son bac à sable coupe souvent le réseau et limite l'accès aux do
 ## Photos ajoutées après l'export des métadonnées
 
 L'export des métadonnées date du 30/09/2026 : 1 494 photos, numérotées de P0001 à P1517. L'album exporté le 24/11 va jusqu'à P1753 : les images plus récentes n'ont pas de fiche. Le rapport les liste sous « Images du dossier sans fiche dans l'export ». Pour les ajouter : refaire l'export des métadonnées depuis Photos (même outil, mêmes colonnes, dont « UUID Photos »), mettre son chemin dans `photos` de `prive/config-import.json`, relancer. Les nouvelles fiches s'ajoutent, les autres ne bougent pas.
+
+## Import complet du 24/11/2026 (référence)
+
+Fait par Codex sur le Mac (clone `~/Documents/ChatGPT/MÉMOIRES MAMILI/phototheque-import`) : 1 494 fiches, toutes illustrées (355 Mo de versions web, 46 Mo de miniatures, plus gros fichier 0,7 Mo), 53 conflits, 92 noms sans correspondance, 168 images sans fiche (P1518 et suivantes, plus une image sans numéro), dont 6 photos imprimées dans le livre (P1518, P1519, P1536, P1546, P1558, P1616) ; second passage sans changement. L'étape 3 a été contournée en donnant le dossier du Drive à la main ; le script le reprend désormais de `prive/config-import.json` ou de `DRIVE=…`.
 
 ## À transmettre à la fin
 
