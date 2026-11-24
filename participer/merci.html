@@ -35,6 +35,12 @@
   <em>Préserver notre histoire, transmettre nos souvenirs.</em>
 </footer>
 
+<script>
+  // Chargée dans le cadre d'envoi d'une correction de photo (espace famille) : confirmer l'envoi.
+  if (window.parent !== window) {
+    try { window.parent.postMessage({ type: "memoires-envoi-confirme" }, "*"); } catch (e) { /* rien */ }
+  }
+</script>
 <script src="../assets/js/site.js"></script>
 </body>
 </html>

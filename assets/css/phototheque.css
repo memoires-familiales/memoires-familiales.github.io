@@ -521,6 +521,7 @@
 .correction__copie summary { cursor: pointer; margin-top: 0.3rem; }
 .correction__copie details .bouton { margin-top: 0.4rem; }
 .pot-de-miel { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; }
+.cadre-envoi { position: absolute; left: -10000px; width: 1px; height: 1px; border: 0; }
 
 .correction__merci { padding: 1.5rem 0 0.5rem; text-align: center; }
 .correction__merci .grand { font-size: 1.6rem; margin: 0 0 0.4rem; }

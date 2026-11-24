@@ -12,6 +12,8 @@
   };
   var MEMOIRE = "correction-photo-auteur";
   var PAGE_MERCI = "https://memoires-familiales.github.io/participer/merci.html";
+  var ORIGINE_MERCI = "https://memoires-familiales.github.io";
+  var DELAI_CONFIRMATION = 45000; // FormSubmit répond parfois lentement
   var CERTITUDES = ["J'en suis sûr(e)", "Je crois, à vérifier", "Je ne sais pas trop"];
 
   function el(tag, attrs, enfants) {
@@ -263,7 +265,7 @@
         pot,
         el("p", { classe: "correction__erreur", role: "alert", hidden: "" }),
         el("div", { classe: "correction__boutons" }, [
-          el("button", { type: "submit", classe: "bouton", id: "corr-envoyer", disabled: "", texte: "Envoyer à Samuel" }),
+          el("button", { type: "submit", classe: "bouton", id: "corr-envoyer", texte: "Envoyer à Samuel" }),
           el("button", { type: "button", classe: "bouton bouton--discret", texte: "Annuler", onclick: fermer })
         ])
       ])
@@ -309,8 +311,9 @@
   }
 
   function majEnvoi() {
-    var b = fenetre && fenetre.querySelector("#corr-envoyer");
-    if (b) b.disabled = propositions().vide;
+    // le bouton reste actif ; on efface seulement l'éventuel message « choisissez quelque chose »
+    var n = fenetre && fenetre.querySelector(".correction__erreur");
+    if (n && !n.hidden && !propositions().vide && /Choisissez/.test(n.textContent)) { n.hidden = true; n.textContent = ""; }
   }
 
   function lienPhoto() {
@@ -369,18 +372,52 @@
       _template: "table",
       _captcha: "false"
     }, champs);
-    // Formulaire classique de FormSubmit, envoyé dans un nouvel onglet au moment du clic.
-    // L'envoi « en arrière-plan » (ajax) restait sans réponse chez Samuel le 24/11 ;
-    // le formulaire classique, lui, passe (site activé le 24/11).
+    // Formulaire classique de FormSubmit, envoyé dans un cadre caché : pas de nouvel onglet.
+    // FormSubmit renvoie vers la page merci du site public, qui confirme l'envoi par un message ;
+    // sans confirmation dans le délai, la fenêtre propose la messagerie ou le texte à copier.
+    // (L'envoi ajax restait sans réponse chez Samuel le 24/11 ; le formulaire classique passe.)
     var envoi = SITE.contributions || {};
-    var formulaire = el("form", { method: "POST", action: envoi.service + envoi.destinataire, target: "_blank", hidden: "" });
+    var nomCadre = "envoi-correction-" + Date.now();
+    var cadre = el("iframe", { name: nomCadre, title: "Envoi de la correction", classe: "cadre-envoi", "aria-hidden": "true", tabindex: "-1" });
+    var formulaire = el("form", { method: "POST", action: envoi.service + envoi.destinataire, target: nomCadre, hidden: "" });
     Object.keys(corps).forEach(function (k) { formulaire.appendChild(el("input", { type: "hidden", name: k, value: corps[k] })); });
     formulaire.appendChild(el("input", { type: "hidden", name: "_next", value: PAGE_MERCI }));
+    document.body.appendChild(cadre);
     document.body.appendChild(formulaire);
-    console.info("[correction] envoi par le formulaire FormSubmit (nouvel onglet)");
+
+    var bouton = fenetre.querySelector("#corr-envoyer");
+    bouton.disabled = true;
+    bouton.textContent = "Envoi en cours…";
+    erreur("");
+    var fini = false;
+    function terminer() {
+      fini = true;
+      window.removeEventListener("message", ecouter);
+      clearTimeout(minuterie);
+      setTimeout(function () { cadre.remove(); formulaire.remove(); }, 2000);
+    }
+    function ecouter(ev) {
+      if (fini || ev.origin !== ORIGINE_MERCI || !ev.data || ev.data.type !== "memoires-envoi-confirme") return;
+      console.info("[correction] envoi confirmé par FormSubmit");
+      terminer();
+      merci(corps);
+    }
+    window.addEventListener("message", ecouter);
+    var minuterie = setTimeout(function () {
+      if (fini) return;
+      console.warn("[correction] pas de confirmation de FormSubmit après " + DELAI_CONFIRMATION / 1000 + " s");
+      terminer();
+      bouton.disabled = false;
+      bouton.textContent = "Réessayer";
+      erreur("L'envoi n'a pas été confirmé : le service d'envoi ne répond pas pour le moment. Réessayez dans un instant, ou envoyez-la autrement :");
+      var ancien = fenetre.querySelector(".correction__envoi .correction__copie");
+      if (ancien) ancien.remove();
+      var secours = autresMoyens(corps);
+      secours.open = true;
+      fenetre.querySelector(".correction__envoi").appendChild(secours);
+    }, DELAI_CONFIRMATION);
+    console.info("[correction] envoi par le formulaire FormSubmit (cadre caché)");
     formulaire.submit();
-    setTimeout(function () { formulaire.remove(); }, 1000);
-    merci(corps);
   }
 
   // Autres moyens d'envoyer : la messagerie de la personne (e-mail prérempli) ou le texte à copier.
@@ -393,7 +430,7 @@
     var aire = el("textarea", { rows: "6", readonly: "", "aria-label": "Texte de la correction à copier" });
     aire.value = texte;
     return el("details", { classe: "correction__copie" }, [
-      el("summary", { classe: "petit", texte: "La page de confirmation affiche une erreur ? Envoyer autrement" }),
+      el("summary", { classe: "petit", texte: "Envoyer autrement" }),
       el("div", { classe: "correction__boutons" }, [
         el("a", { classe: "bouton bouton--discret", href: courriel, texte: "Envoyer avec ma messagerie" }),
         el("button", { type: "button", classe: "bouton bouton--discret", texte: "Copier le texte", onclick: function () {
@@ -412,10 +449,8 @@
     var retour = el("button", { type: "button", classe: "bouton", texte: "Revenir à la photo", onclick: fermer });
     corps.appendChild(el("div", { classe: "correction__merci", role: "status" }, [
       el("p", { classe: "grand", texte: "Merci !" }),
-      el("p", { texte: "Votre proposition pour la photo " + (photo.numero || "") + " part chez Samuel, qui mettra la photothèque à jour." }),
-      el("p", { classe: "petit", texte: "Une page de confirmation s'est ouverte dans un nouvel onglet : vous pouvez la fermer." }),
-      retour,
-      envoye ? autresMoyens(envoye) : null
+      el("p", { texte: "Votre proposition pour la photo " + (photo.numero || "") + " est partie : Samuel la reçoit par e-mail et mettra la photothèque à jour." }),
+      retour
     ]));
     retour.focus();
   }
