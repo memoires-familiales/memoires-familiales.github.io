@@ -404,10 +404,15 @@
       : [p.numero, p.titre ? "« " + p.titre + " »" : ""].filter(Boolean).join(" ");
     if (date.enregistree) tech += (tech ? ". " : "") + "Date enregistrée dans Photos : " + date.enregistree + ", sans doute celle de la numérisation";
     ligne(dl, "Référence", el("span", { classe: "technique", texte: tech }));
-    ligne(dl, "Vous reconnaissez quelqu'un ? Une date est fausse ?", el("a", {
-      href: racine + "participer/index.html?photo=" + encodeURIComponent(p.numero || p.id),
-      texte: "Proposer une correction"
-    }));
+    var corriger;
+    if (window.CorrectionPhoto) {
+      // fenêtre par-dessus la fiche : on ne perd pas le fil des photos
+      corriger = el("button", { type: "button", classe: "bouton bouton--discret bouton-corriger", texte: "Proposer une correction" });
+      corriger.addEventListener("click", function () { window.CorrectionPhoto.ouvrir(p, photos); });
+    } else {
+      corriger = el("a", { href: racine + "participer/index.html?photo=" + encodeURIComponent(p.numero || p.id), texte: "Proposer une correction" });
+    }
+    ligne(dl, "Vous reconnaissez quelqu'un ? Une date est fausse ?", corriger);
 
     $("fiche-position").textContent = "Photo " + nf.format(courante + 1) + " sur " + nf.format(resultats.length);
     $("precedente").disabled = courante <= 0;
@@ -447,7 +452,7 @@
 
   fiche.addEventListener("click", function (e) { if (e.target === fiche) fermerFiche(); });
   fiche.addEventListener("keydown", function (e) {
-    if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+    if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
     if (e.key === "ArrowLeft") { e.preventDefault(); naviguer(-1); }
     if (e.key === "ArrowRight") { e.preventDefault(); naviguer(1); }
   });

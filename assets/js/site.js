@@ -128,6 +128,12 @@
   // Outils partagés par les pages de rubrique
   window.SITE = {
     racine: racine,
+    // Réception des contributions (formulaire « Participer », corrections des photos) par FormSubmit.
+    // Après activation, FormSubmit fournit une chaîne aléatoire à mettre à la place de l'adresse.
+    contributions: {
+      destinataire: ["samuel.rodriguez.1295", "gmail.com"].join("@"),
+      service: "https://formsubmit.co/"
+    },
     espaceFamille: ESPACE_FAMILLE,
     adresseEspaceFamille: ADRESSE_ESPACE_FAMILLE,
     texteDonneesFamille: ESPACE_FAMILLE

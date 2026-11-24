@@ -151,3 +151,17 @@ Les champs vides sont omis dans le fichier. Le jeu d'exemple (`data/demo/photos.
 - **Contributions de la famille** (identifications, corrections) : à stocker dans un fichier ou une base séparés, reliés par `id`, jamais écrits par l'import.
 - **Arbre généalogique** : donner à chaque personne un identifiant permanent ; `personnes` contiendra alors des identifiants plutôt que des noms.
 - **Accès familial en ligne** : servir `photos.js` et les images depuis un stockage privé avec contrôle d'accès, au lieu de `prive/`. Seules les deux balises `<script>` de `phototheque/index.html` et les chemins `images` sont à changer.
+
+## Proposer une correction depuis une photo
+
+Dans la fiche d'une photo, « Proposer une correction » ouvre une fenêtre par-dessus la fiche (`assets/js/correction-photo.js`) : on ne quitte pas la photo. La personne choisit ce qu'elle corrige ou complète :
+
+- **date** (texte libre : « été 1958 », « vers 1950 ») ;
+- **lieu** et **événement**, avec les suggestions déjà présentes dans la photothèque ;
+- **personnes** : toucher un nom mal reconnu pour dire qui c'est à la place (ou « je ne sais pas qui c'est » pour le retirer), et « Ajouter une personne » avec sa place sur la photo. Les noms se complètent dès les premières lettres, écrits comme dans la photothèque (chaque mot tapé doit commencer un mot du nom : « jo luq ») ; un nom absent reste possible et est signalé comme tel ;
+- une remarque libre, sa certitude et son nom (obligatoire, mémorisé sur l'appareil). Dans l'espace famille, l'adresse de connexion Cloudflare Access est jointe quand elle existe (`/cdn-cgi/access/get-identity`) ; un accès autorisé par adresse IP n'en a pas, d'où le nom demandé à chaque fois.
+
+L'envoi part par e-mail à Samuel (FormSubmit, point d'envoi `ajax/`, réglé une seule fois dans `SITE.contributions` de `assets/js/site.js`) : un tableau lisible (« Date : avant → proposée », « Personnes mal reconnues : X → Y »…) et la même chose en JSON dans « Données pour la mise à jour » (`version`, `photo` {numero, id}, `actuel`, `propose` {date, lieu, evenement, remplacer [{avant, apres, nouveau}], retirer, ajouter [{nom, position, nouveau}], remarque}, `certitude`, `auteur`). La première correction envoyée depuis un nouveau site peut demander une activation FormSubmit (e-mail à Samuel). En cas d'échec, le texte est proposé à copier.
+
+Les corrections se reportent ensuite dans Photos, le tableau de travail ou `prive/alias-personnes.csv`, puis on relance l'import.
+

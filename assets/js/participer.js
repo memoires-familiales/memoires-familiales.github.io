@@ -5,10 +5,9 @@
 
   // ---------------------------------------------------------------- réglages
   var ENVOI = {
-    // Adresse qui reçoit les contributions. Après la première activation, FormSubmit
-    // fournit une chaîne aléatoire à mettre ici à la place de l'adresse, pour la masquer.
-    destinataire: ["samuel.rodriguez.1295", "gmail.com"].join("@"),
-    service: "https://formsubmit.co/",
+    // Adresse qui reçoit les contributions : réglée une seule fois dans assets/js/site.js.
+    destinataire: window.SITE.contributions.destinataire,
+    service: window.SITE.contributions.service,
     merci: "https://memoires-familiales.github.io/participer/merci.html",
     maxFichiers: 10,
     maxOctets: 10 * 1024 * 1024 - 300 * 1024, // 10 Mo au total, avec une marge pour le texte
