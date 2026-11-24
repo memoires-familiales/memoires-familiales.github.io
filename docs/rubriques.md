@@ -39,7 +39,7 @@ python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
   --pages-imprimees sommaire-pdf.txt
 ```
 
-`sommaire-pdf.txt` est le sommaire copié depuis le PDF du livre imprimé, une entrée par ligne (« Titre……… 123 »). Le script reprend les pages dans l'ordre (prologue, puis chaque partie suivie de ses chapitres), recolle les titres coupés sur deux lignes, ignore les folios « — 6 — » et signale tout titre qui diffère de celui du manuscrit.
+`sommaire-pdf.txt` est le sommaire copié depuis le PDF du livre imprimé, une entrée par ligne (« Titre……… 123 »). Le script reprend les pages dans l'ordre (prologue, puis chaque partie suivie de ses chapitres), recolle les titres coupés sur deux lignes et ignore les folios « — 6 — ». Le livre imprimé fait référence : un titre qui diffère de celui du manuscrit est remplacé par le titre imprimé, et le changement est affiché (c'est le cas de la partie 9, « La famille », décision de Samuel du 24/11/2026). Un titre très différent laisse penser à un décalage : il est seulement signalé.
 
 ```json
 {
@@ -106,7 +106,7 @@ python3 outils/catalogue_voix.py --index Index_enregistrements_audio.docx       
 python3 outils/catalogue_voix.py --index Index_enregistrements_audio.docx --appliquer  # et reporte les changements
 ```
 
-- **Le numéro de chapitre est la clé** : `0` pour le prologue, `1` à `108`, vide pour un témoignage hors livre. Le titre du chapitre n'est jamais saisi : il vient de `data/livre.json`, comme les pages du livre imprimé. Les pages de l'index Word ne sont pas reprises (elles suivent une autre pagination).
+- **Le numéro de chapitre est la clé** : `0` pour le prologue, `1` à `108`, vide pour un témoignage hors livre. Le titre du chapitre n'est jamais saisi : il vient de `data/livre.json`, comme les pages du livre imprimé. Les pages de l'index Word ne sont pas reprises. Version de référence de l'index (décision du 24/11/2026) : celle qui cite les pages du livre imprimé, « Index_enregistrements_audio_Memoires_Mamili - référence (pages du livre imprimé).docx » ; la version d'origine citait les pages du PDF du 22/11 (2 à 12 pages d'écart) et reste sur le Drive sans modification. C'est la version de référence qu'on complète et qu'on passe à `--index`.
 - `type` : `livre` (la scène est dans le livre), `complément` (détail ou rapprochement oral), `version à vérifier` (divergence à garder), `hors livre`. On ne transforme pas un complément en concordance certaine.
 - `statut` : `monté` ou `exclu` (avec `motif_exclusion`). Les extraits exclus restent dans le catalogue pour la traçabilité mais ne s'affichent pas.
 - `coupes` : les portions conservées dans l'original, séparées par « + ». `note_montage` signale une retouche (raccourci…) ; ces extraits ne sont jamais modifiés par la reprise de l'index.

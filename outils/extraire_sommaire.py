@@ -27,8 +27,10 @@ Pour les pages du livre imprimé, copier le sommaire du PDF final dans un fichie
   python3 outils/extraire_sommaire.py manuscrit.txt --public --pages-imprimees sommaire-pdf.txt
 
 Les entrées sont reprises dans l'ordre (prologue, puis chaque partie suivie de ses chapitres).
-Les titres coupés sur deux lignes sont recollés, les folios « — 6 — » ignorés, et tout titre
-qui diffère de celui du manuscrit est signalé.
+Les titres coupés sur deux lignes sont recollés et les folios « — 6 — » ignorés. Le livre
+imprimé fait référence : quand un titre diffère de celui du manuscrit, le titre imprimé est
+retenu et le changement signalé (décision de Samuel, 24/11/2026, pour la partie 9). Un titre
+très différent fait penser à un décalage : il est seulement signalé, le manuscrit est gardé.
 """
 import argparse
 import difflib
@@ -148,7 +150,8 @@ def lire_sommaire_imprime(texte):
 
 
 def appliquer_pages_imprimees(livre, entrees):
-    """Ajoute « page » à chaque entrée, dans l'ordre de lecture. Renvoie les écarts de titre."""
+    """Ajoute « page » à chaque entrée, dans l'ordre de lecture ; retient le titre imprimé
+    quand il est proche de celui du manuscrit. Renvoie les changements et les écarts."""
     ordre = list(livre["liminaires"])
     for p in livre["parties"]:
         ordre.append(p)
@@ -161,8 +164,12 @@ def appliquer_pages_imprimees(livre, entrees):
     for cible, (titre, page) in zip(ordre, entrees):
         if cle(cible["titre"]) != cle(titre):
             proche = difflib.SequenceMatcher(None, cle(cible["titre"]), cle(titre)).ratio()
-            ecarts.append(f"« {cible['titre']} » (manuscrit) / « {titre} » (imprimé, p. {page})"
-                          + ("" if proche > 0.5 else " : titres très différents, vérifier l'ordre"))
+            if proche > 0.5:
+                ecarts.append(f"titre imprimé retenu : « {titre} » (p. {page}) au lieu de « {cible['titre']} » (manuscrit)")
+                cible["titre"] = titre
+            else:
+                ecarts.append(f"« {cible['titre']} » (manuscrit) / « {titre} » (imprimé, p. {page}) : "
+                              "titres très différents, vérifier l'ordre ; titre du manuscrit gardé")
         if page < precedente:
             ecarts.append(f"page {page} plus petite que la précédente ({precedente}) pour « {titre} »")
         cible["page"] = page
@@ -219,7 +226,7 @@ def main():
             sum(1 for p in livre["parties"] for c in p["chapitres"] if "page" in c)
         print(f"Pages du livre imprimé : {nb_pages} entrées renseignées")
         for e in ecarts:
-            print("  À vérifier : " + e)
+            print("  " + e)
     print(f"Écrit dans {args.sortie / 'livre.js'}")
 
 

@@ -3,7 +3,7 @@
  "mode": "public",
  "titre": "Les Mémoires de Mamili",
  "sous_titre": "Rosalie Luque, 1923 – 2018",
- "source": "Livre final -v2026_11_15 - Passe editoriale claude.docx (texte du 22/11/2026) ; pages : sommaire du PDF final",
+ "source": "Livre final -v2026_11_15 - Passe editoriale claude.docx (texte du 22/11/2026) ; pages et titres : sommaire du PDF final",
  "liminaires": [
   {
    "titre": "Prologue",
@@ -619,7 +619,7 @@
   },
   {
    "numero": 9,
-   "titre": "La famille s’agrandit",
+   "titre": "La famille",
    "annees": "1964 – 1968",
    "chapitres": [
     {
