@@ -26,12 +26,17 @@
       photosParChapitre[n].nb++;
     });
   }
-  var extraitsParChapitre = {};
+  // Extraits de la voix par numéro de chapitre (0 = prologue) ; les témoignages hors livre à part
+  var extraitsParChapitre = {}, horsLivre = 0;
   if (S.memeNature(voix, livre)) {
     (voix.extraits || []).forEach(function (v) {
       var n = numero(v.chapitre);
-      if (n != null) extraitsParChapitre[n] = (extraitsParChapitre[n] || 0) + 1;
+      if (n != null && n !== "") extraitsParChapitre[n] = (extraitsParChapitre[n] || 0) + 1;
+      else horsLivre++;
     });
+  }
+  function lienVoix(n, ancre) {
+    return el("a", { href: S.racine + "voix/index.html#" + ancre, texte: S.pluriel(n, "extrait de sa voix", "extraits de sa voix") });
   }
 
   // À droite des points de conduite : la page si elle est connue, sinon les années
@@ -51,7 +56,7 @@
     else if ((c.photos || []).length) liens.push(el("span", { texte: S.pluriel(c.photos.length, "photo dans le livre", "photos dans le livre") }));
     if (c.page && c.annees) liens.unshift(el("span", { texte: c.annees }));
     var nv = extraitsParChapitre[c.numero];
-    if (nv) liens.push(el("a", { href: S.racine + "voix/index.html#chapitre-" + c.numero, texte: S.pluriel(nv, "extrait de sa voix", "extraits de sa voix") }));
+    if (nv) liens.push(lienVoix(nv, "chapitre-" + c.numero));
     return el("div", { classe: "chapitre", id: "chapitre-" + c.numero }, [
       ligne(c.numero, c.titre, c.page, c.annees),
       liens.length ? el("div", { classe: "liens-croises" }, liens) : null
@@ -60,7 +65,12 @@
 
   var sommaire = document.getElementById("sommaire");
   (livre.liminaires || []).forEach(function (l) {
-    sommaire.appendChild(el("div", { classe: "liminaire" }, [ligne(null, l.titre, l.page)]));
+    var prologue = S.normaliser(l.titre) === "prologue";
+    var nv = prologue && extraitsParChapitre[0];
+    sommaire.appendChild(el("div", { classe: "liminaire", id: prologue ? "chapitre-0" : null }, [
+      ligne(null, l.titre, l.page),
+      nv ? el("div", { classe: "liens-croises" }, [lienVoix(nv, "chapitre-0")]) : null
+    ]));
   });
   (livre.parties || []).forEach(function (p) {
     var bloc = el("section", { classe: "partie", id: "partie-" + p.numero, "aria-label": "Partie " + p.numero + ", " + p.titre }, [
@@ -73,6 +83,12 @@
     (p.chapitres || []).forEach(function (c) { bloc.appendChild(chapitre(c)); });
     sommaire.appendChild(bloc);
   });
+  if (horsLivre) {
+    sommaire.appendChild(el("section", { classe: "partie partie--hors-livre", id: "hors-livre", "aria-label": "Témoignages hors livre" }, [
+      el("h2", null, [el("small", { texte: "Ce que le livre ne raconte pas" }), el("span", { classe: "titre-partie", texte: "Témoignages hors livre" })]),
+      el("div", { classe: "liens-croises" }, [lienVoix(horsLivre, "hors-livre")])
+    ]));
+  }
   if ((livre.annexes || []).length) {
     var annexes = el("section", { classe: "partie", "aria-label": "Annexes" }, [el("h2", { texte: "Annexes" })]);
     livre.annexes.forEach(function (a) { annexes.appendChild(el("div", { classe: "liminaire" }, [ligne(null, a.titre, a.page)])); });

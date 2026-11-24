@@ -8,6 +8,11 @@
   personnes.forEach(function (p) { parId[p.id] = p; });
 
   S.avis(arbre, "Cet arbre est un exemple fictif : il montre comment la page sera organisée. L'arbre de la famille sera réservé à la famille.");
+  if (!personnes.length && arbre.mode === "prive") {
+    var avisVide = document.getElementById("avis");
+    if (avisVide) { avisVide.hidden = false; avisVide.textContent = "L'arbre de la famille est en cours d'intégration."; }
+    return;
+  }
 
   // Nombre de photos par personne (seulement si l'arbre et la phototheque sont de même nature)
   var phototheque = window.PHOTOTHEQUE || {};

@@ -270,6 +270,46 @@
 }
 .extrait .note-transcription { margin-top: 0.6rem; }
 
+/* Filtres de la voix */
+.filtres-voix { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr); gap: 0.8rem 1rem; max-width: 52rem; align-items: end; }
+.filtres-voix .champ { display: grid; gap: 0.35rem; }
+.filtres-voix .champ-recherche { max-width: none; }
+.filtres-voix label { font-family: var(--sans); font-size: 0.85rem; color: var(--encre-douce); }
+.filtres-voix select {
+  width: 100%;
+  padding: 0.55rem 0.6rem;
+  border: 1px solid var(--filet);
+  border-radius: 3px;
+  background: var(--carton);
+  color: var(--encre);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
+.filtres-voix select:focus { border-color: var(--cafe-fonce); outline: none; box-shadow: 0 0 0 2px rgba(52, 80, 110, 0.35); }
+@media (max-width: 46rem) { .filtres-voix { grid-template-columns: 1fr 1fr; } .filtres-voix .champ-recherche { grid-column: 1 / -1; } }
+
+/* Fiche d'un extrait */
+.extrait__tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.7rem; }
+.extrait .meta strong { font-weight: 600; color: var(--encre); }
+.etiquette--complement { border-color: var(--cafe); color: var(--cafe-fonce); }
+.etiquette--version-a-verifier { border-color: var(--stylo); color: var(--stylo); }
+.etiquette--hors-livre { border-style: dashed; border-color: var(--cafe); color: var(--cafe-fonce); }
+.divergence {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.6rem 0.85rem;
+  border-left: 3px solid var(--stylo);
+  background: rgba(52, 80, 110, 0.06);
+}
+.divergence strong { font-family: var(--sans); font-size: 0.82rem; font-weight: 600; color: var(--stylo); }
+.divergence p { font-size: 0.95rem; }
+.extrait .note-extrait { font-style: italic; }
+.details-origine dl.origine { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.25rem 0.9rem; margin: 0.6rem 0 0.4rem; font-family: var(--sans); font-size: 0.84rem; }
+.details-origine dt { color: var(--encre-douce); }
+.details-origine dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 34rem) { .details-origine dl.origine { grid-template-columns: 1fr; } .details-origine dd { margin-bottom: 0.4rem; } }
+.groupe-hors-livre { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--cafe); }
+
 /* ---------- Les archives ---------- */
 
 .choix-type { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1rem 0 0; }

@@ -10,7 +10,7 @@ L'espace numérique qui prolonge le livre *Mamili*, Rosalie Luque, née Llerena.
 | Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Premier aperçu ; import des vraies données prêt |
 | Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Sommaire réel en ligne (14 parties, 108 chapitres), avec les pages du livre imprimé |
 | L'arbre : une personne au centre, ses parents, son conjoint, ses enfants | `arbre/` | Structure, avec un exemple fictif |
-| La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Structure, avec un exemple fictif |
+| La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Exemple fictif ici ; 99 extraits réels dans l'espace famille |
 | Les archives : documents par type, avec recherche | `archives/` | Structure, avec un exemple fictif |
 | Les films : un écran par film, et ses séquences | `films/` | Structure, avec un exemple fictif |
 | Participer : envoie par e-mail à Samuel une identification, une correction, un souvenir, des photos (pièces jointes) | `participer/` | Utilisable, après activation de FormSubmit (voir docs/rubriques.md) |
@@ -40,6 +40,7 @@ outils/creer_demo.py        fabrique les photos d'exemple
 outils/creer_demo_rubriques.py   fabrique les exemples des autres rubriques
 outils/extraire_sommaire.py      extrait le sommaire du livre (parties, chapitres, photos, pages imprimées)
 outils/preparer_espace_famille.py   assemble l'espace famille (site + prive/) pour le dépôt privé
+outils/catalogue_voix.py         catalogue des extraits audio (prive/voix/) → prive/voix.js, avec contrôles
 data/livre.js               sommaire du livre, publié
 docs/phototheque.md         import des photos et modèle de données
 docs/rubriques.md           format des données de chaque rubrique

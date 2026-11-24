@@ -33,13 +33,21 @@ Offres gratuites : Cloudflare Access jusqu'à 50 utilisateurs ; Cloudflare Pages
 - Vérifier en navigation privée : l'adresse doit afficher la page de connexion de Cloudflare.
 
 **5. Données et lien**
-- `python3 outils/preparer_espace_famille.py --sortie ../espace-famille`, puis commit et push.
+- `python3 outils/preparer_espace_famille.py --sortie ../espace-famille`, puis commit et push. `--rubriques voix,photos` choisit les données publiées (par défaut celles de `prive/espace-famille.json`, sinon la voix seule) ; les autres rubriques reçoivent un jeu vide, pour que les exemples fictifs n'apparaissent pas.
 - Dans `assets/js/site.js`, renseigner `ADRESSE_ESPACE_FAMILLE` : le site public affiche alors « Espace famille » dans le menu.
 
 ## Au quotidien
 
 - **Mettre à jour** : refaire l'étape 5 (le script remet la copie à l'image du site et de `prive/`).
 - **Ajouter ou retirer un proche** : Zero Trust → Access → Applications → règle « Famille » → Emails.
-- Ce que le script copie de `prive/` : les fichiers de données (`*.js`), `images/` et `audio/`. Les rapports d'import, l'historique, les tableaux de correspondance et les réglages restent sur l'ordinateur.
+- Ce que le script copie de `prive/` : le fichier de données de chaque rubrique choisie, `audio/` (voix) et `images/` (photothèque). Le catalogue de la voix (`prive/voix/`), les rapports d'import, l'historique, les tableaux de correspondance et les réglages restent sur l'ordinateur. Les photos d'exemple ne sont pas copiées.
+- Les fichiers propres au dépôt privé sont conservés : `LISEZ-MOI.md`, `404.html`, `test-acces.txt`, `_headers` (avec `Cache-Control: private, no-store`).
 - Le script refuse d'écrire dans le dépôt public. Le dépôt `espace-famille` ne doit jamais devenir public.
-- Dans la copie, `window.ESPACE_FAMILLE = true` (ajouté en tête de `assets/js/site.js`) remplace l'avis « dossier prive de cet ordinateur » par un avis « réservé aux proches », et le nom du site porte la mention « Espace famille ».
+- Dans la copie, `window.ESPACE_FAMILLE = true` (ajouté en tête de `assets/js/site.js`) remplace l'avis « dossier prive de cet ordinateur » par un avis « réservé aux proches », ajoute « Site public » et « Se déconnecter » au menu, remplace les états de l'accueil par ceux des attributs `data-etat-famille`, et le nom du site porte la mention « Espace famille ».
+
+## État au 24 novembre 2026
+
+- Dépôt privé `memoires-familiales/espace-famille`, projet Cloudflare Pages `espace-famille` (production : `espace-famille.pages.dev`, déploiement automatique à chaque envoi sur `main`).
+- Deux applications Access, règle réutilisable « Famille » (Allow, liste d'adresses e-mail, session d'un mois) : `espace-famille.pages.dev` et `*.espace-famille.pages.dev` (les adresses de chaque déploiement). Aucun chemin n'est précisé : tout le site est couvert.
+- Contrôle du 24/11 : une requête sans cookie vers la page, `prive/voix.js`, `prive/photos.js`, un MP3, `data/livre.js` ou une page inexistante est redirigée vers la connexion Cloudflare, sur l'adresse de production comme sur une adresse de déploiement. `noindex` n'est qu'un complément.
+- Pour refaire ce contrôle : ouvrir l'espace connecté, puis dans la console du navigateur `fetch("/prive/voix.js", {credentials: "omit", redirect: "manual"}).then(r => r.type)` doit répondre `opaqueredirect`.

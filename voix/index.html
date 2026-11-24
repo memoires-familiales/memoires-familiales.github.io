@@ -20,14 +20,24 @@
 <main class="page voix">
   <div class="tete">
     <h1>La voix de Mamili</h1>
-    <p class="resume">Des extraits de ses enregistrements, avec leur transcription, rangés selon les chapitres du livre. On garde sa voix telle qu'elle est : les silences, les rires, ses expressions.</p>
+    <p class="resume">Des extraits de ses enregistrements, rangés selon les chapitres du livre, avec leur transcription et leur origine. On garde sa voix telle qu'elle est : les silences, les rires, ses expressions. À la fin, des témoignages que le livre ne raconte pas.</p>
   </div>
 
   <p class="avis" id="avis" hidden></p>
 
-  <div class="champ-recherche">
-    <label for="q-voix">Chercher dans les transcriptions</label>
-    <input id="q-voix" type="search" autocomplete="off" placeholder="Un mot, un lieu, un prénom…">
+  <div class="filtres-voix">
+    <div class="champ champ-recherche">
+      <label for="q-voix">Chercher dans les extraits</label>
+      <input id="q-voix" type="search" autocomplete="off" placeholder="Un mot, un lieu, un prénom…">
+    </div>
+    <div class="champ">
+      <label for="type-voix">Afficher</label>
+      <select id="type-voix"><option value="">Tous les extraits</option></select>
+    </div>
+    <div class="champ">
+      <label for="enregistrement-voix">Enregistrement</label>
+      <select id="enregistrement-voix"><option value="">Tous</option></select>
+    </div>
   </div>
   <p class="discret" id="compte-voix" role="status"></p>
   <div id="extraits"></div>
@@ -39,6 +49,8 @@
 </footer>
 
 <script src="../assets/js/site.js"></script>
+<script src="../data/demo/livre.js"></script>
+<script src="../data/livre.js" onerror="this.remove()"></script>
 <script src="../data/demo/voix.js"></script>
 <script src="../prive/voix.js" onerror="this.remove()"></script>
 <script src="../assets/js/voix.js"></script>

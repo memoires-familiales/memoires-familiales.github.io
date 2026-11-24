@@ -77,6 +77,21 @@
     liste.appendChild(liFamille);
   }
 
+  // Dans l'espace famille : retour au site public et déconnexion de Cloudflare Access
+  if (ESPACE_FAMILLE) {
+    [["https://memoires-familiales.github.io/", "Site public", "accueil"], ["/cdn-cgi/access/logout", "Se déconnecter", "famille"]].forEach(function (l) {
+      var li = document.createElement("li");
+      li.className = "lien-espace";
+      var a = document.createElement("a");
+      a.href = l[0];
+      a.appendChild(icone(l[2]));
+      a.appendChild(document.createTextNode(l[1]));
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-etat-famille]"), function (n) { n.textContent = n.getAttribute("data-etat-famille"); });
+  }
+
   nav.textContent = "";
   nav.appendChild(bouton);
   nav.appendChild(liste);

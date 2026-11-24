@@ -20,7 +20,7 @@ Le jeu d'exemple se régénère avec `python3 outils/creer_demo_rubriques.py`. L
 |---|---|---|---|
 | Le livre | `livre/` | `window.LIVRE` | `data/livre.js` (publié) ou `prive/livre.js` |
 | L'arbre | `arbre/` | `window.ARBRE` | `prive/arbre.js` |
-| La voix de Mamili | `voix/` | `window.VOIX` | `prive/voix.js` |
+| La voix de Mamili | `voix/` | `window.VOIX` | `prive/voix.js`, produit par `outils/catalogue_voix.py` |
 | Les archives | `archives/` | `window.ARCHIVES` | `prive/archives.js` |
 | Les films | `films/` | `window.FILMS` | `prive/films.js` |
 | Participer | `participer/` | — | — (rien n'est enregistré) |
@@ -90,28 +90,56 @@ python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
 
 ## La voix de Mamili — `window.VOIX`
 
+Les vraies données ne s'écrivent pas à la main : elles sont produites par `outils/catalogue_voix.py` à partir du **catalogue privé** (`prive/voix/`, jamais dans ce dépôt) :
+
+```
+prive/voix/catalogue.csv        une ligne par extrait (séparateur « ; », s'ouvre dans un tableur)
+prive/voix/enregistrements.csv  une ligne par enregistrement original (A01, A02…)
+prive/voix/transcriptions/      une transcription par extrait : <id>.txt
+prive/audio/                    les MP3, sous le nom exact de la colonne « fichier »
+```
+
+```bash
+python3 outils/catalogue_voix.py              # contrôle le catalogue et écrit prive/voix.js
+python3 outils/catalogue_voix.py --verifier   # contrôle seulement
+python3 outils/catalogue_voix.py --index Index_enregistrements_audio.docx              # compare avec l'index Word
+python3 outils/catalogue_voix.py --index Index_enregistrements_audio.docx --appliquer  # et reporte les changements
+```
+
+- **Le numéro de chapitre est la clé** : `0` pour le prologue, `1` à `108`, vide pour un témoignage hors livre. Le titre du chapitre n'est jamais saisi : il vient de `data/livre.json`, comme les pages du livre imprimé. Les pages de l'index Word ne sont pas reprises (elles suivent une autre pagination).
+- `type` : `livre` (la scène est dans le livre), `complément` (détail ou rapprochement oral), `version à vérifier` (divergence à garder), `hors livre`. On ne transforme pas un complément en concordance certaine.
+- `statut` : `monté` ou `exclu` (avec `motif_exclusion`). Les extraits exclus restent dans le catalogue pour la traçabilité mais ne s'affichent pas.
+- `coupes` : les portions conservées dans l'original, séparées par « + ». `note_montage` signale une retouche (raccourci…) ; ces extraits ne sont jamais modifiés par la reprise de l'index.
+- `personnes`, `lieux`, `divergences` : valeurs séparées par « | ».
+- Contrôles : identifiants, fichiers et identifiants Drive uniques ; chapitre présent dans le sommaire et cohérent avec le type ; coupes lisibles ; enregistrement connu ; transcription et résumé présents ; MP3 présent, décodable, de durée conforme (± 1,5 s), sans doublon, sous 25 Mio ; MP3 non référencés. Rapport : `prive/voix/rapport-controles.md`. En cas d'erreur, `prive/voix.js` n'est pas modifié. Deux lancements identiques donnent le même fichier.
+- La reprise de l'index se fait par l'identifiant Drive du MP3 : nouveaux extraits ajoutés (type, fichier, résumé et transcription à compléter), titres, chapitres et coupes changés listés, extraits disparus signalés sans être supprimés.
+
+Format produit (modèle 2) :
+
 ```json
 {
+  "modele": 2, "mode": "prive",
   "extraits": [
     {
-      "id": "a03-12m40",
-      "titre": "…",
-      "chapitre": { "numero": 2, "titre": "L'enfance à Oran" },
-      "enregistrement": { "date": "…", "par": "…", "fichier": "nom du fichier original" },
-      "debut": "12:40", "fin": "14:05", "duree": "1 min 25",
-      "resume": "…",
-      "transcription": "…",
-      "personnes": ["…"], "lieux": ["…"],
-      "statut": "brut | à monter | monté | validé",
-      "audio": "prive/audio/a03-12m40.mp3"
+      "id": "audio-006", "titre": "…",
+      "chapitre": { "numero": 1, "titre": "titre repris du sommaire" },
+      "type": "livre",
+      "enregistrement": { "code": "A13", "titre": "…", "fichier": "….m4a", "par": "…", "drive_id": "…", "transcription": "…", "note": "…" },
+      "coupes": ["00:29,55–03:28,08"], "debut": "00:29,55", "fin": "03:28,08", "duree": "2:59",
+      "fichier": "Chapitre_001_….mp3", "drive_id": "…",
+      "resume": "…", "transcription": "Mamili : …\nCathy : …", "note_transcription": "…",
+      "personnes": ["…"], "lieux": ["…"], "divergences": ["…"], "notes": "…", "note_montage": "…",
+      "statut": "monté",
+      "audio": "prive/audio/Chapitre_001_….mp3"
     }
-  ]
+  ],
+  "exclusions": [{ "id": "…", "titre": "…", "source": "A21", "motif": "…" }]
 }
 ```
 
-Le champ facultatif `note_transcription` s'affiche sous la transcription (origine, relecture).
+La page range les extraits dans l'ordre du livre (prologue, chapitres, puis « Témoignages hors livre »), affiche la page imprimée de chaque chapitre, un filtre par type et par enregistrement, la recherche dans les titres, résumés, transcriptions et personnes, l'écart avec le livre, et un volet « D'où vient cet extrait » (enregistrement, fichier original, passage retenu, transcription d'origine, liens Drive). Sans `audio`, elle affiche « Fichier audio en cours de transfert ». Le sommaire du livre renvoie vers les extraits de chaque chapitre, du prologue et des témoignages hors livre. L'ancien format (modèle 1, sans `type` ni `coupes`) reste lisible.
 
-C'est l'index prévu par la feuille de route (identifiant, fichier source, début/fin, chapitre, personnes, lieu, résumé, transcription, statut de montage). On garde toujours trois choses distinctes : l'original intact, le montage de consultation (`audio`) et la transcription. Sans `audio`, la page affiche « Extrait audio à venir ».
+On garde toujours trois choses distinctes : l'original intact, le montage de consultation (`audio`) et la transcription.
 
 ## Les archives — `window.ARCHIVES`
 
