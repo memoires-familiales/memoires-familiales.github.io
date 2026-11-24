@@ -141,7 +141,7 @@ Le formulaire envoie la contribution **par e-mail à Samuel**, avec ses pièces 
 - Types proposés : mettre un nom sur un visage, corriger une date ou un lieu, raconter un souvenir, envoyer des photos, envoyer un document.
 - Champs : photo ou document concerné (pré-rempli par le lien « Proposer une correction » de chaque photo : `participer/index.html?photo=P0123`), message, degré de certitude, prénom et nom, **e-mail ou téléphone** (au moins l'un des deux).
 - Pièces jointes : jusqu'à 10 fichiers (photos ou PDF), **10 Mo au total** (limite de FormSubmit). Les photos de plus de 2,5 Mo sont réduites à 3 000 pixels de côté (JPEG) dans le navigateur avant l'envoi ; chaque fichier part dans son propre champ.
-- Après l'envoi : vérification anti-robot de FormSubmit, puis retour sur `participer/merci.html`.
+- Après l'envoi : retour direct sur `participer/merci.html`. La vérification anti-robot de FormSubmit (reCAPTCHA) est **désactivée** (`<input type="hidden" name="_captcha" value="false">` dans `participer/index.html`), à la demande de Samuel, le lien circulant peu. Le champ piège `_honey` reste en place. En cas de messages indésirables ou d'envois perdus, supprimer cette ligne pour réactiver la vérification.
 - Repli : « Préférer copier le message » prépare le texte à envoyer soi-même (sans les fichiers).
 - Les coordonnées saisies sont gardées sur l'appareil de la personne (stockage local du navigateur) pour la prochaine fois ; rien n'est enregistré sur le site.
 

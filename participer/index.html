@@ -28,6 +28,7 @@
   <form class="formulaire" id="formulaire" method="POST" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="_subject" id="champ-sujet" value="Mémoires de Mamili : nouvelle contribution">
     <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
     <input type="hidden" name="_next" id="champ-suite" value="">
     <input type="hidden" name="Type de contribution" id="champ-type" value="">
     <input type="text" name="_honey" class="pot-de-miel" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -85,7 +86,7 @@
       <button type="submit" class="bouton" id="envoyer">Envoyer à Samuel</button>
       <button type="button" class="lien-effacer" id="preparer">Préférer copier le message et l'envoyer moi-même</button>
     </div>
-    <p class="discret note-envoi">Le message et les fichiers sont transmis par e-mail à Samuel grâce au service FormSubmit ; ils ne sont ni publiés ni conservés sur ce site. Une vérification « Je ne suis pas un robot » peut s'afficher.</p>
+    <p class="discret note-envoi">Le message et les fichiers sont transmis par e-mail à Samuel grâce au service FormSubmit ; ils ne sont ni publiés ni conservés sur ce site.</p>
   </form>
 
   <section class="message-pret" id="message-pret" hidden aria-labelledby="titre-message">
