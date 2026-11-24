@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Participer — Mémoires familiales</title>
-<meta name="description" content="Aider à identifier les personnes, corriger une date, raconter un souvenir.">
+<meta name="description" content="Aider à identifier les personnes, corriger une date, raconter un souvenir, envoyer des photos.">
 <meta name="robots" content="noindex">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/css/site.css">
@@ -20,36 +20,72 @@
 <main class="page participer">
   <div class="tete">
     <h1>Participer</h1>
-    <p class="resume">Vous reconnaissez quelqu'un sur une photo, une date vous semble fausse, un souvenir vous revient ? Remplissez ce formulaire : il prépare un message que vous envoyez ensuite à Samuel, par SMS, WhatsApp ou e-mail.</p>
+    <p class="resume">Vous reconnaissez quelqu'un sur une photo, une date vous semble fausse, un souvenir vous revient, ou vous avez des photos de famille ? Ce formulaire envoie directement votre message à Samuel, avec vos photos si vous en ajoutez.</p>
   </div>
 
   <p class="avis" id="avis" hidden></p>
 
-  <form class="formulaire" id="formulaire" novalidate>
+  <form class="formulaire" id="formulaire" method="POST" enctype="multipart/form-data" novalidate>
+    <input type="hidden" name="_subject" id="champ-sujet" value="Mémoires de Mamili : nouvelle contribution">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_next" id="champ-suite" value="">
+    <input type="hidden" name="Type de contribution" id="champ-type" value="">
+    <input type="text" name="_honey" class="pot-de-miel" tabindex="-1" autocomplete="off" aria-hidden="true">
+
     <fieldset>
       <legend>Que voulez-vous proposer ?</legend>
       <div class="types-contribution">
-        <label><input type="radio" name="type" value="identifier" checked><span><strong>Mettre un nom sur un visage</strong><small>Vous reconnaissez une personne sur une photo.</small></span></label>
-        <label><input type="radio" name="type" value="corriger"><span><strong>Corriger une date ou un lieu</strong><small>Une information vous semble fausse ou incomplète.</small></span></label>
-        <label><input type="radio" name="type" value="souvenir"><span><strong>Raconter un souvenir</strong><small>Une anecdote liée à une photo, une personne, un lieu.</small></span></label>
-        <label><input type="radio" name="type" value="document"><span><strong>Signaler un document</strong><small>Vous avez une photo, une lettre, un film à partager.</small></span></label>
+        <label><input type="radio" name="choix-type" value="identifier" checked><span><strong>Mettre un nom sur un visage</strong><small>Vous reconnaissez une personne sur une photo.</small></span></label>
+        <label><input type="radio" name="choix-type" value="corriger"><span><strong>Corriger une date ou un lieu</strong><small>Une information vous semble fausse ou incomplète.</small></span></label>
+        <label><input type="radio" name="choix-type" value="souvenir"><span><strong>Raconter un souvenir</strong><small>Une anecdote liée à une photo, une personne, un lieu.</small></span></label>
+        <label><input type="radio" name="choix-type" value="photos"><span><strong>Envoyer des photos</strong><small>Une ou plusieurs photos de famille à ajouter à la photothèque.</small></span></label>
+        <label><input type="radio" name="choix-type" value="document"><span><strong>Envoyer un document</strong><small>Une lettre, un acte, un article, un film à signaler.</small></span></label>
       </div>
     </fieldset>
-    <label><span>La photo ou le document concerné (facultatif)</span>
-      <input type="text" id="reference" placeholder="Par exemple P0123, ou « la photo du mariage de 1965 »"></label>
-    <label><span>Votre proposition</span>
-      <textarea id="proposition" required placeholder="Par exemple : à gauche, au premier rang, c'est tante Marie."></textarea></label>
-    <label><span>Comment le savez-vous ?</span>
-      <select id="certitude">
+
+    <label id="bloc-reference"><span>La photo ou le document concerné (facultatif)</span>
+      <input type="text" id="reference" name="Photo ou document concerné" placeholder="Par exemple P0123, ou « la photo du mariage de 1965 »"></label>
+
+    <label><span id="libelle-message">Votre proposition</span>
+      <textarea id="proposition" name="Message" placeholder="Par exemple : à gauche, au premier rang, c'est tante Marie."></textarea></label>
+
+    <label id="bloc-certitude"><span>Comment le savez-vous ?</span>
+      <select id="certitude" name="Comment je le sais">
         <option value="Je m'en souviens">Je m'en souviens</option>
         <option value="C'est écrit au dos ou sur un document">C'est écrit au dos ou sur un document</option>
         <option value="Quelqu'un me l'a dit">Quelqu'un me l'a dit</option>
         <option value="Je n'en suis pas sûr">Je n'en suis pas sûr</option>
       </select></label>
-    <label><span>Votre prénom</span>
-      <input type="text" id="auteur" autocomplete="given-name"></label>
-    <p class="confirmation" id="erreur" hidden></p>
-    <div><button type="submit" class="bouton">Préparer le message</button></div>
+
+    <div class="pieces-jointes">
+      <span class="etiquette-champ" id="titre-pieces">Pièces jointes (facultatif)</span>
+      <input type="file" id="fichiers" multiple accept="image/*,application/pdf" class="visuellement-cache" aria-describedby="aide-pieces">
+      <label for="fichiers" class="bouton bouton--discret" id="bouton-fichiers">Ajouter des photos ou des fichiers</label>
+      <p class="discret" id="aide-pieces">Photos ou PDF, jusqu'à 10 fichiers et 10 Mo au total. Les photos très lourdes sont réduites automatiquement avant l'envoi.</p>
+      <ul class="liste-fichiers" id="liste-fichiers" aria-live="polite"></ul>
+      <div id="champs-fichiers" hidden></div>
+    </div>
+
+    <fieldset class="coordonnees">
+      <legend>Vos coordonnées, pour que Samuel puisse vous répondre</legend>
+      <label><span>Votre prénom et votre nom</span>
+        <input type="text" id="auteur" name="Nom" autocomplete="name"></label>
+      <div class="deux-colonnes">
+        <label><span>Votre e-mail</span>
+          <input type="email" id="courriel" name="email" autocomplete="email" inputmode="email"></label>
+        <label><span>ou votre téléphone</span>
+          <input type="tel" id="telephone" name="Téléphone" autocomplete="tel"></label>
+      </div>
+      <p class="discret">Indiquez au moins l'un des deux.</p>
+    </fieldset>
+
+    <p class="erreur" id="erreur" role="alert" hidden></p>
+
+    <div class="actions">
+      <button type="submit" class="bouton" id="envoyer">Envoyer à Samuel</button>
+      <button type="button" class="lien-effacer" id="preparer">Préférer copier le message et l'envoyer moi-même</button>
+    </div>
+    <p class="discret note-envoi">Le message et les fichiers sont transmis par e-mail à Samuel grâce au service FormSubmit ; ils ne sont ni publiés ni conservés sur ce site. Une vérification « Je ne suis pas un robot » peut s'afficher.</p>
   </form>
 
   <section class="message-pret" id="message-pret" hidden aria-labelledby="titre-message">
@@ -57,7 +93,7 @@
     <pre id="message"></pre>
     <button type="button" class="bouton" id="copier">Copier le message</button>
     <p class="confirmation" id="copie-ok" role="status"></p>
-    <p class="discret">Collez-le dans un SMS, un message WhatsApp ou un e-mail à Samuel. Rien n'est enregistré sur ce site.</p>
+    <p class="discret">Collez-le dans un SMS, un message WhatsApp ou un e-mail à Samuel. Les photos ne peuvent pas être jointes de cette façon : envoyez-les à part.</p>
   </section>
 </main>
 

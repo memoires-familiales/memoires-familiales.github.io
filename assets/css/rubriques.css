@@ -405,6 +405,65 @@
 
 .confirmation { margin: 0.6rem 0 0; font-family: var(--sans); font-size: 0.88rem; color: var(--stylo); }
 
+.pot-de-miel { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+.etiquette-champ { display: block; margin-bottom: 0.45rem; font-family: var(--sans); font-size: 0.85rem; color: var(--encre-douce); }
+.pieces-jointes .discret { margin: 0.5rem 0 0; font-size: 0.92rem; }
+.pieces-jointes .bouton { display: inline-block; }
+.visuellement-cache:focus-visible + label { outline: 2px solid var(--stylo); outline-offset: 3px; }
+
+.liste-fichiers { margin: 0.7rem 0 0; padding: 0; list-style: none; }
+.liste-fichiers li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.8rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--filet);
+  font-size: 0.98rem;
+}
+.liste-fichiers .nom-fichier { flex: 1 1 12rem; min-width: 0; overflow-wrap: anywhere; }
+.liste-fichiers .poids-fichier { font-family: var(--sans); font-size: 0.82rem; color: var(--encre-douce); }
+.liste-fichiers .total-fichiers { border-bottom: 0; font-family: var(--sans); font-size: 0.85rem; color: var(--encre-douce); }
+.liste-fichiers .total-fichiers.trop { color: #8a2e1e; }
+
+.coordonnees { display: grid; gap: 0.9rem; }
+.coordonnees .discret { margin: -0.3rem 0 0; font-size: 0.92rem; }
+.deux-colonnes { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.9rem; }
+.formulaire input[type="email"], .formulaire input[type="tel"] {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--filet);
+  border-radius: 3px;
+  background: var(--carton);
+  color: var(--encre);
+  font: inherit;
+  font-size: 1rem;
+}
+.formulaire input[type="email"]:focus, .formulaire input[type="tel"]:focus {
+  border-color: var(--cafe-fonce);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 80, 110, 0.35);
+}
+
+.erreur {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid #8a2e1e;
+  background: var(--carton);
+  color: #8a2e1e;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
+
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.2rem; }
+.bouton:disabled { opacity: 0.6; cursor: progress; }
+.note-envoi { margin: -0.4rem 0 0; font-size: 0.9rem; }
+
+.merci { max-width: 36rem; padding: 1rem 0 0; }
+.merci p { margin: 0 0 1rem; }
+.merci .actions { margin-top: 1.5rem; }
+
 /* ---------- Petits écrans ---------- */
 
 @media (max-width: 52rem) {

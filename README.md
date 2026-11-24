@@ -13,7 +13,7 @@ L'espace numérique qui prolonge le livre *Mamili*, Rosalie Luque, née Llerena.
 | La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Structure, avec un exemple fictif |
 | Les archives : documents par type, avec recherche | `archives/` | Structure, avec un exemple fictif |
 | Les films : un écran par film, et ses séquences | `films/` | Structure, avec un exemple fictif |
-| Participer : prépare un message de correction ou de souvenir à envoyer à Samuel | `participer/` | Utilisable |
+| Participer : envoie par e-mail à Samuel une identification, une correction, un souvenir, des photos (pièces jointes) | `participer/` | Utilisable, après activation de FormSubmit (voir docs/rubriques.md) |
 
 Le site est fait de pages HTML simples, sans outil de construction : ce qui est dans le dépôt est ce qui est publié par GitHub Pages.
 

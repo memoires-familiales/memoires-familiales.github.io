@@ -136,4 +136,17 @@ Format de consultation conseillé : MP4 (H.264/AAC). Quand `fichier` est présen
 
 ## Participer
 
-Pas de données : le formulaire prépare un message (type de proposition, photo concernée, proposition, degré de certitude, prénom) que la personne copie et envoie à Samuel par le moyen de son choix. La fiche de chaque photo a un lien « Proposer une correction » qui pré-remplit le numéro (`participer/index.html?photo=P0123`). Les contributions en ligne, avec comptes et modération, viendront plus tard ; elles seront stockées à part des imports.
+Le formulaire envoie la contribution **par e-mail à Samuel**, avec ses pièces jointes, grâce à FormSubmit (service gratuit, sans compte, qui relaie le formulaire vers une adresse e-mail et ne conserve pas les fichiers).
+
+- Types proposés : mettre un nom sur un visage, corriger une date ou un lieu, raconter un souvenir, envoyer des photos, envoyer un document.
+- Champs : photo ou document concerné (pré-rempli par le lien « Proposer une correction » de chaque photo : `participer/index.html?photo=P0123`), message, degré de certitude, prénom et nom, **e-mail ou téléphone** (au moins l'un des deux).
+- Pièces jointes : jusqu'à 10 fichiers (photos ou PDF), **10 Mo au total** (limite de FormSubmit). Les photos de plus de 2,5 Mo sont réduites à 3 000 pixels de côté (JPEG) dans le navigateur avant l'envoi ; chaque fichier part dans son propre champ.
+- Après l'envoi : vérification anti-robot de FormSubmit, puis retour sur `participer/merci.html`.
+- Repli : « Préférer copier le message » prépare le texte à envoyer soi-même (sans les fichiers).
+- Les coordonnées saisies sont gardées sur l'appareil de la personne (stockage local du navigateur) pour la prochaine fois ; rien n'est enregistré sur le site.
+
+**Réglages** (en tête de `assets/js/participer.js`, objet `ENVOI`) : l'adresse de destination, la limite de taille, le seuil de réduction des photos.
+
+**Mise en service (une fois)** : au tout premier envoi, FormSubmit écrit à l'adresse de destination pour demander une confirmation. Il faut cliquer sur le lien d'activation ; les messages arrivent ensuite directement. FormSubmit fournit alors une chaîne aléatoire : la mettre à la place de l'adresse dans `ENVOI.destinataire` masque l'adresse e-mail dans le code du site.
+
+Les contributions en ligne avec comptes et modération viendront plus tard ; elles seront stockées à part des imports.
