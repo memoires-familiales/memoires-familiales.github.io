@@ -11,7 +11,6 @@
     return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   };
   var MEMOIRE = "correction-photo-auteur";
-  var DELAI_ENVOI = 15000; // au-delà, FormSubmit est considéré comme injoignable
   var PAGE_MERCI = "https://memoires-familiales.github.io/participer/merci.html";
   var CERTITUDES = ["J'en suis sûr(e)", "Je crois, à vérifier", "Je ne sais pas trop"];
 
@@ -370,88 +369,53 @@
       _template: "table",
       _captcha: "false"
     }, champs);
-    var bouton = fenetre.querySelector("#corr-envoyer");
-    bouton.disabled = true;
-    bouton.textContent = "Envoi en cours…";
-    var envoi = (SITE.contributions || {});
-    var arret = window.AbortController ? new AbortController() : null;
-    var minuterie = setTimeout(function () { if (arret) arret.abort(); }, DELAI_ENVOI);
-    console.info("[correction] envoi à FormSubmit (ajax)…");
-    fetch(envoi.service + "ajax/" + envoi.destinataire, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(corps),
-      referrerPolicy: "origin", // FormSubmit a besoin de savoir de quel site vient l'envoi
-      signal: arret ? arret.signal : undefined
-    }).then(function (r) { return r.json().catch(function () { return { success: r.ok ? "true" : "false", message: "réponse " + r.status }; }); })
-      .then(function (rep) {
-        clearTimeout(minuterie);
-        console.info("[correction] réponse de FormSubmit :", rep);
-        if (String(rep.success) === "true") return merci();
-        var activation = /activ/i.test(rep.message || "");
-        echec(corps, activation
-          ? "Le service d'envoi doit d'abord être activé pour ce site : Samuel a reçu un e-mail de FormSubmit pour l'activer."
-          : "Le service d'envoi a refusé la correction" + (rep.message ? " (" + rep.message + ")" : "") + ".");
-      })
-      .catch(function (err) {
-        clearTimeout(minuterie);
-        console.warn("[correction] envoi impossible :", err && err.name, err && err.message);
-        echec(corps, err && err.name === "AbortError"
-          ? "Le service d'envoi ne répond pas pour le moment."
-          : "L'envoi n'a pas abouti (connexion ?).");
-      });
+    // Formulaire classique de FormSubmit, envoyé dans un nouvel onglet au moment du clic.
+    // L'envoi « en arrière-plan » (ajax) restait sans réponse chez Samuel le 24/11 ;
+    // le formulaire classique, lui, passe (site activé le 24/11).
+    var envoi = SITE.contributions || {};
+    var formulaire = el("form", { method: "POST", action: envoi.service + envoi.destinataire, target: "_blank", hidden: "" });
+    Object.keys(corps).forEach(function (k) { formulaire.appendChild(el("input", { type: "hidden", name: k, value: corps[k] })); });
+    formulaire.appendChild(el("input", { type: "hidden", name: "_next", value: PAGE_MERCI }));
+    document.body.appendChild(formulaire);
+    console.info("[correction] envoi par le formulaire FormSubmit (nouvel onglet)");
+    formulaire.submit();
+    setTimeout(function () { formulaire.remove(); }, 1000);
+    merci(corps);
   }
 
-  // Si l'envoi direct échoue : le formulaire classique de FormSubmit (nouvel onglet, déjà activé
-  // pour le site), la messagerie de la personne, ou le texte à copier.
-  function echec(corps, message) {
-    var bouton = fenetre.querySelector("#corr-envoyer");
-    bouton.disabled = false;
-    bouton.textContent = "Réessayer";
-    erreur(message + " Vous pouvez l'envoyer autrement :");
+  // Autres moyens d'envoyer : la messagerie de la personne (e-mail prérempli) ou le texte à copier.
+  function autresMoyens(corps) {
     var champs = {};
     Object.keys(corps).forEach(function (k) { if (k.charAt(0) !== "_") champs[k] = corps[k]; });
     var texte = texteACopier(champs);
     var envoi = SITE.contributions || {};
-    var zone = fenetre.querySelector(".correction__copie");
-    if (zone) zone.remove();
-
-    var classique = el("form", { method: "POST", action: envoi.service + envoi.destinataire, target: "_blank", classe: "correction__classique" });
-    Object.keys(corps).forEach(function (k) { classique.appendChild(el("input", { type: "hidden", name: k, value: corps[k] })); });
-    classique.appendChild(el("input", { type: "hidden", name: "_next", value: PAGE_MERCI }));
-    classique.appendChild(el("button", { type: "submit", classe: "bouton", texte: "Envoyer par le formulaire du site" }));
-    classique.addEventListener("submit", function () { setTimeout(merci, 400); });
-
     var courriel = "mailto:" + envoi.destinataire + "?subject=" + encodeURIComponent(corps._subject) + "&body=" + encodeURIComponent(texte);
     var aire = el("textarea", { rows: "6", readonly: "", "aria-label": "Texte de la correction à copier" });
     aire.value = texte;
-    zone = el("div", { classe: "correction__copie" }, [
-      el("p", { classe: "petit", texte: "Le formulaire du site s'ouvre dans un nouvel onglet ; la messagerie ouvre un e-mail déjà rempli." }),
+    return el("details", { classe: "correction__copie" }, [
+      el("summary", { classe: "petit", texte: "La page de confirmation affiche une erreur ? Envoyer autrement" }),
       el("div", { classe: "correction__boutons" }, [
-        classique,
-        el("a", { classe: "bouton bouton--discret", href: courriel, texte: "Envoyer avec ma messagerie" })
-      ]),
-      el("details", null, [
-        el("summary", { classe: "petit", texte: "Ou copier le texte" }),
-        aire,
+        el("a", { classe: "bouton bouton--discret", href: courriel, texte: "Envoyer avec ma messagerie" }),
         el("button", { type: "button", classe: "bouton bouton--discret", texte: "Copier le texte", onclick: function () {
           aire.select();
           try { navigator.clipboard.writeText(aire.value); } catch (err) { document.execCommand("copy"); }
           this.textContent = "Copié";
         } })
-      ])
+      ]),
+      aire
     ]);
-    fenetre.querySelector(".correction__envoi").appendChild(zone);
   }
 
-  function merci() {
+  function merci(envoye) {
     var corps = fenetre.querySelector(".correction__corps");
     corps.textContent = "";
     var retour = el("button", { type: "button", classe: "bouton", texte: "Revenir à la photo", onclick: fermer });
     corps.appendChild(el("div", { classe: "correction__merci", role: "status" }, [
       el("p", { classe: "grand", texte: "Merci !" }),
-      el("p", { texte: "Samuel a bien reçu votre proposition pour la photo " + (photo.numero || "") + ". Il mettra la photothèque à jour." }),
-      retour
+      el("p", { texte: "Votre proposition pour la photo " + (photo.numero || "") + " part chez Samuel, qui mettra la photothèque à jour." }),
+      el("p", { classe: "petit", texte: "Une page de confirmation s'est ouverte dans un nouvel onglet : vous pouvez la fermer." }),
+      retour,
+      envoye ? autresMoyens(envoye) : null
     ]));
     retour.focus();
   }

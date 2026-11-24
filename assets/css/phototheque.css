@@ -516,7 +516,7 @@
 .correction__envoi label { margin-top: 0.35rem; }
 .correction__boutons { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem; }
 .correction__erreur { margin: 0.5rem 0 0; color: #8a2f1d; font-family: var(--sans); font-size: 0.9rem; }
-.correction__copie { display: grid; gap: 0.45rem; margin-top: 0.6rem; }
+.correction__copie { display: grid; gap: 0.45rem; margin-top: 1.2rem; text-align: left; }
 .correction__classique { display: inline; margin: 0; }
 .correction__copie summary { cursor: pointer; margin-top: 0.3rem; }
 .correction__copie details .bouton { margin-top: 0.4rem; }
