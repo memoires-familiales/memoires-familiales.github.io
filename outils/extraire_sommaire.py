@@ -20,8 +20,18 @@ Un « chapitre » qui n'est pas suivi d'une ligne de date (« 1858 – 1880 », 
 
 Les numéros de page du sommaire Word ne sont repris qu'avec --avec-pages : ils ne
 correspondent au livre imprimé que si le manuscrit est la version mise en page finale.
+
+Pour les pages du livre imprimé, copier le sommaire du PDF final dans un fichier texte
+(une ligne par entrée, « Titre……… 123 ») et le passer avec --pages-imprimees :
+
+  python3 outils/extraire_sommaire.py manuscrit.txt --public --pages-imprimees sommaire-pdf.txt
+
+Les entrées sont reprises dans l'ordre (prologue, puis chaque partie suivie de ses chapitres).
+Les titres coupés sur deux lignes sont recollés, les folios « — 6 — » ignorés, et tout titre
+qui diffère de celui du manuscrit est signalé.
 """
 import argparse
+import difflib
 import json
 import re
 import sys
@@ -114,6 +124,52 @@ def extraire(texte, exclure=(), avec_pages=False, sans_annexes=False):
     return {"liminaires": liminaires, "parties": parties, "annexes": annexes}, ignores
 
 
+# Ligne du sommaire imprimé : « Titre ....... 123 » (points, points de suspension ou espaces)
+LIGNE_IMPRIMEE = re.compile(r"^(.*?)[\s.…·]*?(\d{1,4})\s*$")
+FOLIO = re.compile(r"^[—–-]\s*\d+\s*[—–-]$")
+
+
+def lire_sommaire_imprime(texte):
+    """Renvoie la liste (titre, page) du sommaire copié depuis le PDF, dans l'ordre."""
+    entrees, en_cours = [], ""
+    for brute in texte.splitlines():
+        ligne = brute.strip()
+        if not ligne or FOLIO.match(ligne):
+            continue
+        ligne = (en_cours + " " + ligne).strip() if en_cours else ligne
+        m = LIGNE_IMPRIMEE.match(ligne)
+        titre = m and re.sub(r"[\s.…·]+$", "", m.group(1)).strip()
+        if m and titre:
+            entrees.append((re.sub(r"\s+", " ", titre), int(m.group(2))))
+            en_cours = ""
+        else:
+            en_cours = ligne  # titre coupé : la suite est sur la ligne suivante
+    return entrees
+
+
+def appliquer_pages_imprimees(livre, entrees):
+    """Ajoute « page » à chaque entrée, dans l'ordre de lecture. Renvoie les écarts de titre."""
+    ordre = list(livre["liminaires"])
+    for p in livre["parties"]:
+        ordre.append(p)
+        ordre.extend(p["chapitres"])
+    ordre.extend(livre["annexes"])
+    ecarts = []
+    if len(entrees) != len(ordre):
+        ecarts.append(f"{len(entrees)} entrées dans le sommaire imprimé, {len(ordre)} dans le manuscrit")
+    precedente = 0
+    for cible, (titre, page) in zip(ordre, entrees):
+        if cle(cible["titre"]) != cle(titre):
+            proche = difflib.SequenceMatcher(None, cle(cible["titre"]), cle(titre)).ratio()
+            ecarts.append(f"« {cible['titre']} » (manuscrit) / « {titre} » (imprimé, p. {page})"
+                          + ("" if proche > 0.5 else " : titres très différents, vérifier l'ordre"))
+        if page < precedente:
+            ecarts.append(f"page {page} plus petite que la précédente ({precedente}) pour « {titre} »")
+        cible["page"] = page
+        precedente = page
+    return ecarts
+
+
 def main():
     p = argparse.ArgumentParser(description="Extrait le sommaire du livre vers prive/livre.js.")
     p.add_argument("texte", type=Path, help="texte du manuscrit (export du connecteur Drive ou Markdown)")
@@ -126,11 +182,17 @@ def main():
     p.add_argument("--exclure", action="append", default=[], help="titre de chapitre à ne pas reprendre")
     p.add_argument("--avec-pages", action="store_true", help="reprendre les numéros de page du sommaire Word")
     p.add_argument("--sans-annexes", action="store_true", help="ne pas reprendre ce qui suit le dernier chapitre")
+    p.add_argument("--pages-imprimees", type=Path, default=None,
+                   help="sommaire copié depuis le PDF final : donne les pages du livre imprimé")
     args = p.parse_args()
 
     livre, ignores = extraire(args.texte.read_text(encoding="utf-8"), args.exclure, args.avec_pages, args.sans_annexes)
     if not livre["parties"]:
         sys.exit("Aucune partie trouvée : le texte doit contenir des titres « # » et « ## ».")
+    ecarts = []
+    if args.pages_imprimees:
+        entrees = lire_sommaire_imprime(args.pages_imprimees.read_text(encoding="utf-8"))
+        ecarts = appliquer_pages_imprimees(livre, entrees)
     if args.sortie is None:
         args.sortie = RACINE / ("data" if args.public else "prive")
     donnees = {"modele": 1, "mode": "public" if args.public else "prive", "titre": args.titre, "sous_titre": args.sous_titre}
@@ -152,6 +214,12 @@ def main():
           f"{len(livre['liminaires'])} liminaire(s), {len(livre['annexes'])} annexe(s)")
     if ignores:
         print("Ignorés (pas de ligne d'années ou exclus) : " + " ; ".join(ignores))
+    if args.pages_imprimees:
+        nb_pages = sum(1 for e in livre["liminaires"] + livre["parties"] + livre["annexes"] if "page" in e) + \
+            sum(1 for p in livre["parties"] for c in p["chapitres"] if "page" in c)
+        print(f"Pages du livre imprimé : {nb_pages} entrées renseignées")
+        for e in ecarts:
+            print("  À vérifier : " + e)
     print(f"Écrit dans {args.sortie / 'livre.js'}")
 
 

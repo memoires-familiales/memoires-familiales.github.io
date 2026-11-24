@@ -8,7 +8,7 @@ L'espace numérique qui prolonge le livre *Mamili*, Rosalie Luque, née Llerena.
 |---|---|---|
 | Accueil : présentation et sommaire des rubriques | `index.html` | En ligne |
 | Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Premier aperçu ; import des vraies données prêt |
-| Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Sommaire réel en ligne (14 parties, 108 chapitres) ; numéros de page à ajouter |
+| Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Sommaire réel en ligne (14 parties, 108 chapitres), avec les pages du livre imprimé |
 | L'arbre : une personne au centre, ses parents, son conjoint, ses enfants | `arbre/` | Structure, avec un exemple fictif |
 | La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Structure, avec un exemple fictif |
 | Les archives : documents par type, avec recherche | `archives/` | Structure, avec un exemple fictif |
@@ -38,7 +38,7 @@ outils/importer_photos.py   import des photos depuis Apple Photos → prive/
 outils/mettre-a-jour-phototheque.command   lanceur Mac : import + ouverture
 outils/creer_demo.py        fabrique les photos d'exemple
 outils/creer_demo_rubriques.py   fabrique les exemples des autres rubriques
-outils/extraire_sommaire.py      extrait le sommaire du livre (parties, chapitres, photos) du manuscrit
+outils/extraire_sommaire.py      extrait le sommaire du livre (parties, chapitres, photos, pages imprimées)
 data/livre.js               sommaire du livre, publié
 docs/phototheque.md         import des photos et modèle de données
 docs/rubriques.md           format des données de chaque rubrique

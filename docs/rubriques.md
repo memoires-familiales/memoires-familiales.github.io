@@ -35,8 +35,11 @@ Il est produit par `outils/extraire_sommaire.py` à partir du texte du manuscrit
 
 ```bash
 python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
-  --titre "Les Mémoires de Mamili" --sous-titre "Rosalie Luque, 1923 – 2018"
+  --titre "Les Mémoires de Mamili" --sous-titre "Rosalie Luque, 1923 – 2018" \
+  --pages-imprimees sommaire-pdf.txt
 ```
+
+`sommaire-pdf.txt` est le sommaire copié depuis le PDF du livre imprimé, une entrée par ligne (« Titre……… 123 »). Le script reprend les pages dans l'ordre (prologue, puis chaque partie suivie de ses chapitres), recolle les titres coupés sur deux lignes, ignore les folios « — 6 — » et signale tout titre qui diffère de celui du manuscrit.
 
 ```json
 {
@@ -53,7 +56,7 @@ python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
 
 - Les chapitres sont numérotés à la suite d'un bout à l'autre du livre, comme dans l'édition imprimée.
 - `photos` liste les photos imprimées dans le chapitre. L'import de la photothèque s'en sert pour donner à chaque photo son chapitre (le livre l'emporte sur la colonne « chapitre » du tableau).
-- `page` est facultatif. Le sommaire publié n'a pas encore les numéros de page : le texte utilisé date d'avant les derniers réglages de mise en page. La page affiche alors les années à droite. Les numéros pourront être repris du PDF imprimé (option `--avec-pages` sur le texte de la version finale).
+- `page` est la page du livre imprimé, reprise du sommaire du PDF final (option `--pages-imprimees`), pour le prologue, les parties et les chapitres. Sans `page`, la ligne affiche les années à droite.
 - Sur le site en ligne, chaque chapitre indique « N photos dans le livre » ; sur l'ordinateur où la photothèque privée est présente, c'est un lien vers ces photos.
 
 ## L'arbre — `window.ARBRE`
@@ -105,6 +108,8 @@ python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
   ]
 }
 ```
+
+Le champ facultatif `note_transcription` s'affiche sous la transcription (origine, relecture).
 
 C'est l'index prévu par la feuille de route (identifiant, fichier source, début/fin, chapitre, personnes, lieu, résumé, transcription, statut de montage). On garde toujours trois choses distinctes : l'original intact, le montage de consultation (`audio`) et la transcription. Sans `audio`, la page affiche « Extrait audio à venir ».
 

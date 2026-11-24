@@ -64,7 +64,11 @@
   });
   (livre.parties || []).forEach(function (p) {
     var bloc = el("section", { classe: "partie", id: "partie-" + p.numero, "aria-label": "Partie " + p.numero + ", " + p.titre }, [
-      el("h2", null, [el("small", { texte: "Partie " + p.numero + (p.annees ? ", " + p.annees : "") }), p.titre])
+      el("h2", null, [
+        el("small", { texte: "Partie " + p.numero + (p.annees ? ", " + p.annees : "") }),
+        el("span", { classe: "titre-partie", texte: p.titre }),
+        p.page ? el("span", { classe: "page-livre", texte: "p. " + p.page }) : null
+      ])
     ]);
     (p.chapitres || []).forEach(function (c) { bloc.appendChild(chapitre(c)); });
     sommaire.appendChild(bloc);

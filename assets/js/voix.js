@@ -16,7 +16,8 @@
 
   function carteExtrait(v) {
     var e = v.enregistrement || {};
-    var meta = [e.date ? "Enregistré le " + e.date : "", e.par ? "par " + e.par : "", v.duree].filter(Boolean).join(", ");
+    var qui = (e.date ? "Enregistré le " + e.date + (e.par ? " par " + e.par : "") : e.par ? "Enregistré par " + e.par : "");
+    var meta = [qui, v.duree].filter(Boolean).join(", ");
     var lecteur = v.audio
       ? el("audio", { controls: "", preload: "none", src: S.racine + v.audio })
       : el("div", { classe: "audio-absent", texte: "Extrait audio à venir" });
@@ -34,11 +35,12 @@
       v.resume ? el("p", { texte: v.resume }) : null,
       v.transcription ? el("details", null, [
         el("summary", { texte: "Lire la transcription" }),
-        el("blockquote", { classe: "transcription", texte: v.transcription })
+        el("blockquote", { classe: "transcription", texte: v.transcription }),
+        v.note_transcription ? el("p", { classe: "meta note-transcription", texte: v.note_transcription }) : null
       ]) : null,
       el("div", { classe: "liens-croises" }, [
         liensPersonnes.length ? el("span", null, ["Personnes évoquées : "].concat(liensPersonnes)) : null,
-        v.statut ? el("span", { classe: "etiquette", texte: STATUTS[v.statut] || v.statut }) : null
+        v.statut && voix.mode !== "public" ? el("span", { classe: "etiquette", texte: STATUTS[v.statut] || v.statut }) : null
       ])
     ]);
   }

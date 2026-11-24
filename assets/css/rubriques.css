@@ -102,6 +102,10 @@
 
 .partie { margin-top: 2.2rem; }
 .partie h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.8rem;
   margin: 0 0 0.3rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--cafe);
@@ -110,11 +114,14 @@
 }
 
 .partie h2 small {
-  display: block;
+  flex-basis: 100%;
   font-family: var(--sans);
   font-size: 0.8rem;
   color: var(--encre-douce);
 }
+
+.partie h2 .titre-partie { flex: 1; }
+.partie h2 .page-livre { font-family: var(--sans); font-size: 0.85rem; color: var(--encre-douce); white-space: nowrap; }
 
 /* ---------- L'arbre ---------- */
 
@@ -259,7 +266,9 @@
   border-left: 2px solid var(--cafe);
   font-style: italic;
   line-height: 1.75;
+  white-space: pre-line;
 }
+.extrait .note-transcription { margin-top: 0.6rem; }
 
 /* ---------- Les archives ---------- */
 
