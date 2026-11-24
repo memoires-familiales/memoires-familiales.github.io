@@ -1,0 +1,219 @@
+/* Page d'accueil */
+
+.ouverture {
+  max-width: var(--large);
+  margin: 0 auto;
+  padding: 4.5rem 1.25rem 3.5rem;
+  text-align: center;
+}
+
+.ouverture h1 {
+  margin: 0;
+  font-size: clamp(3.6rem, 12vw, 6.5rem);
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.ouverture .sous-titre {
+  margin: 1rem 0 0;
+  font-size: clamp(1.2rem, 3.4vw, 1.5rem);
+  font-style: italic;
+  color: var(--encre-douce);
+}
+
+/* La route de sa vie : un trait, quatre étapes. */
+
+.route {
+  --hauteur-point: 0.7rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 34rem;
+  margin: 3rem auto 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--encre-douce);
+}
+
+.route::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--hauteur-point) / 2);
+  left: 12.5%;
+  right: 12.5%;
+  height: 1px;
+  background: var(--cafe);
+  transform-origin: left center;
+  animation: tracer 1.6s cubic-bezier(.5, 0, .2, 1) 0.3s both;
+}
+
+.route li {
+  position: relative;
+  padding-top: calc(var(--hauteur-point) + 0.6rem);
+  animation: apparaitre 0.5s ease-out both;
+}
+
+.route li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--hauteur-point);
+  height: var(--hauteur-point);
+  margin-left: calc(var(--hauteur-point) / -2);
+  border: 1px solid var(--cafe-fonce);
+  border-radius: 50%;
+  background: var(--papier);
+}
+
+.route li:last-child::before { background: var(--cafe-fonce); }
+
+.route li:nth-child(1) { animation-delay: 0.3s; }
+.route li:nth-child(2) { animation-delay: 0.75s; }
+.route li:nth-child(3) { animation-delay: 1.2s; }
+.route li:nth-child(4) { animation-delay: 1.65s; }
+
+@keyframes tracer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes apparaitre { from { opacity: 0; } to { opacity: 1; } }
+
+/* Le texte de présentation */
+
+.recit {
+  max-width: var(--mesure);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.recit h2 {
+  margin: 0 0 1rem;
+  font-size: 1.6rem;
+  font-weight: normal;
+}
+
+.recit p { margin: 0 0 1.1em; line-height: 1.8; }
+
+.recit .envoi {
+  margin: 2.2rem 0 0;
+  text-align: center;
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--encre-douce);
+}
+
+/* Prolonger les souvenirs */
+
+.prolonger {
+  max-width: 46rem;
+  margin: 5rem auto 0;
+  padding: 0 1.25rem;
+}
+
+.prolonger > h2 {
+  margin: 0 0 0.4rem;
+  font-size: 1.6rem;
+  font-weight: normal;
+  text-align: center;
+}
+
+.prolonger > .chapeau {
+  margin: 0 auto 2.5rem;
+  max-width: var(--mesure);
+  text-align: center;
+  color: var(--encre-douce);
+}
+
+/* La rubrique ouverte */
+
+.rubrique-ouverte {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem 2rem;
+  align-items: center;
+  padding: 1.6rem 1.75rem;
+  background: var(--carton);
+  border: 1px solid var(--filet);
+  border-left: 3px solid var(--cafe-fonce);
+}
+
+.rubrique-ouverte h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: normal;
+}
+
+.rubrique-ouverte p { margin: 0.35rem 0 0; color: var(--encre-douce); line-height: 1.6; }
+
+.rubrique-ouverte .etat {
+  display: block;
+  margin-top: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--stylo);
+}
+
+/* Le sommaire des rubriques à venir */
+
+.sommaire {
+  margin: 2.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sommaire li { padding: 0.9rem 0; border-bottom: 1px solid var(--filet); }
+.sommaire li:first-child { border-top: 1px solid var(--filet); }
+
+.sommaire .ligne {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.sommaire h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: normal;
+}
+
+/* points de conduite, comme dans le sommaire du livre */
+.sommaire .ligne::after {
+  content: "";
+  order: 2;
+  flex: 1;
+  min-width: 1.5rem;
+  border-bottom: 1px dotted var(--cafe);
+  transform: translateY(-0.3em);
+}
+
+.sommaire .etat {
+  order: 3;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+  white-space: nowrap;
+}
+
+.sommaire p {
+  margin: 0.25rem 0 0;
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--encre-douce);
+}
+
+.prolonger .note {
+  margin: 2rem 0 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--encre-douce);
+  text-align: center;
+}
+
+@media (max-width: 34rem) {
+  .ouverture { padding-top: 3rem; }
+  .route { font-size: 0.8rem; }
+  .rubrique-ouverte { grid-template-columns: 1fr; padding: 1.3rem 1.2rem; }
+  .rubrique-ouverte .bouton { justify-self: start; }
+}

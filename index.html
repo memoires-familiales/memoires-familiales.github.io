@@ -1,190 +1,98 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mamili — Mémoires familiales</title>
-
-<style>
-    * { box-sizing: border-box; }
-
-    body {
-        margin: 0;
-        background: #f7f3eb;
-        color: #514537;
-        font-family: Georgia, serif;
-    }
-
-    header {
-        padding: 25px;
-        border-bottom: 1px solid #d9cebe;
-        font-size: 12px;
-        letter-spacing: 3px;
-        text-align: center;
-    }
-
-    .hero {
-        padding: 65px 20px 45px;
-        text-align: center;
-    }
-
-    .eyebrow {
-        color: #86725b;
-        font-size: 11px;
-        letter-spacing: 3px;
-    }
-
-    h1 {
-        font-size: clamp(56px, 10vw, 90px);
-        font-weight: normal;
-        margin: 25px 0 10px;
-    }
-
-    .subtitle {
-        font-size: 23px;
-        font-style: italic;
-        color: #86725b;
-    }
-
-    .ornament {
-        margin: 30px 0;
-        color: #a28a66;
-    }
-
-    .countries {
-        font-size: 11px;
-        letter-spacing: 2px;
-        color: #86725b;
-    }
-
-    article {
-        max-width: 760px;
-        margin: 0 auto;
-        padding: 40px 30px;
-        background: #fffcf6;
-        border: 1px solid #e5dccf;
-    }
-
-    h2 {
-        font-size: 30px;
-        font-weight: normal;
-    }
-
-    p {
-        font-size: 18px;
-        line-height: 1.85;
-    }
-
-    .conclusion {
-        text-align: center;
-        font-size: 23px;
-        font-style: italic;
-        color: #86725b;
-        padding: 30px 0 10px;
-    }
-
-    .projects {
-        max-width: 760px;
-        padding: 35px 20px;
-        margin: auto;
-    }
-
-    .projects h2 {
-        text-align: center;
-    }
-
-    .project {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-        padding: 20px;
-        margin: 12px 0;
-        border: 1px solid #d9cebe;
-        border-radius: 6px;
-        background: #fffcf6;
-    }
-
-    .status {
-        font-size: 12px;
-        color: #86725b;
-        white-space: nowrap;
-    }
-
-    footer {
-        text-align: center;
-        padding: 35px 20px;
-        border-top: 1px solid #d9cebe;
-        color: #86725b;
-        font-size: 13px;
-        line-height: 1.8;
-    }
-</style>
+<meta name="description" content="Mamili, Rosalie Luque, née Llerena : le livre de ses souvenirs et l'espace numérique de la famille.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/accueil.css">
 </head>
-
 <body>
 
-<header>MÉMOIRES FAMILIALES</header>
+<header class="bandeau">
+  <a class="bandeau__nom" href="index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale">
+    <ul>
+      <li><a href="index.html" aria-current="page">Accueil</a></li>
+      <li><a href="phototheque/index.html">Photothèque</a></li>
+    </ul>
+  </nav>
+</header>
 
 <main>
-    <section class="hero">
-        <div class="eyebrow">HISTOIRES DE FAMILLE · 01</div>
-        <h1>Mamili</h1>
-        <div class="subtitle">Rosalie Luque, née Llerena</div>
-        <div class="ornament">──────── ◇ ────────</div>
-        <div class="countries">
-            ESPAGNE · ALGÉRIE · MAROC · FRANCE
-        </div>
-    </section>
+  <section class="ouverture">
+    <h1>Mamili</h1>
+    <p class="sous-titre">Rosalie Luque, née Llerena</p>
+    <ol class="route" aria-label="Les pays de son histoire">
+      <li>Espagne</li>
+      <li>Algérie</li>
+      <li>Maroc</li>
+      <li>France</li>
+    </ol>
+  </section>
 
-    <article>
-        <h2>La mémoire de la famille</h2>
+  <article class="recit">
+    <h2>La mémoire de la famille</h2>
 
-        <p>Mamili, Rosalie Luque, née Llerena, était la mémoire de la famille. Elle aimait raconter, et elle savait faire revivre l'histoire de ses grands-parents, partis d'Espagne pour l'Algérie par amour, celle de son enfance à Palissy, celle de chaque visage des boîtes de photos. Elle avait ses expressions, le sens du détail, et cette manière d'entraîner ceux qui l'écoutaient dans ses souvenirs.</p>
+    <p>Mamili, Rosalie Luque, née Llerena, était la mémoire de la famille. Elle aimait raconter, et elle savait faire revivre l'histoire de ses grands-parents, partis d'Espagne pour l'Algérie par amour, celle de son enfance à Palissy, celle de chaque visage des boîtes de photos. Elle avait ses expressions, le sens du détail, et cette manière d'entraîner ceux qui l'écoutaient dans ses souvenirs.</p>
 
-        <p>Sa propre vie l'a menée de l'Algérie au Maroc, puis en France, où il a fallu tout recommencer en 1957.</p>
+    <p>Sa propre vie l'a menée de l'Algérie au Maroc, puis en France, où il a fallu tout recommencer en 1957.</p>
 
-        <p>Ces souvenirs, elle en a écrit une partie dans ses cahiers, entre une recette, une prière et une chanson. Le reste, elle le racontait, jusque dans ses dernières années.</p>
+    <p>Ces souvenirs, elle en a écrit une partie dans ses cahiers, entre une recette, une prière et une chanson. Le reste, elle le racontait, jusque dans ses dernières années.</p>
 
-        <div class="conclusion">
-            Ce livre réunit ses cahiers et ses récits.
-        </div>
-    </article>
+    <p class="envoi">Ce livre réunit ses cahiers et ses récits.</p>
+  </article>
 
-    <section class="projects">
-        <h2>Prolonger les souvenirs</h2>
+  <section class="prolonger" aria-labelledby="titre-prolonger">
+    <h2 id="titre-prolonger">Prolonger les souvenirs</h2>
+    <p class="chapeau">Autour du livre, ce site rassemblera peu à peu les photographies, la voix de Mamili et les documents de la famille.</p>
 
-        <div class="project">
-            Le livre de Mamili
-            <span class="status">À venir</span>
-        </div>
+    <div class="rubrique-ouverte">
+      <div>
+        <h3>Les photographies de famille</h3>
+        <p>Les photos des boîtes, des albums et des CD de la famille, numérisées une à une. On peut les chercher par personne, par lieu, par année ou par chapitre du livre.</p>
+        <span class="etat">Premier aperçu, avec des photos d'exemple</span>
+      </div>
+      <a class="bouton" href="phototheque/index.html">Ouvrir la photothèque</a>
+    </div>
 
-        <div class="project">
-            Les photographies de famille
-            <span class="status">À venir</span>
-        </div>
+    <ul class="sommaire">
+      <li>
+        <div class="ligne"><h3>Le livre de Mamili</h3><span class="etat">À venir</span></div>
+        <p>Le sommaire du livre, chapitre par chapitre, avec les photos et les enregistrements qui s'y rattachent.</p>
+      </li>
+      <li>
+        <div class="ligne"><h3>Notre arbre généalogique</h3><span class="etat">À venir</span></div>
+        <p>Une fiche par personne : ses liens de parenté, ses dates et ses lieux, ses photographies et les documents qui la concernent.</p>
+      </li>
+      <li>
+        <div class="ligne"><h3>La voix de Mamili</h3><span class="etat">À venir</span></div>
+        <p>Des extraits de ses enregistrements, avec leur transcription, rangés selon les chapitres du livre.</p>
+      </li>
+      <li>
+        <div class="ligne"><h3>Les archives familiales</h3><span class="etat">Plus tard</span></div>
+        <p>Actes, lettres, articles et cartes qui éclairent son histoire et celle de la famille.</p>
+      </li>
+      <li>
+        <div class="ligne"><h3>Les films de famille</h3><span class="etat">Plus tard</span></div>
+        <p>Les films tournés en famille, une fois numérisés.</p>
+      </li>
+      <li>
+        <div class="ligne"><h3>Participer</h3><span class="etat">Plus tard</span></div>
+        <p>Mettre un nom sur un visage, corriger une date, ajouter un souvenir à une photo.</p>
+      </li>
+    </ul>
 
-        <div class="project">
-            Notre arbre généalogique
-            <span class="status">À venir</span>
-        </div>
-
-        <div class="project">
-            Les archives familiales
-            <span class="status">À venir</span>
-        </div>
-
-        <div class="project">
-            Les témoignages et enregistrements
-            <span class="status">À venir</span>
-        </div>
-    </section>
+    <p class="note">Les photographies, les enregistrements et les documents de la famille seront réservés à la famille.</p>
+  </section>
 </main>
 
-<footer>
-    Mémoires familiales<br>
-    <i>Préserver notre histoire, transmettre nos souvenirs.</i>
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
 </footer>
 
 </body>

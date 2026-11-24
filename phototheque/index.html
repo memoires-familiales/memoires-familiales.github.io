@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photothèque — Mémoires familiales</title>
+<meta name="description" content="Les photographies de la famille de Mamili, classées par personne, lieu, année et chapitre du livre.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/phototheque.css">
+</head>
+<body data-racine="../">
+
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale">
+    <ul>
+      <li><a href="../index.html">Accueil</a></li>
+      <li><a href="index.html" aria-current="page">Photothèque</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="phototheque">
+  <div class="tete">
+    <h1>Les photographies de famille</h1>
+    <p class="resume" id="resume"></p>
+  </div>
+
+  <p class="avis" id="avis" hidden></p>
+
+  <section class="outils" aria-label="Rechercher et filtrer les photos">
+    <div class="recherche">
+      <label for="q">Rechercher</label>
+      <input id="q" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Un nom, un lieu, une année, un mot écrit au dos…">
+    </div>
+
+    <div class="frise" id="frise" role="group" aria-label="Choisir une décennie"></div>
+
+    <button type="button" class="bascule-filtres" id="bascule-filtres" aria-expanded="false" aria-controls="filtres">
+      Filtres <span id="nb-filtres"></span>
+    </button>
+
+    <div class="filtres" id="filtres">
+      <label class="champ">
+        <span>Personne</span>
+        <select id="f-personne"></select>
+      </label>
+      <label class="champ">
+        <span>Lieu</span>
+        <select id="f-lieu"></select>
+      </label>
+      <label class="champ">
+        <span>Événement</span>
+        <select id="f-evenement"></select>
+      </label>
+      <label class="champ">
+        <span>Chapitre du livre</span>
+        <select id="f-chapitre"></select>
+      </label>
+      <label class="champ">
+        <span>Ordre</span>
+        <select id="tri">
+          <option value="chrono">Par date</option>
+          <option value="numero">Par numéro de photo</option>
+        </select>
+      </label>
+      <label class="case">
+        <input type="checkbox" id="f-identifier">
+        <span>Seulement les photos avec des visages à identifier</span>
+      </label>
+    </div>
+
+    <div class="actifs" id="actifs"></div>
+  </section>
+
+  <p class="compte" id="compte" role="status"></p>
+
+  <ul class="grille" id="grille"></ul>
+
+  <div class="vide" id="vide" hidden>
+    <p>Aucune photo ne correspond à ces critères.</p>
+    <button type="button" class="bouton bouton--discret" data-action="effacer">Effacer les filtres</button>
+  </div>
+
+  <div class="suite" id="suite" hidden>
+    <button type="button" class="bouton bouton--discret" id="plus">Afficher plus de photos</button>
+  </div>
+</main>
+
+<dialog class="fiche" id="fiche" aria-labelledby="fiche-titre">
+  <div class="fiche__barre">
+    <span class="fiche__position" id="fiche-position"></span>
+    <div class="fiche__nav">
+      <button type="button" id="precedente" aria-label="Photo précédente" title="Photo précédente (←)">‹</button>
+      <button type="button" id="suivante" aria-label="Photo suivante" title="Photo suivante (→)">›</button>
+      <button type="button" id="fermer" class="fiche__fermer" aria-label="Fermer la fiche" title="Fermer (Échap)">Fermer</button>
+    </div>
+  </div>
+  <div class="fiche__corps">
+    <figure class="fiche__image" id="fiche-image"></figure>
+    <div class="fiche__texte">
+      <h2 id="fiche-titre"></h2>
+      <p class="fiche__lieu" id="fiche-lieu"></p>
+      <dl id="fiche-details"></dl>
+    </div>
+  </div>
+</dialog>
+
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+
+<!-- Les données : le jeu d'exemple, puis les données privées si elles sont présentes
+     sur l'ordinateur (dossier prive/, jamais publié). -->
+<script src="../data/demo/photos.js"></script>
+<script src="../prive/photos.js" onerror="this.remove()"></script>
+<script src="../assets/js/phototheque.js"></script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+/* Photothèque */
+
+.phototheque {
+  max-width: var(--large);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.tete { padding: 3rem 0 1.5rem; max-width: 46rem; }
+
+.tete h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: normal;
+  line-height: 1.15;
+}
+
+.resume { margin: 0.6rem 0 0; color: var(--encre-douce); }
+
+.avis {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  max-width: 46rem;
+  border-left: 3px solid var(--stylo);
+  background: var(--carton);
+  color: var(--stylo);
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ---------- Recherche et filtres ---------- */
+
+.outils {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.25rem 0 1.4rem;
+  border-top: 1px solid var(--filet);
+  border-bottom: 1px solid var(--filet);
+}
+
+.recherche { display: grid; gap: 0.35rem; max-width: 34rem; }
+
+.recherche label,
+.champ > span {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+}
+
+.recherche input,
+.champ select {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--filet);
+  border-radius: 3px;
+  background: var(--carton);
+  color: var(--encre);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.champ select { font-family: var(--sans); font-size: 0.92rem; }
+
+.recherche input:focus,
+.champ select:focus { border-color: var(--cafe-fonce); outline: none; box-shadow: 0 0 0 2px rgba(52, 80, 110, 0.35); }
+
+/* La frise des décennies : chaque barre dit combien de photos elle contient. */
+
+.frise {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+  scrollbar-width: thin;
+}
+
+.frise button {
+  flex: 1 0 3.1rem;
+  display: grid;
+  grid-template-rows: 3.6rem auto;
+  align-items: end;
+  padding: 0.3rem 0.1rem 0.25rem;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--encre-douce);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.frise button:hover { background: var(--carton); color: var(--encre); }
+
+.frise .barre {
+  display: block;
+  justify-self: center;
+  width: min(62%, 2.2rem);
+  min-height: 2px;
+  background: var(--cafe);
+  border-radius: 2px 2px 0 0;
+  transition: height 0.25s ease;
+}
+
+.frise .annee { margin-top: 0.3rem; white-space: nowrap; }
+
+.frise button[aria-pressed="true"] { background: var(--carton); color: var(--encre); }
+.frise button[aria-pressed="true"] .barre { background: var(--cafe-fonce); }
+.frise button[aria-pressed="true"] .annee { text-decoration: underline; text-underline-offset: 0.2em; }
+.frise button:disabled { cursor: default; opacity: 0.45; }
+.frise button.sans-date { flex-basis: 4.2rem; margin-left: 0.6rem; }
+.frise button.sans-date .barre { background: var(--filet); }
+
+.filtres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  gap: 0.9rem 1.1rem;
+  align-items: end;
+}
+
+.champ { display: grid; gap: 0.35rem; }
+
+.case {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  grid-column: 1 / -1;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.case input { width: 1.05rem; height: 1.05rem; accent-color: var(--cafe-fonce); }
+
+.bascule-filtres { display: none; }
+
+.actifs { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.actifs:empty { display: none; }
+
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.55rem 0.25rem 0.7rem;
+  border: 1px solid var(--cafe);
+  border-radius: 999px;
+  background: var(--carton);
+  color: var(--encre);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pastille::after { content: "×"; font-size: 1.05rem; line-height: 1; color: var(--encre-douce); }
+.pastille:hover { border-color: var(--encre); }
+.pastille:hover::after { color: var(--encre); }
+
+.lien-effacer {
+  padding: 0.25rem 0.4rem;
+  border: 0;
+  background: none;
+  color: var(--cafe-fonce);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+/* ---------- La grille, comme une page d'album ---------- */
+
+.compte {
+  margin: 1.3rem 0 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--encre-douce);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: 1.6rem 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vignette {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.tirage {
+  --marge-tirage: 0.7rem;
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  background: #efe6d5;
+  border-radius: 2px;
+}
+
+.tirage img {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  max-width: calc(100% - 2 * var(--marge-tirage));
+  max-height: calc(100% - 2 * var(--marge-tirage));
+  width: auto;
+  height: auto;
+  border: 3px solid #fbf7ee;
+  box-shadow: 0 1px 2px rgba(69, 55, 42, 0.28), 0 3px 8px rgba(69, 55, 42, 0.12);
+  transition: transform 0.2s ease;
+}
+
+.tirage--absent span {
+  display: grid;
+  place-items: center;
+  width: 72%;
+  aspect-ratio: 4 / 3;
+  border: 1px dashed var(--cafe);
+  color: var(--encre-douce);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  background: var(--carton);
+}
+
+.vignette:hover .tirage img,
+.vignette:focus-visible .tirage img { transform: scale(1.03); }
+
+.vignette:focus-visible { outline: none; }
+.vignette:focus-visible .tirage { outline: 2px solid var(--stylo); outline-offset: 2px; }
+
+.legende-v {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.legende-v .v-lieu {
+  display: block;
+  color: var(--encre-douce);
+  font-size: 0.88rem;
+}
+
+.legende-v .v-incertaine { font-style: italic; color: var(--encre-douce); }
+
+.suite { display: flex; justify-content: center; padding: 2.5rem 0 0; }
+
+.vide { padding: 3rem 0; text-align: center; color: var(--encre-douce); }
+.vide p { margin: 0 0 1rem; }
+
+/* ---------- La fiche d'une photo ---------- */
+
+.fiche {
+  width: min(70rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  padding: 0;
+  border: 1px solid var(--filet);
+  border-radius: 4px;
+  background: var(--papier);
+  color: var(--encre);
+}
+
+.fiche::backdrop { background: rgba(40, 31, 23, 0.72); }
+
+.fiche[open] { display: flex; flex-direction: column; }
+
+.fiche__barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.8rem 0.6rem 1.2rem;
+  border-bottom: 1px solid var(--filet);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+}
+
+.fiche__nav { display: flex; gap: 0.4rem; }
+
+.fiche__nav button {
+  min-width: 2.4rem;
+  height: 2.2rem;
+  padding: 0 0.7rem;
+  border: 1px solid var(--filet);
+  border-radius: 3px;
+  background: var(--carton);
+  color: var(--encre);
+  font-family: var(--sans);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fiche__nav button:hover:not(:disabled) { border-color: var(--encre); }
+.fiche__nav button:disabled { opacity: 0.4; cursor: default; }
+.fiche__nav .fiche__fermer { font-size: 0.88rem; }
+
+.fiche__corps {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr);
+  min-height: 0;
+  overflow: auto;
+}
+
+.fiche__image {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 1.5rem;
+  background: #efe6d5;
+  min-height: 18rem;
+}
+
+.fiche__image img {
+  max-height: calc(100vh - 9rem);
+  width: auto;
+  border: 5px solid #fbf7ee;
+  box-shadow: 0 2px 4px rgba(69, 55, 42, 0.3), 0 8px 24px rgba(69, 55, 42, 0.18);
+}
+
+.fiche__image .tirage--absent { width: 100%; aspect-ratio: auto; background: none; }
+
+.fiche__texte { padding: 1.5rem 1.6rem 2rem; }
+
+.fiche__texte h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: normal;
+  line-height: 1.25;
+}
+
+.fiche__texte .approx {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--encre-douce);
+}
+
+.fiche__lieu { margin: 0.35rem 0 0; font-style: italic; color: var(--encre-douce); }
+.fiche__lieu:empty { display: none; }
+
+.fiche dl { margin: 1.4rem 0 0; }
+
+.fiche dt {
+  margin-top: 1.05rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--encre-douce);
+}
+
+.fiche dd { margin: 0.2rem 0 0; line-height: 1.55; }
+
+.fiche .personnes { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+
+.lien-filtre {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--filet);
+  border-radius: 999px;
+  background: var(--carton);
+  color: var(--encre);
+  font: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lien-filtre:hover { border-color: var(--cafe-fonce); color: var(--cafe-fonce); }
+
+.fiche .inconnus { display: block; margin-top: 0.35rem; color: var(--encre-douce); font-size: 0.95rem; }
+
+/* le bleu du stylo qui a écrit au dos des photos */
+.fiche .au-dos { color: var(--stylo); font-style: italic; }
+
+.fiche .technique { font-family: var(--sans); font-size: 0.82rem; color: var(--encre-douce); word-break: break-word; }
+
+/* ---------- Petits écrans ---------- */
+
+@media (max-width: 46rem) {
+  .tete { padding-top: 2rem; }
+
+  .bascule-filtres {
+    display: inline-flex;
+    justify-self: start;
+    gap: 0.35rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--cafe-fonce);
+    border-radius: 3px;
+    background: var(--carton);
+    color: var(--cafe-fonce);
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+
+  .filtres { display: none; }
+  .filtres.ouverts { display: grid; }
+
+  .grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 0.9rem; }
+  .tirage { --marge-tirage: 0.45rem; }
+
+  .fiche { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; border: 0; border-radius: 0; }
+  .fiche__corps { display: block; }
+  .fiche__image { padding: 0.9rem; min-height: 0; }
+  .frise button { flex-basis: 2.6rem; }
+  .frise button.sans-date { flex-basis: 3.8rem; margin-left: 0.3rem; }
+  .fiche__image img { max-height: 58vh; }
+  .fiche__texte { padding: 1.2rem 1.2rem 2rem; }
+}
+
+@media (min-width: 46.01rem) and (max-width: 62rem) {
+  .fiche__corps { display: block; }
+  .fiche__image img { max-height: 60vh; }
+}

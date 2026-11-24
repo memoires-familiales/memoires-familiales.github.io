@@ -1,0 +1,7 @@
+# Données de la famille : jamais publiées
+prive/
+
+# Fichiers système
+.DS_Store
+__pycache__/
+*.pyc

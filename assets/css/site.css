@@ -1,0 +1,136 @@
+/* Mémoires familiales — styles communs
+   Palette tirée du livre : papier, encre sépia, café au lait, et le bleu
+   du stylo qui a écrit au dos des photos. */
+
+:root {
+  --papier: #f6f0e4;
+  --carton: #fffaf1;
+  --encre: #45372a;
+  --encre-douce: #6b5946;
+  --cafe: #b08e6b;
+  --cafe-fonce: #7a5a3c;
+  --filet: #ddd0bc;
+  --stylo: #34506e;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+
+  --mesure: 36rem;
+  --large: 72rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+img { max-width: 100%; display: block; }
+
+[hidden] { display: none !important; }
+
+a { color: var(--cafe-fonce); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { color: var(--encre); }
+
+:focus-visible {
+  outline: 2px solid var(--stylo);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.visuellement-cache {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Bandeau du site ---------- */
+
+.bandeau {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: var(--large);
+  margin: 0 auto;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--filet);
+}
+
+.bandeau__nom {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.bandeau nav ul {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+}
+
+.bandeau nav a { color: var(--encre-douce); text-decoration: none; }
+.bandeau nav a:hover { color: var(--encre); text-decoration: underline; }
+.bandeau nav a[aria-current="page"] { color: var(--encre); text-decoration: underline; }
+
+/* ---------- Pied de page ---------- */
+
+.pied {
+  max-width: var(--large);
+  margin: 4rem auto 0;
+  padding: 2rem 1.25rem 2.5rem;
+  border-top: 1px solid var(--filet);
+  text-align: center;
+  color: var(--encre-douce);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.pied p { margin: 0; }
+.pied em { display: block; margin-top: 0.2rem; }
+
+/* ---------- Boutons ---------- */
+
+.bouton {
+  display: inline-block;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--cafe-fonce);
+  border-radius: 3px;
+  background: var(--cafe-fonce);
+  color: var(--carton);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.bouton:hover { background: var(--encre); border-color: var(--encre); color: var(--carton); }
+
+.bouton--discret {
+  background: transparent;
+  color: var(--cafe-fonce);
+}
+
+.bouton--discret:hover { background: var(--carton); color: var(--encre); border-color: var(--encre); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
