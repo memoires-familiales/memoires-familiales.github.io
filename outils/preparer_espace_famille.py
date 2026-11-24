@@ -73,7 +73,9 @@ def fichiers_du_site():
         noms = [n for n in sortie.splitlines() if n]
     except (subprocess.CalledProcessError, FileNotFoundError):
         sys.exit("Impossible de lister les fichiers du site : lancer le script depuis le dépôt Git du site.")
-    return [n for n in noms if not n.startswith(EXCLUS_SITE) and not n.startswith("prive/")]
+    # Les .json des exemples ne servent qu'à les régénérer : le site lit les .js
+    return [n for n in noms if not n.startswith(EXCLUS_SITE) and not n.startswith("prive/")
+            and not (n.startswith("data/demo/") and n.endswith(".json"))]
 
 
 def verifier_sortie(sortie):
