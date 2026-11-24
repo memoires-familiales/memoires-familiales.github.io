@@ -511,11 +511,31 @@ class Referentiel:
 
 # ---------------------------------------------------------------- images
 
+EXTENSIONS_IMAGES = (".jpg", ".jpeg", ".png", ".tif", ".tiff", ".webp")
+SIGNATURES_IMAGES = (b"\xff\xd8\xff", b"\x89PNG", b"II*\x00", b"MM\x00*")
+
+
+def est_une_image(f: Path) -> bool:
+    """Image reconnue à son extension, ou à son contenu quand le nom n'en a pas
+    (« P1607 - France - Ruvigny » dans le dossier CHRONO PHOTO du Drive)."""
+    if f.suffix.lower() in EXTENSIONS_IMAGES:
+        return True
+    if f.name.startswith(".") or f.suffix.lower() in (".xlsx", ".csv", ".json", ".txt", ".url", ".heic", ".mov", ".mp4"):
+        return False
+    try:
+        with f.open("rb") as h:
+            debut = h.read(12)
+    except OSError:
+        return False
+    return debut.startswith(SIGNATURES_IMAGES) or (debut[:4] == b"RIFF" and debut[8:12] == b"WEBP")
+
+
 def indexer_images(dossier: Path) -> dict[str, Path]:
     index = {}
-    for f in dossier.rglob("*"):
-        if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".tif", ".tiff", ".webp"):
-            index.setdefault(cle(f.stem), f)
+    for f in sorted(dossier.rglob("*")):
+        if f.is_file() and est_une_image(f):
+            nom = f.stem if f.suffix.lower() in EXTENSIONS_IMAGES else f.name
+            index.setdefault(cle(nom), f)
             index.setdefault(cle(f.name), f)
     return index
 

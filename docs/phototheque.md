@@ -29,7 +29,7 @@ pip3 install openpyxl pillow
 - le tableau déjà utilisé (`Export_Photos_avec_miniatures… - Album complet.xlsx`, colonnes « UUID Photos », « Titre Photos », « Personnes reconnues »…) ;
 - ou un export OSXPhotos : `osxphotos query --album "ANCIENNES PHOTOS SCANEES" --json > export-photos.json`.
 
-**Les images.** Dans Photos : sélectionner l'album, *Fichier → Exporter → Exporter les photos*, format JPEG, nom de fichier « Titre ». Les titres commençant par un numéro (`P0001`…), le script retrouve chaque image. Avec OSXPhotos : `osxphotos export ~/Exports/photos-jpeg --album "ANCIENNES PHOTOS SCANEES" --filename "{uuid}" --convert-to-jpeg` (les options d'OSXPhotos évoluent : vérifier avec `osxphotos help export`).
+**Les images.** Les scans numérotés sont déjà sur le Drive, dans « 08 - NUMÉRISATION PHOTOS / CHRONO PHOTO » (« P1616 - 1959_01_01 - France - … .jpg ») : avec Google Drive pour ordinateur, il suffit de donner ce dossier dans `images` (`config-import.json`) ; le script retrouve chaque image par son numéro, y compris les fichiers sans extension, et fabrique les miniatures et les versions web (1 600 px). Sinon, exporter depuis Photos : sélectionner l'album, *Fichier → Exporter → Exporter les photos*, format JPEG, nom de fichier « Titre ». Les titres commençant par un numéro (`P0001`…), le script retrouve chaque image. Avec OSXPhotos : `osxphotos export ~/Exports/photos-jpeg --album "ANCIENNES PHOTOS SCANEES" --filename "{uuid}" --convert-to-jpeg` (les options d'OSXPhotos évoluent : vérifier avec `osxphotos help export`).
 
 ## 3. Lancer l'import
 
