@@ -35,7 +35,7 @@
     return m ? (m[1] ? "vers " : "") + m[2] : "";
   }
   function dates(p) {
-    if (p.vivant) return "";
+    if (p.vivant !== false) return "";
     var n = annee(p.naissance), d = annee(p.deces);
     if (!n && !d) return "";
     return (n || "?") + (d ? " – " + d : "");
@@ -49,9 +49,12 @@
     return ids.map(function (id) { return parId[id]; }).filter(Boolean);
   }
   function fratrie(p) {
-    if (!(p.parents || []).length) return [];
+    var parents = p.parents || [];
+    var declares = p.fratrie_declaree || [];
     return personnes.filter(function (q) {
-      return q.id !== p.id && (q.parents || []).some(function (x) { return p.parents.indexOf(x) !== -1; });
+      return q.id !== p.id && (declares.indexOf(q.id) !== -1 ||
+        (q.fratrie_declaree || []).indexOf(p.id) !== -1 ||
+        (q.parents || []).some(function (x) { return parents.indexOf(x) !== -1; }));
     });
   }
 
@@ -104,8 +107,8 @@
     var sous = [naissanceNom(p), dates(p)].filter(Boolean).join(", ");
     if (sous) fiche.appendChild(el("p", { classe: "sous-nom", texte: sous }));
     var dl = el("dl");
-    if (p.vivant) {
-      ligneFiche(dl, "Dates", "Personne vivante : ses dates ne sont pas affichées.");
+    if (p.vivant !== false) {
+      ligneFiche(dl, "Dates", p.vivant === true ? "Personne vivante : ses dates ne sont pas affichées." : "Dates non affichées : statut à confirmer.");
       if (p.naissance && p.naissance.lieu) ligneFiche(dl, "Naissance", "à " + p.naissance.lieu);
     } else {
       ligneFiche(dl, "Naissance", evenement(p.naissance));
@@ -117,6 +120,7 @@
       b.addEventListener("click", function () { afficher(q.id, true); });
       return b;
     }));
+    if ((p.fratrie_declaree || []).length) ligneFiche(dl, "Fratrie déclarée", "Les liens de fratrie rapportés par la famille ne supposent pas que les deux parents soient communs.");
     ligneFiche(dl, "Sa vie", p.bio);
     ligneFiche(dl, "Sources", (p.sources || []).join(" ; "));
     if (p.certitude) ligneFiche(dl, "Fiabilité", el("span", { classe: "etiquette" + (p.certitude === "confirmé" ? " etiquette--prete" : ""), texte: p.certitude === "confirmé" ? "Confirmé par des documents" : "À vérifier" }));
