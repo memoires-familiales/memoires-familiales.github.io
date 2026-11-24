@@ -12,7 +12,7 @@
   // Nombre de photos par personne (seulement si l'arbre et la phototheque sont de même nature)
   var phototheque = window.PHOTOTHEQUE || {};
   var nbPhotos = {};
-  if (phototheque.mode === arbre.mode) {
+  if (S.memeNature(phototheque, arbre)) {
     (phototheque.photos || []).forEach(function (ph) {
       if (ph.retiree) return;
       (ph.personnes || []).forEach(function (n) { nbPhotos[n] = (nbPhotos[n] || 0) + 1; });

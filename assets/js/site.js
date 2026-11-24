@@ -106,6 +106,7 @@
     avis: function (donnees, texteDemo) {
       var avis = document.getElementById("avis");
       if (!avis) return;
+      if (donnees && donnees.mode === "public") { avis.hidden = true; return; }
       avis.textContent = donnees && donnees.mode === "prive"
         ? "Vous consultez les données de la famille, chargées depuis le dossier « prive » de cet ordinateur. Elles ne sont pas publiées."
         : texteDemo;
@@ -119,6 +120,11 @@
       });
       return racine + "phototheque/index.html?" + u.toString();
     },
-    pluriel: function (n, sing, plur) { return n + " " + (n > 1 ? plur : sing); }
+    pluriel: function (n, sing, plur) { return n + " " + (n > 1 ? plur : sing); },
+    // Deux jeux de données se croisent s'ils sont tous deux réels (publics ou privés) ou tous deux d'exemple
+    memeNature: function (a, b) {
+      function reel(d) { return !!d && (d.mode === "prive" || d.mode === "public"); }
+      return reel(a) === reel(b);
+    }
   };
 })();

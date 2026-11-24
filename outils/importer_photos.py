@@ -583,6 +583,23 @@ def construire_fiches(args, rapport):
     if alias_local.exists():
         ref.charger(alias_local, prioritaire=True)
 
+    # Chapitres du livre (prive/livre.json, produit par outils/extraire_sommaire.py) :
+    # le livre fait foi pour savoir dans quel chapitre une photo est imprimée.
+    chapitres_livre = {}
+    chemin_livre = args.livre
+    if chemin_livre is None:
+        for candidat in (args.sortie / "livre.json", RACINE / "data" / "livre.json"):
+            if candidat.exists():
+                chemin_livre = candidat
+                break
+    if chemin_livre and Path(chemin_livre).exists():
+        livre = json.loads(Path(chemin_livre).read_text(encoding="utf-8"))
+        for partie in livre.get("parties", []):
+            for ch in partie.get("chapitres", []):
+                for n in ch.get("photos", []):
+                    chapitres_livre.setdefault(n, f"Chapitre {ch['numero']}. {ch['titre']}")
+        rapport["livre"] = chemin_livre
+
     index_images = indexer_images(args.images) if args.images else None
     dossier_images = args.sortie / "images"
 
@@ -658,6 +675,8 @@ def construire_fiches(args, rapport):
         if comp and not chapitre and re.search(r"\b(chapitre|partie)\s+\d", cle(comp.get("x"))):
             chapitre = texte(comp.get("x"))
         chapitre = re.sub(r"^\s*x\s+", "", chapitre, flags=re.I)
+        if numero in chapitres_livre:
+            chapitre = chapitres_livre[numero]
 
         mots = liste(apple["mots_cles"]) + (liste(comp.get("mots_cles")) if comp else [])
         mots = sans_doublons([majuscule(m) for m in mots])
@@ -686,7 +705,7 @@ def construire_fiches(args, rapport):
             "favori": booleen(apple["favori"]),
             "a_identifier": inconnus > 0 or any("a identifier" in cle(a) for a in albums)
                             or "identifier" in cle(statut),
-            "sources": ["photos"] + (["tableau"] if comp else []),
+            "sources": ["photos"] + (["tableau"] if comp else []) + (["livre"] if numero in chapitres_livre else []),
         }
 
         # Images
@@ -707,6 +726,7 @@ def construire_fiches(args, rapport):
 
         fiches.append(compacter(fiche))
 
+    rapport["livre_absentes"] = sorted(n for n in chapitres_livre if n not in numeros_vus)
     rapport["complements_orphelins"] = sorted(n for n in complements if n not in numeros_vus
                                               and any(texte(v) for k, v in complements[n].items() if k != "numero"))
     return fiches
@@ -786,6 +806,7 @@ def ecrire_rapport(sortie: Path, horodatage, rapport, total, simulation):
         f"- Ignorées (masquées dans Photos) : {rapport['masquees']} ; sans identifiant : {rapport['sans_uuid']}",
         f"- Conflits entre Photos et le tableau : {len(rapport['conflits'])}",
         f"- Noms de personnes sans correspondance dans le référentiel : {len(rapport['noms_libres'])}",
+        f"- Chapitres repris du livre : {'oui (' + chemin_site(Path(str(rapport['livre']))) + ')' if rapport.get('livre') else 'non (pas de livre.json)'}",
         "",
     ]
 
@@ -806,6 +827,7 @@ def ecrire_rapport(sortie: Path, horodatage, rapport, total, simulation):
             [f"{n} — {t} : {a} / {b}" for n, t, a, b in rapport["conflits"]])
     section("Numéros décrits dans le tableau mais absents de l'export", rapport["complements_orphelins"])
     section("Photos sans image trouvée", rapport["sans_image"])
+    section("Photos imprimées dans le livre mais absentes de l'export", rapport.get("livre_absentes", []))
     if rapport["noms_libres"]:
         lignes += ["## Noms à rapprocher", "",
                    "Ces noms viennent de Photos et ne figurent pas dans le référentiel. La liste complète est "
@@ -885,6 +907,7 @@ def main():
     p.add_argument("--referentiel", type=Path, action="append",
                    help="référentiel des identités (XLSX) ou table d'alias (CSV) ; peut être répété")
     p.add_argument("--images", type=Path, help="dossier des photos exportées (JPEG), pour les miniatures")
+    p.add_argument("--livre", type=Path, help="sommaire du livre (défaut : prive/livre.json, sinon data/livre.json)")
     p.add_argument("--forcer-images", action="store_true", help="refaire toutes les miniatures")
     p.add_argument("--sortie", type=Path, default=RACINE / "prive", help="dossier de sortie (défaut : prive/)")
     p.add_argument("--seuil-date", type=int, default=2000,
@@ -898,7 +921,7 @@ def main():
     p.add_argument("--restaurer", type=Path, help="remettre en place une version de prive/historique/")
     args = p.parse_args()
 
-    for nom in ("photos", "complements", "images", "restaurer"):
+    for nom in ("photos", "complements", "images", "restaurer", "livre"):
         v = getattr(args, nom)
         if v is not None:
             setattr(args, nom, v.expanduser())
@@ -929,7 +952,7 @@ def main():
 
     rapport = {k: [] for k in ("ajoutees", "modifiees", "retirees", "supprimees", "conflits", "sans_image")}
     rapport.update({"noms_libres": {}, "correspondances": {}, "masquees": 0, "sans_uuid": 0,
-                    "complements_orphelins": []})
+                    "complements_orphelins": [], "livre_absentes": [], "livre": None})
 
     nouvelles = construire_fiches(args, rapport)
     anciennes = []

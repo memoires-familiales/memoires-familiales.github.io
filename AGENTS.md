@@ -5,7 +5,8 @@ Site familial publié par GitHub Pages depuis la branche principale, sans étape
 ## À respecter absolument
 
 - **Ne jamais ajouter au dépôt de données de la famille** : photos, noms, dates, lieux, transcriptions, exports d'Apple Photos. Elles vivent dans `prive/` (exclu par `.gitignore`). Le dépôt est public.
-- Les exemples publiés (`data/demo/`) sont fictifs. Les régénérer avec `python3 outils/creer_demo.py`.
+- Une seule exception, décidée par Samuel le 24/11/2026 : le **sommaire du livre** est publié (`data/livre.js`, `data/livre.json`, mode `"public"`). Rien d'autre de réel ne va dans `data/` sans son accord explicite.
+- Les exemples publiés (`data/demo/`) sont fictifs. Les régénérer avec `python3 outils/creer_demo.py` et `python3 outils/creer_demo_rubriques.py`.
 - Ne créer aucun abonnement ni service payant sans accord explicite.
 
 ## Conventions

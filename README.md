@@ -8,7 +8,7 @@ L'espace numérique qui prolonge le livre *Mamili*, Rosalie Luque, née Llerena.
 |---|---|---|
 | Accueil : présentation et sommaire des rubriques | `index.html` | En ligne |
 | Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Premier aperçu ; import des vraies données prêt |
-| Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Structure, avec un exemple fictif |
+| Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Sommaire réel en ligne (14 parties, 108 chapitres) ; numéros de page à ajouter |
 | L'arbre : une personne au centre, ses parents, son conjoint, ses enfants | `arbre/` | Structure, avec un exemple fictif |
 | La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Structure, avec un exemple fictif |
 | Les archives : documents par type, avec recherche | `archives/` | Structure, avec un exemple fictif |
@@ -21,7 +21,7 @@ Le site est fait de pages HTML simples, sans outil de construction : ce qui est 
 
 **Aucune photo, aucun nom, aucune donnée de la famille ne doit entrer dans ce dépôt.** Le dépôt est public et GitHub Pages ne sait pas réserver une page à certaines personnes.
 
-- Les rubriques publiées montrent un **jeu d'exemple fictif** (`data/demo/`), une famille inventée.
+- Les rubriques publiées montrent un **jeu d'exemple fictif** (`data/demo/`), une famille inventée. Seule exception, choisie par Samuel : le sommaire du livre (`data/livre.js`).
 - Les vraies données sont fabriquées sur l'ordinateur, dans le dossier **`prive/`**, que `.gitignore` exclut de Git. Chaque page les charge automatiquement quand elles sont présentes : le site complet se consulte donc en local, en ouvrant les pages par double-clic.
 - L'accès familial en ligne (photos privées, comptes sur invitation) fera l'objet d'une étape à part, avec un stockage privé.
 
@@ -38,6 +38,8 @@ outils/importer_photos.py   import des photos depuis Apple Photos → prive/
 outils/mettre-a-jour-phototheque.command   lanceur Mac : import + ouverture
 outils/creer_demo.py        fabrique les photos d'exemple
 outils/creer_demo_rubriques.py   fabrique les exemples des autres rubriques
+outils/extraire_sommaire.py      extrait le sommaire du livre (parties, chapitres, photos) du manuscrit
+data/livre.js               sommaire du livre, publié
 docs/phototheque.md         import des photos et modèle de données
 docs/rubriques.md           format des données de chaque rubrique
 prive/                      (non suivi par Git) données réelles de la famille

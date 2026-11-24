@@ -12,13 +12,13 @@ Un fichier de données est un script d'une ligne qui définit une variable globa
 window.ARBRE = { "modele": 1, "mode": "prive", "personnes": [ … ] };
 ```
 
-`mode` vaut `"demo"` pour les exemples et `"prive"` pour la famille. Les pages ne croisent que des données de même nature (le nombre de photos d'un chapitre n'est calculé que si le livre et la photothèque sont tous deux privés, ou tous deux d'exemple).
+`mode` vaut `"demo"` pour les exemples, `"prive"` pour les données de la famille gardées sur l'ordinateur et `"public"` pour les données réelles que la famille a choisi de publier (le sommaire du livre). Les pages ne croisent que des données de même nature : réelles avec réelles (publiques ou privées), exemples avec exemples.
 
 Le jeu d'exemple se régénère avec `python3 outils/creer_demo_rubriques.py`. Le plus simple pour créer un fichier privé est de partir du `.json` d'exemple correspondant, de le remplir, puis de l'envelopper dans `window.<VARIABLE> = …;`.
 
 | Rubrique | Page | Variable | Fichier privé |
 |---|---|---|---|
-| Le livre | `livre/` | `window.LIVRE` | `prive/livre.js` |
+| Le livre | `livre/` | `window.LIVRE` | `data/livre.js` (publié) ou `prive/livre.js` |
 | L'arbre | `arbre/` | `window.ARBRE` | `prive/arbre.js` |
 | La voix de Mamili | `voix/` | `window.VOIX` | `prive/voix.js` |
 | Les archives | `archives/` | `window.ARCHIVES` | `prive/archives.js` |
@@ -29,19 +29,32 @@ Liens entre rubriques : un chapitre est toujours désigné par son **numéro** (
 
 ## Le livre — `window.LIVRE`
 
+**Le sommaire réel est publié sur le site**, à la demande de Samuel (24 novembre 2026) : `data/livre.js` et `data/livre.json`, en mode `"public"`. La page charge, dans l'ordre, l'exemple (`data/demo/livre.js`), le sommaire publié (`data/livre.js`), puis une éventuelle version privée (`prive/livre.js`), la dernière présente l'emportant.
+
+Il est produit par `outils/extraire_sommaire.py` à partir du texte du manuscrit (titres `#` pour les parties, `##` pour les chapitres, ligne de dates sous chaque titre, numéros des photos imprimées dans chaque chapitre) :
+
+```bash
+python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
+  --titre "Les Mémoires de Mamili" --sous-titre "Rosalie Luque, 1923 – 2018"
+```
+
 ```json
 {
-  "titre": "Souvenirs d'Antoinette",
-  "sous_titre": "…",
-  "liminaires": [{ "titre": "Prologue", "page": 9 }],
+  "mode": "public",
+  "titre": "…", "sous_titre": "…",
+  "liminaires": [{ "titre": "Prologue" }],
   "parties": [
-    { "numero": 1, "titre": "…", "chapitres": [{ "numero": 1, "titre": "…", "page": 13 }] }
+    { "numero": 1, "titre": "…", "annees": "1895 – 1922",
+      "chapitres": [{ "numero": 1, "titre": "…", "annees": "1895 – 1922", "photos": ["P0123"], "page": 13 }] }
   ],
-  "annexes": [{ "titre": "Généalogie", "page": 161 }]
+  "annexes": []
 }
 ```
 
-Pour chaque chapitre, la page affiche le nombre de photos (champ `chapitre` de la photothèque, dont elle lit le numéro : « Chapitre 12. … » → 12) et le nombre d'extraits audio, avec un lien vers chacun. Le sommaire réel est dans le PDF du livre ; les numéros de chapitre du tableau des photos datent d'avant la dernière mise en page et sont à vérifier.
+- Les chapitres sont numérotés à la suite d'un bout à l'autre du livre, comme dans l'édition imprimée.
+- `photos` liste les photos imprimées dans le chapitre. L'import de la photothèque s'en sert pour donner à chaque photo son chapitre (le livre l'emporte sur la colonne « chapitre » du tableau).
+- `page` est facultatif. Le sommaire publié n'a pas encore les numéros de page : le texte utilisé date d'avant les derniers réglages de mise en page. La page affiche alors les années à droite. Les numéros pourront être repris du PDF imprimé (option `--avec-pages` sur le texte de la version finale).
+- Sur le site en ligne, chaque chapitre indique « N photos dans le livre » ; sur l'ordinateur où la photothèque privée est présente, c'est un lien vers ces photos.
 
 ## L'arbre — `window.ARBRE`
 

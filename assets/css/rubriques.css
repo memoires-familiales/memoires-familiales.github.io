@@ -32,6 +32,7 @@
 }
 
 .liens-croises a { color: var(--cafe-fonce); }
+.liens-croises > span { color: var(--encre-douce); }
 
 .champ-recherche { display: grid; gap: 0.35rem; max-width: 30rem; }
 .champ-recherche label, .formulaire label > span, .formulaire legend {
@@ -84,6 +85,8 @@
   border-bottom: 1px dotted var(--cafe);
   transform: translateY(-0.3em);
 }
+
+.sommaire-livre .ligne--seule::after { display: none; }
 
 .sommaire-livre .numero {
   flex: none;

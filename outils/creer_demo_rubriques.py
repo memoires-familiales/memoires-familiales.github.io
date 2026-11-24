@@ -27,8 +27,11 @@ H = "Hélène Ferrer"
 V = "Pierre Vidal"
 
 
-def chap(numero, titre, page):
-    return {"numero": numero, "titre": titre, "page": page}
+def chap(numero, titre, page, annees=""):
+    d = {"numero": numero, "titre": titre, "page": page}
+    if annees:
+        d["annees"] = annees
+    return d
 
 
 LIVRE = {
@@ -36,16 +39,16 @@ LIVRE = {
     "sous_titre": "Livre d'exemple",
     "liminaires": [{"titre": "Prologue", "page": 9}],
     "parties": [
-        {"numero": 1, "titre": "Avant moi", "chapitres": [chap(1, "Les grands-parents", 13)]},
-        {"numero": 2, "titre": "L'Algérie", "chapitres": [
-            chap(2, "L'enfance à Oran", 21), chap(3, "L'école", 34), chap(4, "La guerre", 47),
-            chap(5, "Le mariage", 58)]},
-        {"numero": 3, "titre": "Le Maroc", "chapitres": [
-            chap(6, "Casablanca", 72), chap(7, "Les enfants grandissent", 88)]},
-        {"numero": 4, "titre": "La France", "chapitres": [
-            chap(8, "Le départ pour la France", 101), chap(9, "Tout recommencer", 112),
-            chap(10, "Le retour au pays des ancêtres", 127), chap(11, "Les mariages des enfants", 139),
-            chap(12, "Les petits-enfants", 150)]},
+        {"numero": 1, "titre": "Avant moi", "annees": "1895 – 1922", "chapitres": [chap(1, "Les grands-parents", 13, "1895 – 1922")]},
+        {"numero": 2, "titre": "L'Algérie", "annees": "1923 – 1946", "chapitres": [
+            chap(2, "L'enfance à Oran", 21, "1923 – 1934"), chap(3, "L'école", 34, "1929 – 1937"), chap(4, "La guerre", 47, "1939 – 1945"),
+            chap(5, "Le mariage", 58, "1946")]},
+        {"numero": 3, "titre": "Le Maroc", "annees": "1947 – 1957", "chapitres": [
+            chap(6, "Casablanca", 72, "1947 – 1953"), chap(7, "Les enfants grandissent", 88, "1953 – 1957")]},
+        {"numero": 4, "titre": "La France", "annees": "1957 – 2015", "chapitres": [
+            chap(8, "Le départ pour la France", 101, "1957"), chap(9, "Tout recommencer", 112, "1957 – 1962"),
+            chap(10, "Le retour au pays des ancêtres", 127, "1962"), chap(11, "Les mariages des enfants", 139, "1968 – 1975"),
+            chap(12, "Les petits-enfants", 150, "1976 – 2015")]},
     ],
     "annexes": [{"titre": "Généalogie", "page": 161}],
 }
