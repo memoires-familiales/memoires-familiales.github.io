@@ -100,6 +100,7 @@ prive/alias-personnes.csv  (facultatif) vos propres correspondances de noms
 | Visages non identifiés | nombre de visages `_UNKNOWN_` dans Photos |
 | Chapitre | le livre (`livre.json` du dossier de sortie, sinon `prive/livre.json` : photos imprimées dans chaque chapitre) → tableau |
 | Événement, type, notes du verso, provenance, statut | tableau |
+| Photo absente de l'export de Photos | fiche provisoire `sans-export-P…` : tableau de travail (même numéro) et nom de fichier ; remplacée par la vraie fiche dès qu'un export de Photos la contient |
 | Légende, mots-clés, albums, favori | Photos (mots-clés complétés par le tableau) |
 
 Les photos masquées dans Photos ne sont jamais importées.

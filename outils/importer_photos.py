@@ -318,9 +318,12 @@ APPROXIMATIF = re.compile(r"\?|\bvers\b|\benviron\b|\bann[ée]es\b|\bdebut\b|\bd
 
 def date_depuis_titre(titre: str):
     segments = [s.strip() for s in re.split(r"\s+-\s*|\s*-\s+", titre) if s.strip()]
-    if len(segments) < 2:
+    # « P0009 - 1941_08_21 - Paris », ou, sans numéro, « 1948_11_28 - Vols Palissy »
+    if segments and re.fullmatch(r"P\d{4}", segments[0]):
+        segments = segments[1:]
+    if not segments:
         return None
-    m = re.match(r"^(1[89]\d{2}|20\d{2})(?:[_.\-](\d{1,2}))?(?:[_.\-](\d{1,2}))?$", segments[1])
+    m = re.match(r"^(1[89]\d{2}|20\d{2})(?:[_.\-](\d{1,2}))?(?:[_.\-](\d{1,2}))?$", segments[0])
     if not m:
         return None
     annee = int(m[1])
@@ -336,7 +339,15 @@ def date_depuis_titre(titre: str):
 
 def resoudre_date(titre, apple_date, comp_date, comp_libelle, seuil, format_date):
     """Choisit la meilleure date disponible et dit à quel point elle est sûre."""
+    # Dans le vrai classeur, la « date estimée » est souvent une cellule date d'Excel :
+    # c'est une date, pas un libellé à afficher tel quel (« 1945-09-01T00:00:00 »).
+    if isinstance(comp_libelle, (dt.datetime, dt.date)):
+        if not texte(comp_date):
+            comp_date = comp_libelle
+        comp_libelle = None
     libelle_humain = texte(comp_libelle)
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:[T ]00:00(?::00)?)?", libelle_humain):
+        libelle_humain = ""
     if cle(libelle_humain) in {"non renseigne", "inconnu", "inconnue", "date inconnue", "sans date"}:
         libelle_humain = ""
         if not texte(comp_date):
@@ -581,6 +592,46 @@ def fabriquer_images(source: Path, dossier_images: Path, uuid: str, forcer=False
 
 # ---------------------------------------------------------------- import
 
+def lignes_provisoires(lignes_photos, index_images, rapport):
+    """Lignes d'export fabriquées pour les images du dossier que l'export de Photos ne contient pas
+    (photos ajoutées après l'export des métadonnées). La fiche prend alors le tableau de travail
+    (même numéro) et ce que dit le nom de fichier (date, pays, ville). Identifiant stable
+    « sans-export-P1518 » ; la fiche disparaît d'elle-même quand un export de Photos contient la photo."""
+    numeros, noms = set(), set()
+    for l in lignes_photos:
+        for cle_col in ("titre", "fichier", "uuid"):
+            v = texte(prendre(l, COLONNES_PHOTOS[cle_col]))
+            if v:
+                noms.add(cle(Path(v).stem if cle_col == "fichier" else v))
+                m = re.search(r"\bP\d{4}\b", v)
+                if m and cle_col != "uuid":
+                    numeros.add(m.group(0))
+    lignes, vus = [], set()
+    for f in sorted(set(index_images.values()), key=lambda f: f.name):
+        titre = f.stem if f.suffix.lower() in EXTENSIONS_IMAGES else f.name
+        m = re.match(r"(P\d{4})\b", titre)
+        if (m and m.group(1) in numeros) or (not m and cle(titre) in noms):
+            continue
+        ident = "sans-export-" + (m.group(1) if m else re.sub(r"[^a-z0-9]+", "-", cle(titre)).strip("-"))
+        if ident in vus:
+            continue
+        vus.add(ident)
+        ligne = {cle("uuid photos"): ident, cle("titre photos"): titre, cle("nom fichier original"): f.name,
+                 "_provisoire": True}
+        # « P1520 - 1955_01_01 - Maroc - Casablanca » : pays et ville après la date (ou après le numéro)
+        segments = [s.strip() for s in re.split(r"\s+-\s*|\s*-\s+", titre) if s.strip()]
+        reste = segments[1:] if m else segments
+        if reste and re.match(r"^(1[89]\d{2}|20\d{2}|19XX)", reste[0]):
+            reste = reste[1:]
+        if reste:
+            ligne[cle("pays")] = reste[0]
+        if len(reste) > 1:
+            ligne[cle("ville")] = reste[1]
+        lignes.append(ligne)
+        rapport["provisoires"].append(m.group(1) if m else titre)
+    return lignes
+
+
 def construire_fiches(args, rapport):
     lignes_photos = lire_tableau(args.photos, repere=None)
     if not lignes_photos:
@@ -623,6 +674,8 @@ def construire_fiches(args, rapport):
     index_images = indexer_images(args.images) if args.images else None
     images_utilisees = set()
     dossier_images = args.sortie / "images"
+    if index_images is not None and not args.sans_provisoires:
+        lignes_photos = lignes_photos + lignes_provisoires(lignes_photos, index_images, rapport)
 
     # Première passe : les noms reconnus par Photos servent aussi de référence
     noms_photos = {}
@@ -704,6 +757,7 @@ def construire_fiches(args, rapport):
         albums = liste(apple["albums"])
         statut = texte(comp.get("statut")) if comp else ""
 
+        provisoire = bool(l.get("_provisoire"))
         fiche = {
             "id": uuid,
             "numero": numero,
@@ -726,16 +780,24 @@ def construire_fiches(args, rapport):
             "favori": booleen(apple["favori"]),
             "a_identifier": inconnus > 0 or any("a identifier" in cle(a) for a in albums)
                             or "identifier" in cle(statut),
-            "sources": ["photos"] + (["tableau"] if comp else []) + (["livre"] if numero in chapitres_livre else []),
+            "sources": (["nom de fichier"] if provisoire else ["photos"]) + (["tableau"] if comp else [])
+                       + (["livre"] if numero in chapitres_livre else []),
+            "provisoire": provisoire,
         }
 
         # Images
         images = None
         if index_images is not None:
             src = trouver_image(index_images, uuid, fichier, numero)
+            mini = dossier_images / "miniatures" / f"{uuid}.jpg"
+            web = dossier_images / "web" / f"{uuid}.jpg"
             if src:
                 images_utilisees.add(src)
                 images = fabriquer_images(src, dossier_images, uuid, args.forcer_images)
+            elif mini.exists() and web.exists():
+                # source absente du dossier cette fois (fichier resté dans le nuage…) : on garde l'existant
+                images = {"miniature": chemin_site(mini), "web": chemin_site(web)}
+                rapport["images_conservees"].append(numero or uuid)
             else:
                 rapport["sans_image"].append(numero or uuid)
         else:
@@ -791,8 +853,9 @@ def fusionner(anciennes, nouvelles, aujourd_hui, supprimer_absentes, rapport):
                 f["modifiee_le"] = old.get("modifiee_le", aujourd_hui)
         resultat.append(f)
     for old in precedent.values():
-        if supprimer_absentes:
+        if supprimer_absentes or old.get("provisoire"):
             rapport["supprimees"].append(old.get("numero") or old["id"])
+            rapport["images_orphelines"].extend((old.get("images") or {}).values())
             continue
         if not old.get("retiree"):
             old = dict(old, retiree=True, modifiee_le=aujourd_hui)
@@ -834,7 +897,8 @@ def ecrire_rapport(sortie: Path, horodatage, rapport, total, simulation):
         f"- Conflits entre Photos et le tableau : {len(rapport['conflits'])}",
         f"- Noms de personnes sans correspondance dans le référentiel : {len(rapport['noms_libres'])}",
         (f"- Images : {len(rapport['sans_image'])} photo(s) sans image ; "
-         f"{len(rapport['images_sans_fiche'])} image(s) du dossier sans fiche"
+         f"{len(rapport['images_sans_fiche'])} image(s) du dossier sans fiche ; "
+         f"{len(rapport.get('provisoires', []))} fiche(s) provisoire(s)"
          if "images_sans_fiche" in rapport else "- Images : dossier d'images non fourni (images existantes conservées)"),
         f"- Chapitres repris du livre : {'oui (' + chemin_site(Path(str(rapport['livre']))) + ')' if rapport.get('livre') else 'non (pas de livre.json)'}",
         "",
@@ -857,6 +921,9 @@ def ecrire_rapport(sortie: Path, horodatage, rapport, total, simulation):
             [f"{n} — {t} : {a} / {b}" for n, t, a, b in rapport["conflits"]])
     section("Numéros décrits dans le tableau mais absents de l'export", rapport["complements_orphelins"])
     section("Photos sans image trouvée", rapport["sans_image"])
+    section("Fiches provisoires (photos absentes de l'export de Photos : tableau de travail et nom de fichier ; "
+            "remplacées automatiquement quand un export de Photos les contiendra)", rapport.get("provisoires", []))
+    section("Images déjà fabriquées, gardées faute de source dans le dossier", rapport.get("images_conservees", []))
     section("Images du dossier sans fiche dans l'export (refaire l'export des métadonnées de Photos pour les ajouter)",
             rapport.get("images_sans_fiche", []))
     section("Photos imprimées dans le livre mais absentes de l'export", rapport.get("livre_absentes", []))
@@ -941,6 +1008,8 @@ def main():
     p.add_argument("--images", type=Path, help="dossier des photos exportées (JPEG), pour les miniatures")
     p.add_argument("--livre", type=Path, help="sommaire du livre (défaut : livre.json du dossier de sortie, sinon prive/livre.json)")
     p.add_argument("--forcer-images", action="store_true", help="refaire toutes les miniatures")
+    p.add_argument("--sans-provisoires", action="store_true",
+                   help="ne pas créer de fiche provisoire pour les images absentes de l'export de Photos")
     p.add_argument("--sortie", type=Path, default=RACINE / "prive", help="dossier de sortie (défaut : prive/)")
     p.add_argument("--seuil-date", type=int, default=2000,
                    help="au-delà de cette année, une date de Photos sans autre indice est considérée comme "
@@ -982,7 +1051,8 @@ def main():
         if f is not None and not f.exists():
             sys.exit(f"Fichier ou dossier introuvable : {f}")
 
-    rapport = {k: [] for k in ("ajoutees", "modifiees", "retirees", "supprimees", "conflits", "sans_image")}
+    rapport = {k: [] for k in ("ajoutees", "modifiees", "retirees", "supprimees", "conflits", "sans_image",
+                              "provisoires", "images_conservees", "images_orphelines")}
     rapport.update({"noms_libres": {}, "correspondances": {}, "masquees": 0, "sans_uuid": 0,
                     "complements_orphelins": [], "livre_absentes": [], "livre": None})
 
@@ -998,6 +1068,11 @@ def main():
             historique.mkdir(parents=True, exist_ok=True)
             shutil.copy2(fichier_donnees, historique / f"photos-{horodatage}.json")
         ecrire_donnees(args.sortie, fiches, maintenant.isoformat())
+        # Images des fiches provisoires remplacées par une vraie fiche de Photos
+        for chemin in rapport["images_orphelines"]:
+            f = (RACINE / chemin).resolve()
+            if f.is_file() and (args.sortie / "images").resolve() in f.parents:
+                f.unlink()
     elif not args.simulation and not (args.sortie / "photos.js").exists():
         ecrire_donnees(args.sortie, fiches, maintenant.isoformat())
 

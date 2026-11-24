@@ -78,15 +78,16 @@ Pour Codex : son bac à sable coupe souvent le réseau et limite l'accès aux do
 - Ne jamais ajouter `prive/` (ou une image, un nom, un export) au dépôt public, ni forcer Git à le suivre (`git add -f`).
 - Ne pas lancer `outils/preparer_espace_famille.py` : la publication des photos dans l'espace famille est une décision de Samuel, réalisée ensuite par Claude depuis le poste qui a toute la voix. Le script refuse de toute façon de vider une rubrique déjà en ligne sans `--vider`.
 - Ne pas éditer `prive/photos.js` à la main : corriger dans Photos, le tableau, le référentiel ou `prive/alias-personnes.csv`, puis relancer.
-- Ne pas inventer de fiche pour une image sans métadonnées.
 
-## Photos ajoutées après l'export des métadonnées
+## Photos ajoutées après l'export des métadonnées : fiches provisoires
 
-L'export des métadonnées date du 30/09/2026 : 1 494 photos, numérotées de P0001 à P1517. L'album exporté le 24/11 va jusqu'à P1753 : les images plus récentes n'ont pas de fiche. Le rapport les liste sous « Images du dossier sans fiche dans l'export ». Pour les ajouter : refaire l'export des métadonnées depuis Photos (même outil, mêmes colonnes, dont « UUID Photos »), mettre son chemin dans `photos` de `prive/config-import.json`, relancer. Les nouvelles fiches s'ajoutent, les autres ne bougent pas.
+L'export des métadonnées date du 30/09/2026 (1 494 photos, P0001 à P1517) ; l'album exporté le 24/11 va jusqu'à P1753. Décision de Samuel (24/11) : ces photos ne restent pas de côté. Pour chaque image du dossier que l'export de Photos ne contient pas, l'import crée une **fiche provisoire** (identifiant `sans-export-P1518`, champ `provisoire`) à partir du tableau de travail (même numéro : date, lieu, événement, verso, provenance, chapitre) et du nom de fichier (date, pays, ville). Le rapport les liste sous « Fiches provisoires ».
+
+Le jour où un nouvel export de Photos contient la photo, la vraie fiche (avec l'UUID et les visages reconnus) la remplace d'elle-même : la fiche provisoire et ses images sont supprimées. Pour ne pas créer de fiches provisoires : `--sans-provisoires`.
 
 ## Import complet du 24/11/2026 (référence)
 
-Fait par Codex sur le Mac (clone `~/Documents/ChatGPT/MÉMOIRES MAMILI/phototheque-import`) : 1 494 fiches, toutes illustrées (355 Mo de versions web, 46 Mo de miniatures, plus gros fichier 0,7 Mo), 53 conflits, 92 noms sans correspondance, 168 images sans fiche (P1518 et suivantes, plus une image sans numéro), dont 6 photos imprimées dans le livre (P1518, P1519, P1536, P1546, P1558, P1616) ; second passage sans changement. L'étape 3 a été contournée en donnant le dossier du Drive à la main ; le script le reprend désormais de `prive/config-import.json` ou de `DRIVE=…`.
+Fait par Codex sur le Mac (clone `~/Documents/ChatGPT/MÉMOIRES MAMILI/phototheque-import`), puis complété par Claude le soir même (168 fiches provisoires, libellés de date corrigés pour 74 fiches : le vrai tableau contient des cellules date d'Excel, qui s'affichaient « 1945-09-01T00:00:00 ») ; bilan final : 1 662 fiches, toutes illustrées. Import de Codex : 1 494 fiches, toutes illustrées (355 Mo de versions web, 46 Mo de miniatures, plus gros fichier 0,7 Mo), 53 conflits, 92 noms sans correspondance, 168 images sans fiche (P1518 et suivantes, plus une image sans numéro), dont 6 photos imprimées dans le livre (P1518, P1519, P1536, P1546, P1558, P1616) ; second passage sans changement. L'étape 3 a été contournée en donnant le dossier du Drive à la main ; le script le reprend désormais de `prive/config-import.json` ou de `DRIVE=…`.
 
 ## À transmettre à la fin
 
