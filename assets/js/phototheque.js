@@ -519,7 +519,9 @@
       avis.textContent = "Les photos et les personnes de cet aperçu sont fictives. Les photographies de la famille seront réservées à la famille.";
       avis.hidden = false;
     } else {
-      avis.textContent = "Vous consultez la photothèque complète, chargée depuis le dossier « prive » de cet ordinateur. Ces données ne sont pas publiées.";
+      avis.textContent = window.SITE && window.SITE.espaceFamille
+        ? window.SITE.texteDonneesFamille
+        : "Vous consultez la photothèque complète, chargée depuis le dossier « prive » de cet ordinateur. Ces données ne sont pas publiées.";
       avis.hidden = false;
     }
     $("compte").setAttribute("tabindex", "-1");

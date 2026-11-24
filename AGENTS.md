@@ -6,6 +6,7 @@ Site familial publié par GitHub Pages depuis la branche principale, sans étape
 
 - **Ne jamais ajouter au dépôt de données de la famille** : photos, noms, dates, lieux, transcriptions, exports d'Apple Photos. Elles vivent dans `prive/` (exclu par `.gitignore`). Le dépôt est public.
 - Une seule exception, décidée par Samuel le 24/11/2026 : le **sommaire du livre** est publié (`data/livre.js`, `data/livre.json`, mode `"public"`). Rien d'autre de réel ne va dans `data/` sans son accord explicite.
+- Les données de la famille vont en ligne **uniquement** dans l'espace famille : dépôt privé `memoires-familiales/espace-famille`, assemblé par `outils/preparer_espace_famille.py`, publié par Cloudflare Pages derrière Cloudflare Access (voir `docs/espace-famille.md`). Ne jamais pousser `prive/` ailleurs.
 - Les exemples publiés (`data/demo/`) sont fictifs. Les régénérer avec `python3 outils/creer_demo.py` et `python3 outils/creer_demo_rubriques.py`.
 - Ne créer aucun abonnement ni service payant sans accord explicite.
 
@@ -24,3 +25,4 @@ Site familial publié par GitHub Pages depuis la branche principale, sans étape
 - `README.md` : vue d'ensemble et règle de confidentialité.
 - `docs/phototheque.md` : import, règles de fusion, modèle de données.
 - `docs/rubriques.md` : format des données du livre, de l'arbre, de la voix, des archives et des films.
+- `docs/espace-famille.md` : l'espace famille protégé (dépôt privé, Cloudflare Pages et Access).

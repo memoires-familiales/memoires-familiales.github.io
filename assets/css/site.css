@@ -247,3 +247,18 @@ html { scroll-padding-top: 4.5rem; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Espace famille : mention à côté du nom du site, lien depuis le site public */
+.mention-espace {
+  margin-left: 0.6rem;
+  padding: 0.1rem 0.55rem;
+  border: 1px solid var(--cafe);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-style: normal;
+  color: var(--cafe-fonce);
+  vertical-align: 0.2em;
+  white-space: nowrap;
+}
+.bandeau nav .lien-espace a { color: var(--cafe-fonce); }

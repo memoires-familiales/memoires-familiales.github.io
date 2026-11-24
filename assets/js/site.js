@@ -3,6 +3,12 @@
 (function () {
   "use strict";
 
+  // Adresse de l'espace famille (copie du site avec les données de la famille, protégée par
+  // Cloudflare Access). Tant qu'elle est vide, le site public n'affiche aucun lien vers lui.
+  var ADRESSE_ESPACE_FAMILLE = "";
+  // Vrai dans la copie de l'espace famille : outils/preparer_espace_famille.py l'y déclare.
+  var ESPACE_FAMILLE = window.ESPACE_FAMILLE === true;
+
   var RUBRIQUES = [
     { id: "accueil", titre: "Accueil", chemin: "index.html" },
     { id: "phototheque", titre: "Photothèque", chemin: "phototheque/index.html" },
@@ -23,6 +29,7 @@
     voix: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M5.8 11.2a6.2 6.2 0 0 0 12.4 0"/><path d="M12 17.4V20.5M9.2 20.5h5.6"/>',
     archives: '<rect x="3.5" y="4.5" width="17" height="4.5" rx="1"/><path d="M5 9v10.5h14V9"/><path d="M10 13h4"/>',
     films: '<rect x="4.5" y="3.5" width="15" height="17" rx="1.5"/><path d="M8.5 3.5v17M15.5 3.5v17M4.5 8h4M4.5 12h4M4.5 16h4M15.5 8h4M15.5 12h4M15.5 16h4"/>',
+    famille: '<rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/><path d="M12 14.5v2.5"/>',
     participer: '<path d="M4.5 19.5 5.6 15 15.8 4.8a2 2 0 0 1 2.9 2.9L8.5 17.9Z"/><path d="m14.2 6.4 2.9 2.9"/><path d="M12 19.5h7.5"/>'
   };
 
@@ -59,9 +66,29 @@
     liste.appendChild(li);
   });
 
+  if (ADRESSE_ESPACE_FAMILLE && !ESPACE_FAMILLE) {
+    var liFamille = document.createElement("li");
+    liFamille.className = "lien-espace";
+    var aFamille = document.createElement("a");
+    aFamille.href = ADRESSE_ESPACE_FAMILLE;
+    aFamille.appendChild(icone("famille"));
+    aFamille.appendChild(document.createTextNode("Espace famille"));
+    liFamille.appendChild(aFamille);
+    liste.appendChild(liFamille);
+  }
+
   nav.textContent = "";
   nav.appendChild(bouton);
   nav.appendChild(liste);
+
+  // Dans l'espace famille, le nom du site porte la mention « Espace famille »
+  var nomSite = document.querySelector(".bandeau__nom");
+  if (ESPACE_FAMILLE && nomSite && !nomSite.querySelector(".mention-espace")) {
+    var mention = document.createElement("span");
+    mention.className = "mention-espace";
+    mention.textContent = "Espace famille";
+    nomSite.appendChild(mention);
+  }
 
   function fermer() {
     bouton.setAttribute("aria-expanded", "false");
@@ -85,6 +112,11 @@
   // Outils partagés par les pages de rubrique
   window.SITE = {
     racine: racine,
+    espaceFamille: ESPACE_FAMILLE,
+    adresseEspaceFamille: ADRESSE_ESPACE_FAMILLE,
+    texteDonneesFamille: ESPACE_FAMILLE
+      ? "Espace famille : ces photos, enregistrements et documents sont réservés aux proches invités. Merci de ne pas les diffuser en dehors de la famille."
+      : "Vous consultez les données de la famille, chargées depuis le dossier « prive » de cet ordinateur. Elles ne sont pas publiées.",
     normaliser: function (s) {
       return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     },
@@ -107,9 +139,7 @@
       var avis = document.getElementById("avis");
       if (!avis) return;
       if (donnees && donnees.mode === "public") { avis.hidden = true; return; }
-      avis.textContent = donnees && donnees.mode === "prive"
-        ? "Vous consultez les données de la famille, chargées depuis le dossier « prive » de cet ordinateur. Elles ne sont pas publiées."
-        : texteDemo;
+      avis.textContent = donnees && donnees.mode === "prive" ? window.SITE.texteDonneesFamille : texteDemo;
       avis.hidden = false;
     },
     // Lien vers la photothèque filtrée

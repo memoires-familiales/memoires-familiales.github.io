@@ -23,7 +23,7 @@ Le site est fait de pages HTML simples, sans outil de construction : ce qui est 
 
 - Les rubriques publiées montrent un **jeu d'exemple fictif** (`data/demo/`), une famille inventée. Seule exception, choisie par Samuel : le sommaire du livre (`data/livre.js`).
 - Les vraies données sont fabriquées sur l'ordinateur, dans le dossier **`prive/`**, que `.gitignore` exclut de Git. Chaque page les charge automatiquement quand elles sont présentes : le site complet se consulte donc en local, en ouvrant les pages par double-clic.
-- L'accès familial en ligne (photos privées, comptes sur invitation) fera l'objet d'une étape à part, avec un stockage privé.
+- L'**espace famille** en ligne est une copie du site avec ces données, dans un dépôt privé publié par Cloudflare Pages et protégé par Cloudflare Access (accès par adresse e-mail et code). Voir `docs/espace-famille.md`.
 
 ## Organisation du dépôt
 
@@ -39,9 +39,11 @@ outils/mettre-a-jour-phototheque.command   lanceur Mac : import + ouverture
 outils/creer_demo.py        fabrique les photos d'exemple
 outils/creer_demo_rubriques.py   fabrique les exemples des autres rubriques
 outils/extraire_sommaire.py      extrait le sommaire du livre (parties, chapitres, photos, pages imprimées)
+outils/preparer_espace_famille.py   assemble l'espace famille (site + prive/) pour le dépôt privé
 data/livre.js               sommaire du livre, publié
 docs/phototheque.md         import des photos et modèle de données
 docs/rubriques.md           format des données de chaque rubrique
+docs/espace-famille.md      l'espace famille protégé : mise en place et mises à jour
 prive/                      (non suivi par Git) données réelles de la famille
 ```
 
