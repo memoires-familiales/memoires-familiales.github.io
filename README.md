@@ -8,7 +8,7 @@ L'espace numérique qui prolonge le livre *Mamili*, Rosalie Luque, née Llerena.
 |---|---|---|
 | Accueil : présentation et sommaire des rubriques | `index.html` | En ligne |
 | Photothèque : recherche par personne, lieu, décennie, événement, chapitre du livre ; fiche de chaque photo | `phototheque/` | Présentation publique et accès à l’espace famille |
-| Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Sommaire réel en ligne (14 parties, 108 chapitres), avec les pages du livre imprimé |
+| Le livre : sommaire, avec les photos et les extraits audio de chaque chapitre | `livre/` | Présentation publique et sommaire dans l’espace famille |
 | L'arbre : une personne au centre, ses parents, son conjoint, ses enfants | `arbre/` | Présentation publique et accès à l’espace famille |
 | La voix de Mamili : extraits audio et transcriptions par chapitre | `voix/` | Présentation publique et extraits dans l’espace famille |
 | Les archives : documents par type, avec recherche | `archives/` | Présentation publique et accès à l’espace famille |
@@ -21,7 +21,7 @@ Le site est fait de pages HTML simples, sans outil de construction : ce qui est 
 
 **Aucune photo, aucun nom, aucune donnée de la famille ne doit entrer dans ce dépôt.** Le dépôt est public et GitHub Pages ne sait pas réserver une page à certaines personnes.
 
-- Les rubriques publiques présentent leur contenu et renvoient vers l’espace famille. Le sommaire réel du livre (`data/livre.js`) reste public avec l’accord de la famille. Les jeux d’exemple (`data/demo/`) servent à la consultation locale.
+- Les rubriques publiques présentent leur contenu et renvoient vers l’espace famille. Le sommaire du livre est réservé à l’espace famille. Les jeux d’exemple (`data/demo/`) se génèrent localement avec les deux scripts indiqués ci-dessous.
 - Les vraies données sont fabriquées sur l'ordinateur, dans le dossier **`prive/`**, que `.gitignore` exclut de Git. Chaque page les charge automatiquement quand elles sont présentes : le site complet se consulte donc en local, en ouvrant les pages par double-clic.
 - L'**espace famille** en ligne est une copie du site avec ces données, dans un dépôt privé publié par Cloudflare Pages et protégé par Cloudflare Access (accès par adresse e-mail et code). Voir `docs/espace-famille.md`.
 
@@ -33,7 +33,7 @@ phototheque/ livre/ arbre/ voix/ archives/ films/ participer/   une page par rub
 assets/css/                 styles (communs, accueil, photothèque, rubriques)
 assets/js/site.js           menu commun (liste des rubriques) et outils partagés
 assets/js/<rubrique>.js     le fonctionnement de chaque page
-data/demo/                  jeu d'exemple fictif (données + images)
+data/demo/                  jeu d'exemple fictif local (non suivi par Git)
 outils/importer_photos.py   import des photos depuis Apple Photos → prive/
 outils/mettre-a-jour-phototheque.command   lanceur Mac : import + ouverture
 outils/creer_demo.py        fabrique les photos d'exemple
@@ -41,7 +41,6 @@ outils/creer_demo_rubriques.py   fabrique les exemples des autres rubriques
 outils/extraire_sommaire.py      extrait le sommaire du livre (parties, chapitres, photos, pages imprimées)
 outils/preparer_espace_famille.py   assemble l'espace famille (site + prive/) pour le dépôt privé
 outils/catalogue_voix.py         catalogue des extraits audio (prive/voix/) → prive/voix.js, avec contrôles
-data/livre.js               sommaire du livre, publié
 docs/phototheque.md         import des photos et modèle de données
 docs/rubriques.md           format des données de chaque rubrique
 docs/espace-famille.md      l'espace famille protégé : mise en place et mises à jour

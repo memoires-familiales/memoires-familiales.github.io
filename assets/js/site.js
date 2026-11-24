@@ -182,9 +182,11 @@
     Array.prototype.forEach.call(sources, function (source) { source.remove(); });
     document.querySelector("main").replaceWith(vue);
     Array.prototype.forEach.call(sources, function (source) {
+      var chemin = source.getAttribute("data-src");
+      if (ESPACE_FAMILLE && chemin.indexOf("../data/demo/") === 0) return;
       var script = document.createElement("script");
       script.async = false;
-      script.src = source.getAttribute("data-src");
+      script.src = chemin;
       document.body.appendChild(script);
     });
   }

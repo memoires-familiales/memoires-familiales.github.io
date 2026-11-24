@@ -23,7 +23,7 @@ Colonnes de catalogue.csv :
   coupes (« 15:13,50–16:44,71 + 17:17,45–17:54,78 »), duree, fichier, drive_id, taille,
   resume, personnes, lieux, divergences (valeurs séparées par « | »), notes,
   note_transcription, note_montage, motif_exclusion.
-Le titre du chapitre n'est pas saisi : il vient du sommaire (data/livre.json), clé = numéro.
+Le titre du chapitre n'est pas saisi : il vient du sommaire (prive/livre.json), clé = numéro.
 
 Le résultat ne dépend que du catalogue et des fichiers : deux lancements identiques
 produisent le même prive/voix.js. Le rapport est écrit dans prive/voix/rapport-controles.md.
@@ -330,7 +330,7 @@ def reprendre_index(prive, docx, appliquer):
 def main():
     p = argparse.ArgumentParser(description="Catalogue des extraits de la voix de Mamili.")
     p.add_argument("--prive", type=Path, default=RACINE / "prive")
-    p.add_argument("--livre", type=Path, default=RACINE / "data" / "livre.json")
+    p.add_argument("--livre", type=Path, default=RACINE / "prive" / "livre.json")
     p.add_argument("--verifier", action="store_true", help="contrôler sans écrire prive/voix.js")
     p.add_argument("--index", type=Path, help="index Word (.docx) dont reprendre le répertoire des MP3")
     p.add_argument("--appliquer", action="store_true", help="avec --index : reporter les changements dans le catalogue")

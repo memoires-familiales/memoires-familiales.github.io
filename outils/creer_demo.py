@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fabrique le jeu de démonstration publié avec le site (data/demo/).
+Fabrique le jeu de démonstration pour la consultation locale (data/demo/).
 
 Les personnes, les photos et les légendes sont inventées : ce jeu sert à
 montrer et tester la photothèque sans publier aucune donnée de la famille.

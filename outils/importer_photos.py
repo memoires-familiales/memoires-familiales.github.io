@@ -608,7 +608,7 @@ def construire_fiches(args, rapport):
     chapitres_livre = {}
     chemin_livre = args.livre
     if chemin_livre is None:
-        for candidat in (args.sortie / "livre.json", RACINE / "data" / "livre.json"):
+        for candidat in (args.sortie / "livre.json", RACINE / "prive" / "livre.json"):
             if candidat.exists():
                 chemin_livre = candidat
                 break
@@ -939,7 +939,7 @@ def main():
     p.add_argument("--referentiel", type=Path, action="append",
                    help="référentiel des identités (XLSX) ou table d'alias (CSV) ; peut être répété")
     p.add_argument("--images", type=Path, help="dossier des photos exportées (JPEG), pour les miniatures")
-    p.add_argument("--livre", type=Path, help="sommaire du livre (défaut : prive/livre.json, sinon data/livre.json)")
+    p.add_argument("--livre", type=Path, help="sommaire du livre (défaut : livre.json du dossier de sortie, sinon prive/livre.json)")
     p.add_argument("--forcer-images", action="store_true", help="refaire toutes les miniatures")
     p.add_argument("--sortie", type=Path, default=RACINE / "prive", help="dossier de sortie (défaut : prive/)")
     p.add_argument("--seuil-date", type=int, default=2000,

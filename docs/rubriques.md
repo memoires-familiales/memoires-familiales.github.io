@@ -1,9 +1,9 @@
 # Rubriques : structure des pages et format des données
 
-Chaque rubrique suit le même principe que la photothèque :
+Sur le site public, chaque rubrique présente son contenu et renvoie vers l’espace famille. En local :
 
-- la page charge d'abord le **jeu d'exemple fictif** (`data/demo/<rubrique>.js`), publié en ligne ;
-- puis, s'il existe sur l'ordinateur, le **fichier privé** (`prive/<rubrique>.js`), qui le remplace. Ce dossier n'est jamais publié ;
+- la page ouverte depuis le disque charge d'abord le **jeu d'exemple fictif** (`data/demo/<rubrique>.js`), généré localement ;
+- puis, s'il existe sur l'ordinateur, le **fichier privé** (`prive/<rubrique>.js`), qui le remplace. Ce dossier n’est publié que dans l’espace famille protégé ;
 - un avis en haut de page dit lequel des deux est affiché.
 
 Un fichier de données est un script d'une ligne qui définit une variable globale :
@@ -12,13 +12,13 @@ Un fichier de données est un script d'une ligne qui définit une variable globa
 window.ARBRE = { "modele": 1, "mode": "prive", "personnes": [ … ] };
 ```
 
-`mode` vaut `"demo"` pour les exemples, `"prive"` pour les données de la famille gardées sur l'ordinateur et `"public"` pour les données réelles que la famille a choisi de publier (le sommaire du livre). Les pages ne croisent que des données de même nature : réelles avec réelles (publiques ou privées), exemples avec exemples.
+`mode` vaut `"demo"` pour les exemples, `"prive"` pour les données réelles de la famille, consultables dans l’espace protégé. Le mode historique `"public"` est encore lu comme un jeu réel pour assurer la compatibilité avec l’ancien sommaire dans l’espace famille.
 
 Le jeu d'exemple se régénère avec `python3 outils/creer_demo_rubriques.py`. Le plus simple pour créer un fichier privé est de partir du `.json` d'exemple correspondant, de le remplir, puis de l'envelopper dans `window.<VARIABLE> = …;`.
 
 | Rubrique | Page | Variable | Fichier privé |
 |---|---|---|---|
-| Le livre | `livre/` | `window.LIVRE` | `data/livre.js` (publié) ou `prive/livre.js` |
+| Le livre | `livre/` | `window.LIVRE` | `prive/livre.js` |
 | L'arbre | `arbre/` | `window.ARBRE` | `prive/arbre.js` |
 | La voix de Mamili | `voix/` | `window.VOIX` | `prive/voix.js`, produit par `outils/catalogue_voix.py` |
 | Les archives | `archives/` | `window.ARCHIVES` | `prive/archives.js` |
@@ -29,12 +29,12 @@ Liens entre rubriques : un chapitre est toujours désigné par son **numéro** (
 
 ## Le livre — `window.LIVRE`
 
-**Le sommaire réel est publié sur le site**, à la demande de Samuel (24 novembre 2026) : `data/livre.js` et `data/livre.json`, en mode `"public"`. La page charge, dans l'ordre, l'exemple (`data/demo/livre.js`), le sommaire publié (`data/livre.js`), puis une éventuelle version privée (`prive/livre.js`), la dernière présente l'emportant.
+Le sommaire est chargé uniquement dans l’espace famille ou en local depuis `prive/livre.js`.
 
 Il est produit par `outils/extraire_sommaire.py` à partir du texte du manuscrit (titres `#` pour les parties, `##` pour les chapitres, ligne de dates sous chaque titre, numéros des photos imprimées dans chaque chapitre) :
 
 ```bash
-python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
+python3 outils/extraire_sommaire.py manuscrit.txt --sans-annexes \
   --titre "Les Mémoires de Mamili" --sous-titre "Rosalie Luque, 1923 – 2018" \
   --pages-imprimees sommaire-pdf.txt
 ```
@@ -43,7 +43,7 @@ python3 outils/extraire_sommaire.py manuscrit.txt --public --sans-annexes \
 
 ```json
 {
-  "mode": "public",
+  "mode": "prive",
   "titre": "…", "sous_titre": "…",
   "liminaires": [{ "titre": "Prologue" }],
   "parties": [
@@ -106,7 +106,7 @@ python3 outils/catalogue_voix.py --index Index_enregistrements_audio.docx       
 python3 outils/catalogue_voix.py --index Index_enregistrements_audio.docx --appliquer  # et reporte les changements
 ```
 
-- **Le numéro de chapitre est la clé** : `0` pour le prologue, `1` à `108`, vide pour un témoignage hors livre. Le titre du chapitre n'est jamais saisi : il vient de `data/livre.json`, comme les pages du livre imprimé. Les pages de l'index Word ne sont pas reprises. Version de référence de l'index (décision du 24/11/2026) : celle qui cite les pages du livre imprimé, « Index_enregistrements_audio_Memoires_Mamili - référence (pages du livre imprimé).docx » ; la version d'origine citait les pages du PDF du 22/11 (2 à 12 pages d'écart) et reste sur le Drive sans modification. C'est la version de référence qu'on complète et qu'on passe à `--index`.
+- **Le numéro de chapitre est la clé** : `0` pour le prologue, `1` à `108`, vide pour un témoignage hors livre. Le titre du chapitre n'est jamais saisi : il vient de `prive/livre.json`, comme les pages du livre imprimé. Les pages de l'index Word ne sont pas reprises. Version de référence de l'index (décision du 24/11/2026) : celle qui cite les pages du livre imprimé, « Index_enregistrements_audio_Memoires_Mamili - référence (pages du livre imprimé).docx » ; la version d'origine citait les pages du PDF du 22/11 (2 à 12 pages d'écart) et reste sur le Drive sans modification. C'est la version de référence qu'on complète et qu'on passe à `--index`.
 - `type` : `livre` (la scène est dans le livre), `complément` (détail ou rapprochement oral), `version à vérifier` (divergence à garder), `hors livre`. On ne transforme pas un complément en concordance certaine.
 - `statut` : `monté` ou `exclu` (avec `motif_exclusion`). Les extraits exclus restent dans le catalogue pour la traçabilité mais ne s'affichent pas.
 - `coupes` : les portions conservées dans l'original, séparées par « + ». `note_montage` signale une retouche (raccourci…) ; ces extraits ne sont jamais modifiés par la reprise de l'index.

@@ -1,6 +1,9 @@
 # Données de la famille : jamais publiées
 prive/
 
+# Jeux de démonstration locaux et anciens chemins de données
+/data/
+
 # Fichiers système
 .DS_Store
 __pycache__/

@@ -1,6 +1,6 @@
 # L'espace famille : le site complet, réservé aux proches
 
-Le site public (<https://memoires-familiales.github.io/>, adresse du QR code du livre) reste la porte d'entrée : accueil, sommaire du livre, formulaire. Les photos, les enregistrements et les documents de la famille sont dans une **copie du site** publiée par Cloudflare Pages et protégée par **Cloudflare Access** : seules les adresses e-mail inscrites peuvent l'ouvrir, avec un code reçu par e-mail (valable 10 minutes, utilisable une fois).
+Le site public (<https://memoires-familiales.github.io/>, adresse du QR code du livre) reste la porte d'entrée : accueil, présentation des rubriques et formulaire. Le sommaire du livre, les photos, les enregistrements et les documents de la famille sont dans une **copie du site** publiée par Cloudflare Pages et protégée par **Cloudflare Access** : seules les adresses e-mail inscrites peuvent l'ouvrir, avec un code reçu par e-mail (valable 10 minutes, utilisable une fois).
 
 ```
 dépôt public  memoires-familiales.github.io  ──►  GitHub Pages      (tout le monde)
@@ -41,6 +41,7 @@ Offres gratuites : Cloudflare Access jusqu'à 50 utilisateurs ; Cloudflare Pages
 - **Mettre à jour** : refaire l'étape 5 (le script remet la copie à l'image du site et de `prive/`).
 - **Ajouter ou retirer un proche** : Zero Trust → Access → Applications → règle « Famille » → Emails.
 - Ce que le script copie de `prive/` : le fichier de données de chaque rubrique choisie, `audio/` (voix) et `images/` (photothèque). Le catalogue de la voix (`prive/voix/`), les rapports d'import, l'historique, les tableaux de correspondance et les réglages restent sur l'ordinateur. Les photos d'exemple ne sont pas copiées.
+- Le script reprend le sommaire depuis `prive/livre.js` et `prive/livre.json`. Pour retrouver ces fichiers sur un autre poste, les copier dans son dossier local `prive/` depuis le dépôt privé. Si celui-ci contient encore l’ancien sommaire dans `data/`, le script le reprend depuis ce clone de sortie et en fait une copie dans `prive/`.
 - Les fichiers propres au dépôt privé sont conservés : `LISEZ-MOI.md`, `404.html`, `test-acces.txt`, `_headers` (avec `Cache-Control: private, no-store`).
 - Le script refuse d'écrire dans le dépôt public. Le dépôt `espace-famille` ne doit jamais devenir public.
 - Dans la copie, `window.ESPACE_FAMILLE = true` (ajouté en tête de `assets/js/site.js`) remplace l'avis « dossier prive de cet ordinateur » par un avis « réservé aux proches », ajoute « Site public » et « Se déconnecter » au menu, remplace les états de l'accueil par ceux des attributs `data-etat-famille`, et le nom du site porte la mention « Espace famille ».

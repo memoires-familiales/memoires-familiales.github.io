@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Extrait le sommaire du livre (parties, chapitres, années, photos de chaque chapitre)
-à partir du texte du manuscrit, et l'écrit dans prive/livre.json et prive/livre.js,
-ou, avec --public, dans data/livre.json et data/livre.js (publiés sur le site).
+à partir du texte du manuscrit, et l'écrit dans prive/livre.json et prive/livre.js.
 
 Le texte attendu est celui que donne le connecteur Google Drive pour le manuscrit Word
 (ou un export Markdown) :
@@ -24,7 +23,7 @@ correspondent au livre imprimé que si le manuscrit est la version mise en page 
 Pour les pages du livre imprimé, copier le sommaire du PDF final dans un fichier texte
 (une ligne par entrée, « Titre……… 123 ») et le passer avec --pages-imprimees :
 
-  python3 outils/extraire_sommaire.py manuscrit.txt --public --pages-imprimees sommaire-pdf.txt
+  python3 outils/extraire_sommaire.py manuscrit.txt --pages-imprimees sommaire-pdf.txt
 
 Les entrées sont reprises dans l'ordre (prologue, puis chaque partie suivie de ses chapitres).
 Les titres coupés sur deux lignes sont recollés et les folios « — 6 — » ignorés. Le livre
@@ -180,9 +179,7 @@ def appliquer_pages_imprimees(livre, entrees):
 def main():
     p = argparse.ArgumentParser(description="Extrait le sommaire du livre vers prive/livre.js.")
     p.add_argument("texte", type=Path, help="texte du manuscrit (export du connecteur Drive ou Markdown)")
-    p.add_argument("--sortie", type=Path, default=None, help="dossier de sortie (défaut : prive/, ou data/ avec --public)")
-    p.add_argument("--public", action="store_true",
-                   help="sommaire destiné au site public (data/livre.js), avec l'accord de la famille")
+    p.add_argument("--sortie", type=Path, default=RACINE / "prive", help="dossier privé de sortie")
     p.add_argument("--titre", default="")
     p.add_argument("--sous-titre", default="")
     p.add_argument("--source", default="", help="nom du fichier d'origine, noté dans les données")
@@ -193,6 +190,11 @@ def main():
                    help="sommaire copié depuis le PDF final : donne les pages du livre imprimé")
     args = p.parse_args()
 
+    sortie = args.sortie.resolve()
+    if sortie == RACINE or (RACINE in sortie.parents and sortie.relative_to(RACINE).parts[0] != "prive"):
+        p.error("Dans le dépôt du site, le sommaire doit être écrit dans prive/.")
+    args.sortie = sortie
+
     livre, ignores = extraire(args.texte.read_text(encoding="utf-8"), args.exclure, args.avec_pages, args.sans_annexes)
     if not livre["parties"]:
         sys.exit("Aucune partie trouvée : le texte doit contenir des titres « # » et « ## ».")
@@ -200,9 +202,7 @@ def main():
     if args.pages_imprimees:
         entrees = lire_sommaire_imprime(args.pages_imprimees.read_text(encoding="utf-8"))
         ecarts = appliquer_pages_imprimees(livre, entrees)
-    if args.sortie is None:
-        args.sortie = RACINE / ("data" if args.public else "prive")
-    donnees = {"modele": 1, "mode": "public" if args.public else "prive", "titre": args.titre, "sous_titre": args.sous_titre}
+    donnees = {"modele": 1, "mode": "prive", "titre": args.titre, "sous_titre": args.sous_titre}
     if args.source:
         donnees["source"] = args.source
     donnees.update(livre)
@@ -210,8 +210,8 @@ def main():
     args.sortie.mkdir(parents=True, exist_ok=True)
     (args.sortie / "livre.json").write_text(json.dumps(donnees, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (args.sortie / "livre.js").write_text(
-        ("/* Sommaire du livre, publié avec l'accord de la famille. " if args.public
-         else "/* Sommaire du livre : données privées, ne pas publier. ") +
+        "/* Sommaire du livre : données privées, ne pas publier. "
+
         "Généré par outils/extraire_sommaire.py */\n"
         "window.LIVRE = " + json.dumps(donnees, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8")
 

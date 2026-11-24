@@ -98,7 +98,7 @@ prive/alias-personnes.csv  (facultatif) vos propres correspondances de noms
 | Lieu | tableau → Photos ; les coordonnées GPS ne sont gardées que si les deux sources s'accordent |
 | Personnes | visages nommés dans Photos + noms du tableau reconnus par le référentiel, sans doublons ; les autres mentions du tableau (« son mari », « une cousine ? ») restent en texte |
 | Visages non identifiés | nombre de visages `_UNKNOWN_` dans Photos |
-| Chapitre | le livre (`prive/livre.json`, sinon `data/livre.json` : photos imprimées dans chaque chapitre) → tableau |
+| Chapitre | le livre (`livre.json` du dossier de sortie, sinon `prive/livre.json` : photos imprimées dans chaque chapitre) → tableau |
 | Événement, type, notes du verso, provenance, statut | tableau |
 | Légende, mots-clés, albums, favori | Photos (mots-clés complétés par le tableau) |
 

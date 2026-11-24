@@ -11,15 +11,16 @@ dans le clone du dépôt PRIVÉ que Cloudflare Pages publie derrière Cloudflare
 protection Cloudflare Access est bien en place avant d'y mettre quoi que ce soit de la famille.
 
 --rubriques choisit les données privées publiées (par défaut celles de prive/espace-famille.json,
-sinon « voix ») : voix, photos, arbre, archives, films, livre. Les rubriques non choisies reçoivent
+sinon « voix ») : voix, photos, arbre, archives, films. Le livre est inclus dès qu’il est disponible.
+Les autres rubriques non choisies reçoivent
 un jeu vide, pour que les exemples fictifs n'apparaissent pas dans l'espace famille.
 
 Le dossier de sortie est remis à l'image du site (les fichiers qui n'en font plus partie sont
 supprimés, sauf .git). Ensuite, dans ce dossier : git add -A ; git commit ; git push.
 
 Ce que le script copie :
-  - les fichiers du site suivis par Git (pages, styles, scripts, sommaire publié), sans les outils,
-    la documentation ni les photos d'exemple ;
+  - les fichiers du site suivis par Git (pages, styles, scripts), sans les outils,
+    la documentation ni les jeux d'exemple ;
   - de prive/ : le fichier de données de chaque rubrique choisie, prive/audio/ avec la voix et
     prive/images/ avec la photothèque. Le catalogue de la voix (prive/voix/), les rapports,
     l'historique et les réglages d'import restent sur l'ordinateur.
@@ -35,8 +36,9 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
 DEPOT_PUBLIC = "memoires-familiales.github.io"
-EXCLUS_SITE = ("outils/", "docs/", "README.md", "AGENTS.md", ".gitignore", ".nojekyll", "data/demo/images/")
+EXCLUS_SITE = ("outils/", "docs/", "README.md", "AGENTS.md", ".gitignore", ".nojekyll", "data/")
 CONSERVES = ("_headers", ".gitignore", "LISEZ-MOI.md", "404.html", "test-acces.txt")
+FICHIERS_LIVRE = ("livre.js", "livre.json")
 # rubrique : (fichier de prive/, dossier de médias, jeu vide quand la rubrique n'est pas publiée)
 RUBRIQUES = {
     "voix": ("voix.js", "audio", 'window.VOIX = {"modele":2,"mode":"prive","extraits":[],"exclusions":[]};'),
@@ -44,7 +46,6 @@ RUBRIQUES = {
     "arbre": ("arbre.js", None, 'window.ARBRE = {"modele":1,"mode":"prive","personnes":[],"racine":null};'),
     "archives": ("archives.js", None, 'window.ARCHIVES = {"modele":1,"mode":"prive","documents":[],"types":{}};'),
     "films": ("films.js", None, 'window.FILMS = {"modele":1,"mode":"prive","films":[]};'),
-    "livre": ("livre.js", None, None),
 }
 LIMITE_FICHIERS = 20000          # Cloudflare Pages, offre gratuite
 LIMITE_TAILLE = 25 * 1024 * 1024  # 25 Mio par fichier
@@ -73,9 +74,7 @@ def fichiers_du_site():
         noms = [n for n in sortie.splitlines() if n]
     except (subprocess.CalledProcessError, FileNotFoundError):
         sys.exit("Impossible de lister les fichiers du site : lancer le script depuis le dépôt Git du site.")
-    # Les .json des exemples ne servent qu'à les régénérer : le site lit les .js
-    return [n for n in noms if not n.startswith(EXCLUS_SITE) and not n.startswith("prive/")
-            and not (n.startswith("data/demo/") and n.endswith(".json"))]
+    return [n for n in noms if not n.startswith(EXCLUS_SITE) and not n.startswith("prive/")]
 
 
 def verifier_sortie(sortie):
@@ -105,7 +104,7 @@ def main():
         choisies = json.loads(reglages.read_text(encoding="utf-8")).get("rubriques", ["voix"])
     else:
         choisies = ["voix"]
-    inconnues = [r for r in choisies if r not in RUBRIQUES]
+    inconnues = [r for r in choisies if r not in RUBRIQUES and r != "livre"]
     if inconnues:
         sys.exit("Rubriques inconnues : " + ", ".join(inconnues) + " (possibles : " + ", ".join(RUBRIQUES) + ")")
 
@@ -114,6 +113,21 @@ def main():
 
     a_copier = {n: RACINE / n for n in fichiers_du_site()}
     vides = {}
+    # L’ancien sommaire du dépôt privé sert de source si le dossier local n’en a pas.
+    anciens_livres = {"data/" + fichier for fichier in FICHIERS_LIVRE}
+    for fichier in FICHIERS_LIVRE:
+        rel = "prive/" + fichier
+        deja_en_ligne = (sortie / rel, sortie / "data" / fichier)
+        if args.sans_donnees:
+            if any(src.is_file() for src in deja_en_ligne):
+                sys.exit("Le dossier de sortie contient déjà le sommaire du livre. Utilisez un dossier vide pour --sans-donnees.")
+            continue
+        for src in (args.prive / fichier, *deja_en_ligne):
+            if src.is_file():
+                a_copier[rel] = src
+                break
+    if not args.sans_donnees and "prive/livre.js" not in a_copier:
+        vides["prive/livre.js"] = 'window.LIVRE = {"modele":1,"mode":"prive","parties":[]};'
     if not args.sans_donnees:
         if not args.prive.is_dir():
             sys.exit(f"Dossier des données introuvable : {args.prive}")
@@ -146,6 +160,10 @@ def main():
                  + " ; ".join(menacees) + ".\nVérifiez --rubriques et le dossier prive/ (la voix n'existe que "
                  "là où le catalogue a été construit), ou relancez avec --vider pour confirmer.")
 
+    for rel in anciens_livres:
+        if (sortie / rel).is_file():
+            a_copier[rel] = sortie / rel
+
     # Remise à l'image : on retire ce qui n'est plus dans le site (sauf .git)
     for f in sorted(sortie.rglob("*"), reverse=True):
         rel = f.relative_to(sortie).as_posix()
@@ -160,7 +178,8 @@ def main():
     for rel, src in a_copier.items():
         dest = sortie / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dest)
+        if src.resolve() != dest.resolve():
+            shutil.copy2(src, dest)
         if src.stat().st_size > LIMITE_TAILLE:
             trop_gros.append(rel)
 
@@ -178,7 +197,10 @@ def main():
     nb_prive = sum(1 for r in a_copier if r.startswith("prive/"))
     print(f"Espace famille assemblé dans {sortie} : {nb} fichiers dont {nb_prive} de données, {taille / 1e6:.1f} Mo")
     if not args.sans_donnees:
-        print("Rubriques publiées : " + (", ".join(r for r in choisies if r in RUBRIQUES) or "aucune")
+        publiees = [r for r in choisies if r in RUBRIQUES]
+        if "prive/livre.js" in a_copier:
+            publiees.append("livre")
+        print("Rubriques publiées : " + (", ".join(publiees) or "aucune")
               + (" ; jeux vides : " + ", ".join(v.split("/")[-1] for v in vides) if vides else ""))
     if nb > LIMITE_FICHIERS:
         print(f"ATTENTION : plus de {LIMITE_FICHIERS} fichiers, limite de Cloudflare Pages (offre gratuite).")
