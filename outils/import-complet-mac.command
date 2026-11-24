@@ -61,16 +61,19 @@ ok "$DRIVE"
 # ------------------------------------------------------------------ 4. prive/
 etape "4. Dossier prive/ (réglages, correspondances de noms)"
 KIT="$(ls -t "$PHOTOTHEQUE"/phototheque-prive-essai-*.zip 2>/dev/null | head -1)"
-if [ ! -f prive/config-import.json ] || [ ! -f prive/alias-personnes.csv ]; then
+if [ ! -f prive/config-import.json ]; then
   [ -n "$KIT" ] || stop "prive/config-import.json absent et kit privé introuvable dans $PHOTOTHEQUE."
-  if [ ! -f prive/config-import.json ]; then
-    unzip -o -q "$KIT" -d "$RACINE" || stop "décompression impossible : $KIT"
-    ok "kit décompressé : $(basename "$KIT")"
-  else
-    unzip -o -q "$KIT" prive/alias-personnes.csv -d "$RACINE" || stop "décompression impossible : $KIT"
-    ok "correspondances de noms reprises du kit"
-  fi
+  unzip -o -q "$KIT" -d "$RACINE" || stop "décompression impossible : $KIT"
+  ok "kit décompressé : $(basename "$KIT")"
 fi
+# Fichiers du kit qui manqueraient encore (correspondances de noms, sommaire du livre pour les chapitres)
+for f in alias-personnes.csv livre.json livre.js; do
+  if [ ! -f "prive/$f" ] && [ -n "$KIT" ] && unzip -l "$KIT" "prive/$f" >/dev/null 2>&1; then
+    unzip -o -q "$KIT" "prive/$f" -d "$RACINE" && ok "prive/$f repris du kit"
+  fi
+done
+[ -f prive/livre.json ] && ok "sommaire du livre présent (chapitres des photos)" \
+  || echo "   ATTENTION : prive/livre.json absent, les fiches n'auront pas le chapitre du livre."
 # Les chemins des réglages sont refaits à partir du Drive trouvé sur ce Mac, sauf si quelqu'un
 # a déjà indiqué d'autres fichiers (un nouvel export des métadonnées, par exemple).
 python3 - "$DRIVE" <<'EOF' || stop "réglages invalides dans prive/config-import.json." "corriger les chemins signalés ci-dessus, ou supprimer le fichier pour le recréer."

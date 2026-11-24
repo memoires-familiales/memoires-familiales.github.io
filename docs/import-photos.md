@@ -31,7 +31,7 @@ Options : `SIMULATION=1 bash outils/import-complet-mac.command` s'arrête après
 | 1. Dépôt | vérifie qu'il tourne dans le clone et que `prive/` est ignoré par Git | `ok : clone …, prive/ ignoré par Git` |
 | 2. Python | Python 3.9 ou plus, modules openpyxl et Pillow (installés au besoin avec `pip --user`) | `ok : Python 3.x, openpyxl et Pillow présents` |
 | 3. Drive | trouve « Mon Drive » dans `~/Library/CloudStorage/GoogleDrive-…/` et les dossiers du projet | `ok : …/Mon Drive` |
-| 4. prive/ | si besoin, décompresse le kit privé du Drive ; écrit `prive/config-import.json` avec les chemins de ce Mac ; vérifie les quatre fichiers d'entrée | `ok : les quatre fichiers d'entrée sont trouvés` |
+| 4. prive/ | si besoin, décompresse le kit privé du Drive (ou seulement les fichiers qui manquent) ; écrit `prive/config-import.json` avec les chemins de ce Mac ; vérifie les quatre fichiers d'entrée et le sommaire du livre | `ok : sommaire du livre présent` puis `ok : les quatre fichiers d'entrée sont trouvés` |
 | 5. Export | compte les images deux fois à 20 s d'intervalle (l'export doit être fini) ; lit trois images pour vérifier l'accès aux fichiers du Drive | `1 xxx images…` puis `lu : P0001 …` |
 | 6. Simulation | import à blanc, résumé du rapport | `1494 photos · … conflit(s)` et la ligne `Images : …` |
 | 7. Import | fiches, miniatures (480 px) et versions web (1 600 px) dans `prive/images/`, données dans `prive/photos.js` | `durée : … s ; rapport : prive/rapports/import-….md` |
@@ -52,7 +52,7 @@ Chemins à partir de `~/Library/CloudStorage/GoogleDrive-<adresse>/Mon Drive/` :
 
 Ce sont les originaux : le script les lit, ne les modifie jamais.
 
-Le kit privé `phototheque-prive-essai-30-photos-2026-11-24.zip` (dossier `04 - Photothèque - espace famille` du Drive) contient un dossier `prive/` : `config-import.json`, `alias-personnes.csv` (correspondances de noms confirmées par Samuel, prioritaires sur le référentiel) et le résultat de l'essai (32 photos illustrées). Le script le décompresse tout seul si `prive/` n'a pas encore ces fichiers. À la main : `unzip -o "<chemin du kit>" -d .` depuis la racine du clone (donne `./prive/…`, pas `./prive/prive/…`).
+Le kit privé `phototheque-prive-essai-30-photos-2026-11-24.zip` (dossier `04 - Photothèque - espace famille` du Drive) contient un dossier `prive/` : `config-import.json`, `alias-personnes.csv` (correspondances de noms confirmées par Samuel, prioritaires sur le référentiel), `livre.js` et `livre.json` (le sommaire du livre, désormais privé : il donne à chaque photo imprimée son chapitre) et le résultat de l'essai (32 photos illustrées). Le script le décompresse tout seul si `prive/` n'a pas encore ces fichiers. À la main : `unzip -o "<chemin du kit>" -d .` depuis la racine du clone (donne `./prive/…`, pas `./prive/prive/…`).
 
 ## En cas de blocage
 
@@ -68,6 +68,7 @@ Le kit privé `phototheque-prive-essai-30-photos-2026-11-24.zip` (dossier `04 - 
 | lecture du tableau très longue | 41 Mo d'images incluses dans le classeur | patienter (une à deux minutes) |
 | `Premier lancement : indiquez l'emplacement de vos fichiers` | `prive/config-import.json` absent quand on lance `importer_photos.py` directement | lancer `outils/import-complet-mac.command`, qui l'écrit |
 | `ATTENTION : le second passage a encore modifié des fiches` | anomalie de l'import | ne rien corriger à la main ; transmettre le rapport à Claude |
+| `ATTENTION : prive/livre.json absent` | sommaire du livre absent du poste (il n'est plus publié) | le reprendre du kit, ou de `prive/livre.json` du dépôt privé de l'espace famille |
 | photos sans image dans la photothèque | photo absente de l'export (pas encore exportée, ou masquée) | voir la liste « Photos sans image trouvée » du rapport |
 
 Pour Codex : son bac à sable coupe souvent le réseau et limite l'accès aux dossiers hors du projet. S'il bloque à l'étape 2 ou 5, le plus simple est que Samuel lance lui-même la commande dans le Terminal, puis donne le rapport à Codex ou à Claude.
