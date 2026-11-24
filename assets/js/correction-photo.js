@@ -11,6 +11,8 @@
     return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   };
   var MEMOIRE = "correction-photo-auteur";
+  var DELAI_ENVOI = 15000; // au-delà, FormSubmit est considéré comme injoignable
+  var PAGE_MERCI = "https://memoires-familiales.github.io/participer/merci.html";
   var CERTITUDES = ["J'en suis sûr(e)", "Je crois, à vérifier", "Je ne sais pas trop"];
 
   function el(tag, attrs, enfants) {
@@ -372,40 +374,74 @@
     bouton.disabled = true;
     bouton.textContent = "Envoi en cours…";
     var envoi = (SITE.contributions || {});
+    var arret = window.AbortController ? new AbortController() : null;
+    var minuterie = setTimeout(function () { if (arret) arret.abort(); }, DELAI_ENVOI);
+    console.info("[correction] envoi à FormSubmit (ajax)…");
     fetch(envoi.service + "ajax/" + envoi.destinataire, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify(corps),
-      referrerPolicy: "origin" // FormSubmit a besoin de savoir de quel site vient l'envoi
-    }).then(function (r) { return r.json().catch(function () { return { success: r.ok ? "true" : "false" }; }); })
+      referrerPolicy: "origin", // FormSubmit a besoin de savoir de quel site vient l'envoi
+      signal: arret ? arret.signal : undefined
+    }).then(function (r) { return r.json().catch(function () { return { success: r.ok ? "true" : "false", message: "réponse " + r.status }; }); })
       .then(function (rep) {
+        clearTimeout(minuterie);
+        console.info("[correction] réponse de FormSubmit :", rep);
         if (String(rep.success) === "true") return merci();
         var activation = /activ/i.test(rep.message || "");
-        echec(champs, activation
-          ? "Le formulaire n'est pas encore activé pour ce site : Samuel a reçu un e-mail de FormSubmit pour l'activer. En attendant, copiez votre correction et envoyez-la-lui."
-          : "L'envoi n'a pas abouti" + (rep.message ? " (" + rep.message + ")" : "") + ".");
+        echec(corps, activation
+          ? "Le service d'envoi doit d'abord être activé pour ce site : Samuel a reçu un e-mail de FormSubmit pour l'activer."
+          : "Le service d'envoi a refusé la correction" + (rep.message ? " (" + rep.message + ")" : "") + ".");
       })
-      .catch(function () { echec(champs, "L'envoi n'a pas abouti (pas de connexion ?)."); });
+      .catch(function (err) {
+        clearTimeout(minuterie);
+        console.warn("[correction] envoi impossible :", err && err.name, err && err.message);
+        echec(corps, err && err.name === "AbortError"
+          ? "Le service d'envoi ne répond pas pour le moment."
+          : "L'envoi n'a pas abouti (connexion ?).");
+      });
   }
 
-  function echec(champs, message) {
+  // Si l'envoi direct échoue : le formulaire classique de FormSubmit (nouvel onglet, déjà activé
+  // pour le site), la messagerie de la personne, ou le texte à copier.
+  function echec(corps, message) {
     var bouton = fenetre.querySelector("#corr-envoyer");
     bouton.disabled = false;
     bouton.textContent = "Réessayer";
-    erreur(message + " Vous pouvez aussi copier le texte ci-dessous.");
+    erreur(message + " Vous pouvez l'envoyer autrement :");
+    var champs = {};
+    Object.keys(corps).forEach(function (k) { if (k.charAt(0) !== "_") champs[k] = corps[k]; });
+    var texte = texteACopier(champs);
+    var envoi = SITE.contributions || {};
     var zone = fenetre.querySelector(".correction__copie");
-    if (!zone) {
-      zone = el("div", { classe: "correction__copie" }, [
-        el("textarea", { rows: "6", readonly: "", "aria-label": "Texte de la correction à copier" }),
+    if (zone) zone.remove();
+
+    var classique = el("form", { method: "POST", action: envoi.service + envoi.destinataire, target: "_blank", classe: "correction__classique" });
+    Object.keys(corps).forEach(function (k) { classique.appendChild(el("input", { type: "hidden", name: k, value: corps[k] })); });
+    classique.appendChild(el("input", { type: "hidden", name: "_next", value: PAGE_MERCI }));
+    classique.appendChild(el("button", { type: "submit", classe: "bouton", texte: "Envoyer par le formulaire du site" }));
+    classique.addEventListener("submit", function () { setTimeout(merci, 400); });
+
+    var courriel = "mailto:" + envoi.destinataire + "?subject=" + encodeURIComponent(corps._subject) + "&body=" + encodeURIComponent(texte);
+    var aire = el("textarea", { rows: "6", readonly: "", "aria-label": "Texte de la correction à copier" });
+    aire.value = texte;
+    zone = el("div", { classe: "correction__copie" }, [
+      el("p", { classe: "petit", texte: "Le formulaire du site s'ouvre dans un nouvel onglet ; la messagerie ouvre un e-mail déjà rempli." }),
+      el("div", { classe: "correction__boutons" }, [
+        classique,
+        el("a", { classe: "bouton bouton--discret", href: courriel, texte: "Envoyer avec ma messagerie" })
+      ]),
+      el("details", null, [
+        el("summary", { classe: "petit", texte: "Ou copier le texte" }),
+        aire,
         el("button", { type: "button", classe: "bouton bouton--discret", texte: "Copier le texte", onclick: function () {
-          var t = zone.querySelector("textarea"); t.select();
-          try { navigator.clipboard.writeText(t.value); } catch (err) { document.execCommand("copy"); }
+          aire.select();
+          try { navigator.clipboard.writeText(aire.value); } catch (err) { document.execCommand("copy"); }
           this.textContent = "Copié";
         } })
-      ]);
-      fenetre.querySelector(".correction__envoi").appendChild(zone);
-    }
-    zone.querySelector("textarea").value = texteACopier(champs);
+      ])
+    ]);
+    fenetre.querySelector(".correction__envoi").appendChild(zone);
   }
 
   function merci() {

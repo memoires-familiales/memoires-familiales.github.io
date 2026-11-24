@@ -517,6 +517,9 @@
 .correction__boutons { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem; }
 .correction__erreur { margin: 0.5rem 0 0; color: #8a2f1d; font-family: var(--sans); font-size: 0.9rem; }
 .correction__copie { display: grid; gap: 0.45rem; margin-top: 0.6rem; }
+.correction__classique { display: inline; margin: 0; }
+.correction__copie summary { cursor: pointer; margin-top: 0.3rem; }
+.correction__copie details .bouton { margin-top: 0.4rem; }
 .pot-de-miel { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; }
 
 .correction__merci { padding: 1.5rem 0 0.5rem; text-align: center; }
