@@ -5,7 +5,7 @@
 
   // Adresse de l'espace famille (copie du site avec les données de la famille, protégée par
   // Cloudflare Access). Tant qu'elle est vide, le site public n'affiche aucun lien vers lui.
-  var ADRESSE_ESPACE_FAMILLE = "";
+  var ADRESSE_ESPACE_FAMILLE = "https://espace-famille.pages.dev/";
   // Vrai dans la copie de l'espace famille : outils/preparer_espace_famille.py l'y déclare.
   var ESPACE_FAMILLE = window.ESPACE_FAMILLE === true;
 
