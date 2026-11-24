@@ -33,7 +33,7 @@ Offres gratuites : Cloudflare Access jusqu'à 50 utilisateurs ; Cloudflare Pages
 - Vérifier en navigation privée : l'adresse doit afficher la page de connexion de Cloudflare.
 
 **5. Données et lien**
-- `python3 outils/preparer_espace_famille.py --sortie ../espace-famille`, puis commit et push. `--rubriques voix,photos` choisit les données publiées (par défaut celles de `prive/espace-famille.json`, sinon la voix seule) ; les autres rubriques reçoivent un jeu vide, pour que les exemples fictifs n'apparaissent pas.
+- `python3 outils/preparer_espace_famille.py --sortie ../espace-famille`, puis commit et push. `--rubriques voix,photos` choisit les données publiées (par défaut celles de `prive/espace-famille.json`, sinon la voix seule) ; les autres rubriques reçoivent un jeu vide, pour que les exemples fictifs n'apparaissent pas. Garde-fou : si une rubrique déjà en ligne (la voix, par exemple) devait être remplacée par un jeu vide, parce qu'elle n'est pas choisie ou que `prive/` ne l'a pas sur cet ordinateur, le script s'arrête ; `--vider` confirme que c'est voulu.
 - Dans `assets/js/site.js`, renseigner `ADRESSE_ESPACE_FAMILLE` : le site public affiche alors « Espace famille » dans le menu.
 
 ## Au quotidien

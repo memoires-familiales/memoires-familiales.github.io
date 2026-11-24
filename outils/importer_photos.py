@@ -621,6 +621,7 @@ def construire_fiches(args, rapport):
         rapport["livre"] = chemin_livre
 
     index_images = indexer_images(args.images) if args.images else None
+    images_utilisees = set()
     dossier_images = args.sortie / "images"
 
     # Première passe : les noms reconnus par Photos servent aussi de référence
@@ -733,6 +734,7 @@ def construire_fiches(args, rapport):
         if index_images is not None:
             src = trouver_image(index_images, uuid, fichier, numero)
             if src:
+                images_utilisees.add(src)
                 images = fabriquer_images(src, dossier_images, uuid, args.forcer_images)
             else:
                 rapport["sans_image"].append(numero or uuid)
@@ -746,6 +748,11 @@ def construire_fiches(args, rapport):
 
         fiches.append(compacter(fiche))
 
+    if index_images is not None:
+        # Images du dossier qu'aucune fiche de l'export n'a reprises (photos ajoutées dans
+        # Photos après l'export des métadonnées, par exemple) : à signaler, jamais ignorées en silence.
+        rapport["images_sans_fiche"] = sorted({f.name for f in index_images.values()}
+                                              - {f.name for f in images_utilisees})
     rapport["livre_absentes"] = sorted(n for n in chapitres_livre if n not in numeros_vus)
     rapport["complements_orphelins"] = sorted(n for n in complements if n not in numeros_vus
                                               and any(texte(v) for k, v in complements[n].items() if k != "numero"))
@@ -826,6 +833,9 @@ def ecrire_rapport(sortie: Path, horodatage, rapport, total, simulation):
         f"- Ignorées (masquées dans Photos) : {rapport['masquees']} ; sans identifiant : {rapport['sans_uuid']}",
         f"- Conflits entre Photos et le tableau : {len(rapport['conflits'])}",
         f"- Noms de personnes sans correspondance dans le référentiel : {len(rapport['noms_libres'])}",
+        (f"- Images : {len(rapport['sans_image'])} photo(s) sans image ; "
+         f"{len(rapport['images_sans_fiche'])} image(s) du dossier sans fiche"
+         if "images_sans_fiche" in rapport else "- Images : dossier d'images non fourni (images existantes conservées)"),
         f"- Chapitres repris du livre : {'oui (' + chemin_site(Path(str(rapport['livre']))) + ')' if rapport.get('livre') else 'non (pas de livre.json)'}",
         "",
     ]
@@ -847,6 +857,8 @@ def ecrire_rapport(sortie: Path, horodatage, rapport, total, simulation):
             [f"{n} — {t} : {a} / {b}" for n, t, a, b in rapport["conflits"]])
     section("Numéros décrits dans le tableau mais absents de l'export", rapport["complements_orphelins"])
     section("Photos sans image trouvée", rapport["sans_image"])
+    section("Images du dossier sans fiche dans l'export (refaire l'export des métadonnées de Photos pour les ajouter)",
+            rapport.get("images_sans_fiche", []))
     section("Photos imprimées dans le livre mais absentes de l'export", rapport.get("livre_absentes", []))
     if rapport["noms_libres"]:
         lignes += ["## Noms à rapprocher", "",

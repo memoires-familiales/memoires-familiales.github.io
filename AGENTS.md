@@ -8,6 +8,7 @@ Site familial publié par GitHub Pages depuis la branche principale, sans étape
 - Une seule exception, décidée par Samuel le 24/11/2026 : le **sommaire du livre** est publié (`data/livre.js`, `data/livre.json`, mode `"public"`). Rien d'autre de réel ne va dans `data/` sans son accord explicite.
 - Les données de la famille vont en ligne **uniquement** dans l'espace famille : dépôt privé `memoires-familiales/espace-famille`, assemblé par `outils/preparer_espace_famille.py`, publié par Cloudflare Pages derrière Cloudflare Access (voir `docs/espace-famille.md`). Ne jamais pousser `prive/` ailleurs.
 - La voix de Mamili : le catalogue (`prive/voix/catalogue.csv`, `enregistrements.csv`, `transcriptions/`) et les MP3 (`prive/audio/`) sont privés. `prive/voix.js` se régénère avec `python3 outils/catalogue_voix.py` ; ne pas l'éditer à la main. Le numéro de chapitre est la clé. Index Word de référence : la version aux pages du livre imprimé (voir `docs/rubriques.md`).
+- Import complet de la photothèque (sur le Mac de Samuel) : suivre `docs/import-photos.md`. Ne pas lancer `outils/preparer_espace_famille.py` sans accord de Samuel ; il refuse de vider une rubrique déjà en ligne (la voix) sans `--vider`.
 - Les exemples publiés (`data/demo/`) sont fictifs. Les régénérer avec `python3 outils/creer_demo.py` et `python3 outils/creer_demo_rubriques.py`.
 - Ne créer aucun abonnement ni service payant sans accord explicite.
 
@@ -25,5 +26,6 @@ Site familial publié par GitHub Pages depuis la branche principale, sans étape
 
 - `README.md` : vue d'ensemble et règle de confidentialité.
 - `docs/phototheque.md` : import, règles de fusion, modèle de données.
+- `docs/import-photos.md` : méthode pas à pas de l'import complet sur le Mac (fichiers d'entrée, contrôles, interdits).
 - `docs/rubriques.md` : format des données du livre, de l'arbre, de la voix, des archives et des films.
 - `docs/espace-famille.md` : l'espace famille protégé (dépôt privé, Cloudflare Pages et Access).

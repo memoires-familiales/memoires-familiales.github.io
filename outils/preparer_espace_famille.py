@@ -95,6 +95,8 @@ def main():
     p.add_argument("--prive", type=Path, default=RACINE / "prive", help="dossier des données de la famille")
     p.add_argument("--sans-donnees", action="store_true", help="ne copier que le code (premier envoi)")
     p.add_argument("--rubriques", help="rubriques privées à publier, séparées par des virgules (voix,photos,arbre…)")
+    p.add_argument("--vider", action="store_true",
+                   help="autoriser le remplacement de données déjà en ligne par un jeu vide")
     args = p.parse_args()
     reglages = args.prive / "espace-famille.json"
     if args.rubriques:
@@ -127,6 +129,22 @@ def main():
                 vides["prive/" + fichier] = vide
                 if nom in choisies:
                     print(f"Rubrique « {nom} » choisie mais {src} est absent : jeu vide publié.")
+
+    # Garde-fou : ne jamais vider en silence une rubrique déjà publiée (par exemple la voix,
+    # quand le script est lancé depuis un ordinateur dont le dossier prive/ ne l'a pas).
+    menacees = []
+    for nom, (fichier, _medias, vide) in RUBRIQUES.items():
+        en_ligne = sortie / "prive" / fichier
+        if not vide or not en_ligne.is_file() or en_ligne.stat().st_size <= len(vide.encode("utf-8")) + 50:
+            continue
+        if "prive/" + fichier not in a_copier:
+            raison = ("rubrique non choisie" if nom not in choisies
+                      else f"{args.prive / fichier} absent" if not args.sans_donnees else "--sans-donnees")
+            menacees.append(f"{nom} (prive/{fichier} : {raison})")
+    if menacees and not args.vider:
+        sys.exit("L'espace famille contient déjà des données qui seraient remplacées par un jeu vide : "
+                 + " ; ".join(menacees) + ".\nVérifiez --rubriques et le dossier prive/ (la voix n'existe que "
+                 "là où le catalogue a été construit), ou relancez avec --vider pour confirmer.")
 
     # Remise à l'image : on retire ce qui n'est plus dans le site (sauf .git)
     for f in sorted(sortie.rglob("*"), reverse=True):
