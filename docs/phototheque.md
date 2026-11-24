@@ -33,7 +33,18 @@ pip3 install openpyxl pillow
 
 ## 3. Lancer l'import
 
-Depuis le dossier du site :
+**Le plus simple : double-cliquer sur `outils/mettre-a-jour-phototheque.command`.** Au premier lancement, il installe les modules nécessaires et crée `prive/config-import.json` : y indiquer l'emplacement des fichiers, puis relancer. Ensuite, chaque double-clic refait l'import, ouvre la photothèque et le rapport. (Si macOS bloque le fichier la première fois : clic droit → Ouvrir.)
+
+```json
+{
+  "photos": "~/Documents/Mamili/Export_Photos - Album complet.xlsx",
+  "complements": "~/Documents/Mamili/TABLEAU - PHOTOS ANCIENNES 3.xlsx",
+  "referentiel": ["~/Documents/Mamili/REFERENTIEL - IDENTITES PERSONNES PHOTOS ANCIENNES.xlsx"],
+  "images": "~/Documents/Mamili/photos-jpeg"
+}
+```
+
+**Ou dans le Terminal**, depuis le dossier du site, avec les chemins en arguments (ils priment sur le fichier de réglages) :
 
 ```bash
 python3 outils/importer_photos.py \
@@ -64,8 +75,10 @@ prive/photos.js            les mêmes fiches, chargées par la page
 prive/images/miniatures/   480 px, sans métadonnées EXIF
 prive/images/web/          1 600 px, sans métadonnées EXIF
 prive/historique/          la version précédente à chaque import qui change quelque chose
-prive/rapports/            import-<date>.md, conflits-<date>.csv, noms-sans-correspondance.csv
-prive/alias-personnes.csv  (facultatif, à créer) vos propres correspondances de noms
+prive/rapports/            import-<date>.md, conflits-<date>.csv, noms-sans-correspondance.csv,
+                           correspondance-noms.csv
+prive/config-import.json   l'emplacement des fichiers sources
+prive/alias-personnes.csv  (facultatif) vos propres correspondances de noms
 ```
 
 **Relancer l'import avec les mêmes fichiers ne change rien** (« Aucun changement depuis le dernier import »). Quand l'export évolue, le rapport liste les photos ajoutées, modifiées (avec les champs touchés) et retirées.
@@ -73,7 +86,8 @@ prive/alias-personnes.csv  (facultatif, à créer) vos propres correspondances d
 ## 5. Lire le rapport
 
 - **Conflits** : Photos et le tableau ne disent pas la même chose (par exemple une photo située à Oran dans Photos et à Mostaganem dans le tableau). Le tableau l'emporte à l'affichage ; il reste à corriger la source fautive.
-- **Noms à rapprocher** : noms reconnus par Photos qui ne figurent pas dans le référentiel (un surnom, une orthographe différente…). Pour les rattacher : ouvrir `prive/rapports/noms-sans-correspondance.csv`, remplir la colonne « remplacement » (ex. `Toinette Ferrer` → `Antoinette FERRER (Mamie Toinette)`), enregistrer sous `prive/alias-personnes.csv`, relancer. Les surnoms que le référentiel classe « à vérifier » (Mamie, Maman, Mémé, Pépé…) ne sont jamais remplacés automatiquement.
+- **Noms à rapprocher** : noms reconnus par Photos qui ne figurent pas dans le référentiel (un surnom, une orthographe différente…). Pour les rattacher : ouvrir `prive/rapports/noms-sans-correspondance.csv`, remplir la colonne « remplacement » (ex. `Toinette Ferrer` → `Antoinette FERRER (Mamie Toinette)`), enregistrer sous `prive/alias-personnes.csv`, relancer. Les surnoms que le référentiel classe « à vérifier » (Mamie, Maman, Mémé, Pépé…) ne sont jamais remplacés automatiquement ; une ligne écrite dans `prive/alias-personnes.csv` l'emporte toujours.
+- **Renommer les personnes dans Photos** : `correspondance-noms.csv` liste chaque nom tel qu'il est écrit dans Photos, le nombre de photos, le nom retenu sur le site et l'origine de la correspondance (référentiel, `alias-personnes.csv` ou aucune). C'est la liste de travail pour donner aux personnes leur nom officiel dans Photos ; une fois renommées, les lignes d'alias correspondantes deviennent inutiles.
 
 ## 6. Règles de fusion
 

@@ -446,16 +446,20 @@ class Referentiel:
 
     def __init__(self):
         self.alias: dict[str, str] = {}
+        self.origine: dict[str, str] = {}
         self.ambigus: set[str] = set()
         self.canoniques: dict[str, str] = {}
+        self._source = ""
 
-    def ajouter(self, trouve, remplacement):
+    def ajouter(self, trouve, remplacement, force=False):
         t, r = texte(trouve), texte(remplacement)
-        if t and r and cle(t) not in self.ambigus:
+        if t and r and (force or cle(t) not in self.ambigus):
             self.alias[cle(t)] = r
+            self.origine[cle(t)] = self._source
             self.canoniques[cle(r)] = r
 
-    def charger(self, chemin: Path):
+    def charger(self, chemin: Path, prioritaire=False):
+        self._source = chemin.name
         ext = chemin.suffix.lower()
         if ext in (".xlsx", ".xlsm"):
             personnes = lire_feuille(chemin, "Personnes") or []
@@ -465,13 +469,16 @@ class Referentiel:
                     continue
                 self.canoniques[cle(canon)] = canon
                 self.alias[cle(canon)] = canon
+                self.origine[cle(canon)] = self._source
                 prenoms = texte(prendre(p, ["prenom s", "prenoms", "prenom"]))
                 naissance = texte(prendre(p, ["nom de naissance"]))
                 marital = texte(prendre(p, ["nom marital"]))
                 for variante in (f"{prenoms} {naissance}", f"{prenoms} {naissance} {marital}",
                                  f"{prenoms} {marital}" if marital else ""):
                     if variante.strip() and "/" not in variante and "(" not in variante:
-                        self.alias.setdefault(cle(variante), canon)
+                        if cle(variante) not in self.alias:
+                            self.alias[cle(variante)] = canon
+                            self.origine[cle(variante)] = self._source
             for a in lire_feuille(chemin, "A verifier") or []:
                 for nom in re.split(r"/", texte(prendre(a, ["alias a resoudre"]))):
                     if cle(nom):
@@ -484,9 +491,14 @@ class Referentiel:
                 trouve = prendre(ligne, ["appellation trouvee", "nom trouve"]) or (valeurs[0] if valeurs else "")
                 rempl = prendre(ligne, ["remplacement propose", "remplacement", "appellation normalisee"]) or (
                     valeurs[1] if len(valeurs) > 1 else "")
-                self.ajouter(trouve, rempl)
-        for k in self.ambigus:
-            self.alias.pop(k, None)
+                # une table d'alias écrite à la main l'emporte, même sur un surnom « à vérifier »
+                self.ajouter(trouve, rempl, force=prioritaire)
+        if not prioritaire:
+            for k in self.ambigus:
+                self.alias.pop(k, None)
+
+    def source(self, nom: str) -> str:
+        return self.origine.get(cle(re.sub(r"\s*\?\s*$", "", texte(nom))), "")
 
     def normaliser(self, nom: str):
         """Renvoie (nom retenu, reconnu par le référentiel ?)."""
@@ -569,7 +581,7 @@ def construire_fiches(args, rapport):
         ref.charger(chemin)
     alias_local = args.sortie / "alias-personnes.csv"
     if alias_local.exists():
-        ref.charger(alias_local)
+        ref.charger(alias_local, prioritaire=True)
 
     index_images = indexer_images(args.images) if args.images else None
     dossier_images = args.sortie / "images"
@@ -625,6 +637,8 @@ def construire_fiches(args, rapport):
                 continue
             nn, reconnu = ref.normaliser(n)
             personnes.append(nn)
+            corr = rapport["correspondances"].setdefault(n, [nn, ref.source(n), 0])
+            corr[2] += 1
             if not reconnu:
                 rapport["noms_libres"][nn] = rapport["noms_libres"].get(nn, 0) + 1
         autres = []
@@ -809,6 +823,11 @@ def ecrire_rapport(sortie: Path, horodatage, rapport, total, simulation):
         w.writerow(["appellation trouvée", "nombre de photos", "remplacement"])
         for n, c in sorted(rapport["noms_libres"].items(), key=lambda x: (-x[1], x[0])):
             w.writerow([n, c, ""])
+    with open(dossier / "correspondance-noms.csv", "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["nom dans Photos", "nombre de photos", "nom retenu sur le site", "correspondance trouvée dans"])
+        for n, (retenu, origine, c) in sorted(rapport["correspondances"].items(), key=lambda x: (-x[1][2], x[0])):
+            w.writerow([n, c, retenu, origine or "aucune"])
     with open(dossier / f"conflits-{horodatage}.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f, delimiter=";")
         w.writerow(["numéro", "champ", "valeur 1", "valeur 2"])
@@ -826,6 +845,36 @@ def verifier_gitignore(sortie: Path):
     if rel.parts and rel.parts[0] not in motifs:
         print(f"⚠️  Attention : le dossier « {rel} » n'est pas exclu de Git dans .gitignore. "
               "Les photos et les noms de la famille risqueraient d'être publiés.", file=sys.stderr)
+
+
+CONFIG_EXEMPLE = {
+    "photos": "~/Documents/Mamili/Export_Photos - Album complet.xlsx",
+    "complements": "~/Documents/Mamili/TABLEAU - PHOTOS ANCIENNES 3.xlsx",
+    "referentiel": ["~/Documents/Mamili/REFERENTIEL - IDENTITES PERSONNES PHOTOS ANCIENNES.xlsx"],
+    "images": "~/Documents/Mamili/photos-jpeg",
+}
+
+
+def charger_config(args):
+    """Sans --photos, lit les chemins dans prive/config-import.json (créé au premier lancement)."""
+    config = args.sortie / "config-import.json"
+    if not config.exists():
+        config.write_text(json.dumps(CONFIG_EXEMPLE, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        sys.exit(f"Premier lancement : indiquez l'emplacement de vos fichiers dans {config}, puis relancez.\n"
+                 "(« images » et « complements » sont facultatifs : mettez \"\" pour les ignorer.)")
+    reglages = json.loads(config.read_text(encoding="utf-8"))
+
+    def chemin(v):
+        return Path(v).expanduser() if v else None
+
+    args.photos = chemin(reglages.get("photos"))
+    args.complements = args.complements or chemin(reglages.get("complements"))
+    args.images = args.images or chemin(reglages.get("images"))
+    refs = reglages.get("referentiel") or []
+    args.referentiel = args.referentiel or [chemin(r) for r in ([refs] if isinstance(refs, str) else refs) if r]
+    if not args.photos:
+        sys.exit(f"Indiquez l'export des photos (« photos ») dans {config}.")
+    print(f"Réglages lus dans {config}")
 
 
 def main():
@@ -873,13 +922,14 @@ def main():
         return
 
     if not args.photos:
-        p.error("indiquez l'export des photos avec --photos")
+        charger_config(args)
     for f in [args.photos, args.complements, args.images, *args.referentiel]:
         if f is not None and not f.exists():
             sys.exit(f"Fichier ou dossier introuvable : {f}")
 
     rapport = {k: [] for k in ("ajoutees", "modifiees", "retirees", "supprimees", "conflits", "sans_image")}
-    rapport.update({"noms_libres": {}, "masquees": 0, "sans_uuid": 0, "complements_orphelins": []})
+    rapport.update({"noms_libres": {}, "correspondances": {}, "masquees": 0, "sans_uuid": 0,
+                    "complements_orphelins": []})
 
     nouvelles = construire_fiches(args, rapport)
     anciennes = []

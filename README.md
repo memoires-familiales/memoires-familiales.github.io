@@ -29,12 +29,15 @@ assets/css/                 styles (communs, accueil, photothèque)
 assets/js/phototheque.js    recherche, filtres, galerie, fiche
 data/demo/                  jeu d'exemple fictif (données + images)
 outils/importer_photos.py   import des photos depuis Apple Photos → prive/
+outils/mettre-a-jour-phototheque.command   lanceur Mac : import + ouverture
 outils/creer_demo.py        fabrique le jeu d'exemple
 docs/phototheque.md         mode d'emploi de l'import et modèle de données
 prive/                      (non suivi par Git) données réelles de la famille
 ```
 
 ## Voir la photothèque complète sur son ordinateur
+
+Sur le Mac, double-cliquer sur `outils/mettre-a-jour-phototheque.command` (au premier lancement, indiquer l'emplacement des fichiers dans `prive/config-import.json`). Ou, dans le Terminal :
 
 ```bash
 pip3 install openpyxl pillow
