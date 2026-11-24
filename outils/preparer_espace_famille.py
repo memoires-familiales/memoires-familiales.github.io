@@ -37,7 +37,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parent.parent
 DEPOT_PUBLIC = "memoires-familiales.github.io"
 EXCLUS_SITE = ("outils/", "docs/", "README.md", "AGENTS.md", ".gitignore", ".nojekyll", "data/")
-CONSERVES = ("_headers", ".gitignore", "LISEZ-MOI.md", "404.html", "test-acces.txt")
+CONSERVES = ("_headers", ".gitignore", "LISEZ-MOI.md", "404.html", "test-acces.txt", "_routes.json")
 FICHIERS_LIVRE = ("livre.js", "livre.json")
 # rubrique : (fichier de prive/, dossier de médias, jeu vide quand la rubrique n'est pas publiée)
 RUBRIQUES = {
@@ -191,6 +191,11 @@ def main():
     for nom, contenu in (("_headers", ENTETES), (".gitignore", ".DS_Store\n"), ("LISEZ-MOI.md", LISEZ_MOI)):
         if not (sortie / nom).exists():
             (sortie / nom).write_text(contenu, encoding="utf-8")
+    # Cloudflare Pages Functions (base des corrections) : ne les lancer que pour /api/*,
+    # les pages et les images restent servies directement (et ne comptent pas dans le quota gratuit).
+    if any(r.startswith("functions/") for r in a_copier):
+        (sortie / "_routes.json").write_text(json.dumps({"version": 1, "include": ["/api/*"], "exclude": []}) + "\n",
+                                             encoding="utf-8")
 
     nb = len(a_copier) + len(vides)
     taille = sum(f.stat().st_size for f in sortie.rglob("*") if f.is_file() and ".git" not in f.relative_to(sortie).parts)

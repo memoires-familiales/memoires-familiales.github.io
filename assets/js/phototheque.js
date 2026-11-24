@@ -413,6 +413,7 @@
       corriger = el("a", { href: racine + "participer/index.html?photo=" + encodeURIComponent(p.numero || p.id), texte: "Proposer une correction" });
     }
     ligne(dl, "Vous reconnaissez quelqu'un ? Une date est fausse ?", corriger);
+    if (window.CorrectionPhoto && window.CorrectionPhoto.propositions) window.CorrectionPhoto.propositions(p, dl);
 
     $("fiche-position").textContent = "Photo " + nf.format(courante + 1) + " sur " + nf.format(resultats.length);
     $("precedente").disabled = courante <= 0;
@@ -442,6 +443,11 @@
   }
 
   function fermerFiche() { if (fiche.open) fiche.close(); }
+
+  // après une correction enregistrée, la fiche ouverte montre aussitôt la nouvelle proposition
+  if (window.CorrectionPhoto && window.CorrectionPhoto.surEnvoi) {
+    window.CorrectionPhoto.surEnvoi(function (p) { if (fiche.open && resultats[courante] === p) remplirFiche(); });
+  }
 
   fiche.addEventListener("close", function () {
     remplacerAdresse(location.pathname + location.search);

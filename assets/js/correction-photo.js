@@ -282,7 +282,7 @@
         vignette ? el("img", { src: vignette, alt: "" }) : null,
         el("p", null, [el("strong", { texte: p.numero || "Photo" }), el("br"), document.createTextNode([date.libelle, texteLieu(p)].filter(Boolean).join(" · "))])
       ]),
-      el("p", { classe: "petit", texte: "Choisissez ce qui est à corriger ou à compléter. Samuel reçoit votre proposition par e-mail et met la photothèque à jour." }),
+      el("p", { classe: "petit", texte: "Choisissez ce qui est à corriger ou à compléter. Votre proposition sera visible sous la photo, et Samuel mettra la photothèque à jour." }),
       formulaire
     ]));
     afficherIdentite();
@@ -372,6 +372,28 @@
       _template: "table",
       _captcha: "false"
     }, champs);
+    var bouton = fenetre.querySelector("#corr-envoyer");
+    bouton.disabled = true;
+    bouton.textContent = "Envoi en cours…";
+    var donnees = JSON.parse(champs["Données pour la mise à jour"]);
+    var photoEnvoyee = photo;
+    // 1. La base des corrections de l'espace famille (même site : pas de service extérieur)
+    api("", { method: "POST", body: { photo: donnees.photo, actuel: donnees.actuel, propose: donnees.propose,
+      certitude: donnees.certitude, auteur: { nom: nom } } })
+      .then(function () {
+        console.info("[correction] enregistrée dans la base de l'espace famille");
+        cache = null;
+        merci(corps, true);
+        if (rafraichir) rafraichir(photoEnvoyee);
+      })
+      .catch(function (err) {
+        // 2. Base absente ou injoignable : e-mail par FormSubmit
+        console.warn("[correction] base indisponible (" + (err && err.message) + "), envoi par e-mail");
+        envoyerParFormSubmit(corps);
+      });
+  }
+
+  function envoyerParFormSubmit(corps) {
     // Formulaire classique de FormSubmit, envoyé dans un cadre caché : pas de nouvel onglet.
     // FormSubmit renvoie vers la page merci du site public, qui confirme l'envoi par un message ;
     // sans confirmation dans le délai, la fenêtre propose la messagerie ou le texte à copier.
@@ -386,8 +408,6 @@
     document.body.appendChild(formulaire);
 
     var bouton = fenetre.querySelector("#corr-envoyer");
-    bouton.disabled = true;
-    bouton.textContent = "Envoi en cours…";
     erreur("");
     var fini = false;
     function terminer() {
@@ -420,6 +440,107 @@
     formulaire.submit();
   }
 
+  // ---------------------------------------------------------------- base des corrections
+
+  var cache = null, rafraichir = null;
+  function api(chemin, options) {
+    options = options || {};
+    if (!/^https?:$/.test(location.protocol) || !window.fetch) return Promise.reject(new Error("hors ligne"));
+    var arret = window.AbortController ? new AbortController() : null;
+    var minuterie = setTimeout(function () { if (arret) arret.abort(); }, 12000);
+    return fetch((SITE.racine || "") + "api/corrections" + chemin, {
+      method: options.method || "GET",
+      credentials: "same-origin",
+      headers: options.body ? { "Content-Type": "application/json" } : {},
+      body: options.body ? JSON.stringify(options.body) : undefined,
+      signal: arret ? arret.signal : undefined
+    }).then(function (r) {
+      clearTimeout(minuterie);
+      var type = r.headers.get("content-type") || "";
+      if (type.indexOf("application/json") === -1) throw new Error("réponse inattendue " + r.status);
+      return r.json().then(function (j) { if (!r.ok) throw new Error(j.message || ("erreur " + r.status)); return j; });
+    }, function (e) { clearTimeout(minuterie); throw e; });
+  }
+  function toutes() {
+    if (!cache) cache = api("").then(function (j) { return j.corrections || []; }).catch(function (e) { cache = null; throw e; });
+    return cache;
+  }
+
+  function resume(c) {
+    var p = c.propose || {}, a = c.actuel || {}, lignes = [];
+    if (p.date) lignes.push("Date : " + p.date + (a.date ? " (au lieu de « " + a.date + " »)" : ""));
+    if (p.lieu) lignes.push("Lieu : " + p.lieu);
+    if (p.evenement) lignes.push("Événement : " + p.evenement);
+    (p.remplacer || []).forEach(function (r) { lignes.push("Ce n'est pas " + r.avant + ", c'est " + r.apres); });
+    (p.retirer || []).forEach(function (n) { lignes.push("Ce n'est pas " + n); });
+    (p.ajouter || []).forEach(function (x) { lignes.push("Sur la photo : " + x.nom + (x.position ? " (" + x.position + ")" : "")); });
+    if (p.remarque) lignes.push("« " + p.remarque + " »");
+    return lignes;
+  }
+
+  function nomMemorise() {
+    try { return (JSON.parse(localStorage.getItem(MEMOIRE) || "{}").nom || ""); } catch (e) { return ""; }
+  }
+
+  function carteProposition(c, apres) {
+    var douteuse = c.certitude && c.certitude !== CERTITUDES[0];
+    var date = c.cree_le ? new Date(c.cree_le).toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : "";
+    var compte = el("span", { classe: "proposition__avis petit" });
+    function majCompte() {
+      var n = c.avis || { confirme: 0, doute: 0 };
+      compte.textContent = [n.confirme ? n.confirme + " confirmation" + (n.confirme > 1 ? "s" : "") : "",
+        n.doute ? n.doute + " doute" + (n.doute > 1 ? "s" : "") : ""].filter(Boolean).join(" · ");
+    }
+    majCompte();
+    var message = el("span", { classe: "petit", role: "status" });
+    function donnerAvis(avis) {
+      var nom = nomMemorise() || (window.prompt("Votre prénom et votre nom :") || "").trim();
+      if (!nom) return;
+      try { localStorage.setItem(MEMOIRE, JSON.stringify({ nom: nom })); } catch (e) { /* rien */ }
+      message.textContent = "Envoi…";
+      api("/" + c.id + "/avis", { method: "POST", body: { avis: avis, nom: nom } }).then(function () {
+        cache = null;
+        message.textContent = avis === "confirme" ? "Merci, c'est noté." : "Noté : vous n'êtes pas d'accord.";
+        if (apres) apres();
+      }).catch(function () { message.textContent = "L'avis n'a pas pu être enregistré."; });
+    }
+    var statut = c.statut && c.statut !== "proposée" ? el("span", { classe: "etiquette", texte: c.statut }) : null;
+    return el("li", { classe: "proposition" + (douteuse ? " proposition--douteuse" : "") }, [
+      el("p", { classe: "proposition__tete petit" }, [
+        document.createTextNode((c.auteur && c.auteur.nom ? c.auteur.nom : "Un proche") + (date ? ", le " + date : "")),
+        douteuse ? el("span", { classe: "proposition__doute", texte: " — " + c.certitude.toLowerCase() }) : null,
+        statut ? document.createTextNode(" ") : null, statut
+      ]),
+      el("ul", { classe: "proposition__lignes" }, resume(c).map(function (l) { return el("li", { texte: l }); })),
+      el("div", { classe: "proposition__actions" }, [
+        el("button", { type: "button", classe: "lien-filtre", texte: "Je confirme", onclick: function () { donnerAvis("confirme"); } }),
+        el("button", { type: "button", classe: "lien-filtre", texte: "Je ne pense pas", onclick: function () { donnerAvis("doute"); } }),
+        compte, message
+      ])
+    ]);
+  }
+
+  // Propositions déjà faites pour cette photo, sous la fiche (seulement si la base répond).
+  function afficherPropositions(p, dl) {
+    var marque = p.id || p.numero;
+    dl.setAttribute("data-photo-propositions", marque);
+    toutes().then(function (liste) {
+      if (dl.getAttribute("data-photo-propositions") !== marque) return; // on a changé de photo entre-temps
+      var anciennes = dl.querySelectorAll(".bloc-propositions");
+      Array.prototype.forEach.call(anciennes, function (n) { n.remove(); });
+      var siennes = liste.filter(function (c) {
+        return (p.numero && c.photo.numero === p.numero) || (p.id && c.photo.id === p.id);
+      });
+      if (!siennes.length) return;
+      var ul = el("ul", { classe: "propositions" }, siennes.map(function (c) {
+        return carteProposition(c, function () { afficherPropositions(p, dl); });
+      }));
+      dl.appendChild(el("dt", { classe: "bloc-propositions", texte: "Propositions de la famille" }));
+      dl.appendChild(el("dd", { classe: "bloc-propositions" }, [ul,
+        el("a", { href: (SITE.racine || "") + "participer/corrections.html", classe: "petit", texte: "Voir toutes les propositions" })]));
+    }).catch(function () { /* base absente : rien à montrer */ });
+  }
+
   // Autres moyens d'envoyer : la messagerie de la personne (e-mail prérempli) ou le texte à copier.
   function autresMoyens(corps) {
     var champs = {};
@@ -443,13 +564,15 @@
     ]);
   }
 
-  function merci(envoye) {
+  function merci(envoye, dansLaBase) {
     var corps = fenetre.querySelector(".correction__corps");
     corps.textContent = "";
     var retour = el("button", { type: "button", classe: "bouton", texte: "Revenir à la photo", onclick: fermer });
     corps.appendChild(el("div", { classe: "correction__merci", role: "status" }, [
       el("p", { classe: "grand", texte: "Merci !" }),
-      el("p", { texte: "Votre proposition pour la photo " + (photo.numero || "") + " est partie : Samuel la reçoit par e-mail et mettra la photothèque à jour." }),
+      el("p", { texte: dansLaBase
+        ? "Votre proposition pour la photo " + (photo.numero || "") + " est enregistrée. Elle apparaît sous la photo : les autres membres de la famille peuvent la confirmer, et Samuel mettra la photothèque à jour."
+        : "Votre proposition pour la photo " + (photo.numero || "") + " est partie : Samuel la reçoit par e-mail et mettra la photothèque à jour." }),
       retour
     ]));
     retour.focus();
@@ -458,6 +581,12 @@
   function fermer() { if (fenetre && fenetre.open) fenetre.close(); }
 
   window.CorrectionPhoto = {
+    // phototheque.js indique comment remettre à jour la fiche après un envoi
+    surEnvoi: function (fn) { rafraichir = fn; },
+    propositions: afficherPropositions,
+    carteProposition: carteProposition,
+    resume: resume,
+    api: api,
     ouvrir: function (p, photos) {
       photo = p;
       if (!listes) construireListes(photos || []);

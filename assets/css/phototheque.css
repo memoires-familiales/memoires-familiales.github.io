@@ -531,3 +531,21 @@
   .ajout-personne { grid-template-columns: 1fr auto; }
   .ajout-personne > input { grid-column: 1; }
 }
+
+/* Propositions de la famille, sous la fiche d'une photo et sur la page des corrections */
+.propositions { list-style: none; margin: 0.2rem 0 0.5rem; padding: 0; display: grid; gap: 0.7rem; }
+.proposition { padding: 0.6rem 0.75rem; border: 1px solid var(--filet); border-radius: 3px; background: var(--carton); }
+.proposition--douteuse { border-left: 3px solid var(--stylo); }
+.proposition__tete { margin: 0 0 0.3rem; font-family: var(--sans); font-size: 0.84rem; color: var(--encre-douce); }
+.proposition__doute { color: var(--stylo); }
+.proposition__lignes { margin: 0 0 0.5rem; padding-left: 1.1rem; }
+.proposition__lignes li { margin: 0.1rem 0; }
+.proposition__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem 0.6rem; }
+.proposition__actions .lien-filtre { font-family: var(--sans); font-size: 0.84rem; }
+.proposition .etiquette { font-family: var(--sans); font-size: 0.78rem; padding: 0.05rem 0.45rem; border: 1px solid var(--filet); border-radius: 999px; }
+.fiche .petit, .page-corrections .petit { font-family: var(--sans); font-size: 0.84rem; color: var(--encre-douce); }
+.outils-corrections { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; margin: 1rem 0; }
+.outils-corrections select { padding: 0.45rem 0.6rem; border: 1px solid var(--filet); border-radius: 3px; background: var(--carton); font-family: var(--sans); }
+.proposition__photo { margin: 0 0 0.25rem; font-family: var(--sans); font-size: 0.88rem; }
+.page-corrections .propositions { max-width: var(--mesure); }
+.proposition__actions select { padding: 0.2rem 0.4rem; border: 1px solid var(--filet); border-radius: 3px; background: var(--papier); font-family: var(--sans); font-size: 0.84rem; }
