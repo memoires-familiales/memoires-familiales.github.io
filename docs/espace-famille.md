@@ -69,5 +69,7 @@ L’[administration des corrections](https://espace-famille.pages.dev/administra
 
 La page, la liste de modération, les exports et les décisions vérifient côté serveur la signature, l’émetteur, l’audience et la validité du jeton Access, ainsi que l’adresse de l’unique administrateur. L’historique D1 conserve les décisions, dates, motifs et versions retenues. La proposition familiale initiale reste consultable et le tableau n’écrit dans aucun fichier source.
 
+Si la fonction n’atteint pas le service de clés Access, `ACCESS_JWKS` peut contenir une copie de secours des clés **publiques** du domaine d’équipe, sous la forme `{"keys":[…],"expire":…}`. `expire` est la date limite en millisecondes Unix. Actualiser cette copie après une rotation des clés si le service reste inaccessible.
+
 Les appels utilisés par les proches sont `GET /api/corrections` (filtrable avec `?photo=…` ou `?personne=…`), `GET /api/corrections/etat`, `POST /api/corrections` et `POST /api/corrections/<id>/avis`. Leur liste exclut les coordonnées, notes et valeurs retenues pour la modération. Les exports réservés au compte d’administration sont disponibles en CSV ou JSON. `lot=1` sélectionne les corrections acceptées restant à intégrer.
 

@@ -2,6 +2,7 @@
 const CLES = new Map();
 const DUREE_CACHE = 3600_000;
 const DELAI_ROTATION = 60_000;
+const DELAI_SECOURS = 300_000;
 
 function decoder(texte) {
   if (!/^[A-Za-z0-9_-]+$/.test(texte)) throw new Error("Assertion illisible");
@@ -14,17 +15,27 @@ function lireJSON(texte) {
   return JSON.parse(new TextDecoder().decode(decoder(texte)));
 }
 
-async function cleSignature(domaine, id) {
+function clesParIdentifiant({ keys }) {
+  return new Map(keys.filter(k => k.kty === "RSA" && (!k.alg || k.alg === "RS256"))
+    .map(k => [k.kid, k]));
+}
+
+async function cleSignature(domaine, id, secours) {
   const maintenant = Date.now();
   let entree = CLES.get(domaine);
-  if (!entree || maintenant - entree.date >= DUREE_CACHE ||
+  if (!entree || maintenant >= entree.expire ||
       (!entree.cles.has(id) && maintenant - entree.date >= DELAI_ROTATION)) {
-    const r = await fetch(domaine + "/cdn-cgi/access/certs", { redirect: "error" });
-    if (!r.ok) return null;
-    const { keys } = await r.json();
-    const cles = new Map(keys.filter(k => k.kty === "RSA" && (!k.alg || k.alg === "RS256"))
-      .map(k => [k.kid, k]));
-    entree = { date: maintenant, cles };
+    try {
+      const r = await fetch(domaine + "/cdn-cgi/access/certs", { redirect: "error", signal: AbortSignal.timeout(3000) });
+      if (!r.ok) throw new Error("Clés Access indisponibles");
+      entree = { date: maintenant, expire: maintenant + DUREE_CACHE, cles: clesParIdentifiant(await r.json()) };
+    } catch {
+      // Une copie bornée des clés publiques permet de vérifier les signatures si la
+      // récupération Cloudflare échoue. Un jeton inconnu reste refusé.
+      const publie = JSON.parse(secours || "null");
+      if (!publie || !Number.isFinite(publie.expire) || maintenant >= publie.expire) return null;
+      entree = { date: maintenant, expire: Math.min(publie.expire, maintenant + DELAI_SECOURS), cles: clesParIdentifiant(publie) };
+    }
     CLES.set(domaine, entree);
   }
   const jwk = entree.cles.get(id);
@@ -52,7 +63,7 @@ export async function courrielAccess(requete, env) {
         (d.nbf != null && (!Number.isFinite(d.nbf) || d.nbf > maintenant)) ||
         (d.iat != null && (!Number.isFinite(d.iat) || d.iat > maintenant + 30)) ||
         typeof d.sub !== "string" || !d.sub || typeof d.email !== "string") return "";
-    const cle = await cleSignature(domaine, kid);
+    const cle = await cleSignature(domaine, kid, env.ACCESS_JWKS);
     const message = new TextEncoder().encode(entete + "." + charge);
     const valide = cle && await crypto.subtle.verify("RSASSA-PKCS1-v1_5", cle, decoder(signature), message);
     return valide ? d.email.trim().toLowerCase() : "";
