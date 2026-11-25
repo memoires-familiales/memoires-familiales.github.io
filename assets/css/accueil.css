@@ -34,7 +34,8 @@
   justify-content: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
-  font-size: 1rem;
+  font-family: var(--serif);
+  font-size: 1.125rem;
 }
 
 .accueil__connexion .icone {
@@ -66,7 +67,7 @@
   border-radius: 7px;
   background: var(--carton);
   color: var(--encre);
-  font: 600 1.15rem/1.35 var(--sans);
+  font: 1.3rem/1.3 var(--serif);
   overflow-wrap: anywhere;
   text-decoration: none;
 }
@@ -79,7 +80,7 @@
   place-items: center;
   border-radius: 50%;
   background: var(--papier);
-  color: var(--stylo);
+  color: var(--cafe-fonce);
 }
 
 .accueil__rubrique .icone svg { width: 1.65rem; height: 1.65rem; }
@@ -98,7 +99,7 @@
 
 .accueil__rubrique:hover,
 .accueil__rubrique:focus-visible {
-  border-color: var(--stylo);
+  border-color: var(--cafe-fonce);
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
