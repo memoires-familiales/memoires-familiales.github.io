@@ -64,6 +64,10 @@ export async function onRequest({ request, env }) {
   </section>
   <p id="message-admin" class="avis" role="status" aria-atomic="true">Chargement des propositions…</p>
   <div id="liste-admin"></div>`;
-  const scripts = '<script src="/assets/js/site.js"></script><script src="/prive/arbre.js"></script><script src="/assets/js/administration.js"></script>';
+  const scripts = `
+<script src="/assets/js/site.js"></script>
+<script src="/prive/arbre.js"></script>
+<script src="/prive/photos.js"></script>
+<script src="/assets/js/administration.js"></script>`;
   return new Response(request.method === "HEAD" ? null : page("Administration des corrections", contenu, scripts), { headers: ENTETES });
 }

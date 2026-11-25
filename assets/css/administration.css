@@ -20,6 +20,24 @@
 
 .fiche-admin { margin: 0.75rem 0; padding: clamp(0.85rem, 3vw, 1.5rem); background: var(--carton); border: 1px solid var(--filet); border-radius: 5px; overflow-wrap: anywhere; }
 .fiche-admin__tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.fiche-admin__photo { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); align-items: start; gap: 1rem; margin-top: 0.9rem; }
+.fiche-admin__photo .comparaison-admin { margin-top: 0; }
+.vignette-admin {
+  width: 100%; max-width: 17rem; padding: 0; border: 1px solid var(--filet); border-radius: 4px;
+  background: var(--papier); color: var(--cafe-fonce); cursor: zoom-in; font: 0.85rem var(--sans);
+}
+.vignette-admin:hover { border-color: var(--cafe-fonce); }
+.vignette-admin img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; }
+.vignette-admin span { display: block; padding: 0.45rem; }
+.photo-admin-grand {
+  width: min(58rem, calc(100% - 1.5rem)); max-height: calc(100dvh - 1.5rem); padding: clamp(0.8rem, 3vw, 1.5rem);
+  border: 1px solid var(--filet); border-radius: 5px; background: var(--carton); color: var(--encre);
+}
+.photo-admin-grand::backdrop { background: rgb(34 28 24 / 75%); }
+.photo-admin-grand__tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.photo-admin-grand__tete h2 { margin: 0; font-size: 1.35rem; }
+.photo-admin-grand__image { display: grid; place-items: center; margin: 0.8rem 0; background: var(--papier); }
+.photo-admin-grand__image img { max-height: 72dvh; object-fit: contain; }
 .statut-admin { padding: 0.25rem 0.55rem; border-radius: 3px; background: var(--papier); color: var(--encre); font: 0.85rem var(--sans); }
 .statut-admin[data-statut="à vérifier"] { background: #f3e4c2; }
 .statut-admin[data-statut="confirmée"], .statut-admin[data-statut="appliquée"] { background: #e1e9d9; color: #344631; }
@@ -44,4 +62,5 @@
 @media (max-width: 42rem) {
   .filtres-admin { grid-template-columns: 1fr 1fr; }
   .filtres-admin label:first-child { grid-column: 1 / -1; }
+  .fiche-admin__photo { grid-template-columns: 1fr; }
 }

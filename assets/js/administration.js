@@ -16,8 +16,75 @@
   };
   var champsPhoto = { date: "Date", lieu: "Lieu", evenement: "Événement" };
   var arbre = new Map(((window.ARBRE || {}).personnes || []).map(function (p) { return [p.id, p]; }));
+  var photos = ((window.PHOTOTHEQUE || {}).photos || []);
+  var photosParId = new Map(photos.filter(function (p) { return p.id; }).map(function (p) { return [clePhoto(p.id), p]; }));
+  var photosParNumero = new Map();
+  photos.forEach(function (p) {
+    if (!p.numero || p.retiree) return;
+    var cle = clePhoto(p.numero);
+    // Un ancien signalement peut n’avoir qu’un numéro. Une référence ambiguë reste sans aperçu.
+    photosParNumero.set(cle, photosParNumero.has(cle) ? null : p);
+  });
+  var titrePhoto = el("h2", { id: "titre-photo-admin" });
+  var ouvrirFichePhoto = el("a", { texte: "Voir la fiche dans la photothèque" });
+  var grandePhoto = el("div", { classe: "photo-admin-grand__image" });
+  var visionneuse = el("dialog", { classe: "photo-admin-grand", "aria-labelledby": "titre-photo-admin" }, [
+    el("div", { classe: "photo-admin-grand__tete" }, [
+      titrePhoto,
+      el("form", { method: "dialog" }, [el("button", { classe: "bouton bouton--discret", autofocus: "", texte: "Fermer" })])
+    ]),
+    grandePhoto,
+    ouvrirFichePhoto
+  ]);
+  document.body.appendChild(visionneuse);
+  visionneuse.addEventListener("close", function () {
+    if (!visionneuse.open) grandePhoto.replaceChildren();
+  });
   var corrections = [];
   var actualisation = 0;
+
+  function clePhoto(v) { return String(v || "").trim().toUpperCase(); }
+
+  function adresseImage(chemin) {
+    if (typeof chemin !== "string" || !chemin) return null;
+    try {
+      var adresse = new URL(chemin, location.origin + "/");
+      return adresse.origin === location.origin && adresse.pathname.startsWith("/prive/images/") ? adresse.href : null;
+    } catch (e) { return null; }
+  }
+
+  function imagePhoto(adresses, texte, miniature, indisponible) {
+    var image = el("img", { alt: texte, decoding: "async", loading: miniature ? "lazy" : null });
+    var sources = Array.from(new Set(adresses.filter(Boolean)));
+    function suivante() {
+      if (sources.length) image.src = sources.shift();
+      else indisponible();
+    }
+    image.addEventListener("error", suivante);
+    suivante();
+    return image;
+  }
+
+  function vignettePhoto(photo, titre, lien) {
+    var miniature = adresseImage(photo?.images?.miniature);
+    var web = adresseImage(photo?.images?.web);
+    if (!miniature && !web) return mention("Photo indisponible.");
+    var bouton = el("button", {
+      type: "button", classe: "vignette-admin", "aria-label": "Agrandir « " + titre + " »", "aria-haspopup": "dialog"
+    });
+    var image = imagePhoto([miniature, web], "", true, function () { bouton.replaceWith(mention("Photo indisponible.")); });
+    bouton.append(image, el("span", { texte: "Agrandir la photo" }));
+    bouton.addEventListener("click", function () {
+      titrePhoto.textContent = titre;
+      ouvrirFichePhoto.href = lien;
+      var imageGrande = imagePhoto([web, miniature], titre, false, function () {
+        if (grandePhoto.contains(imageGrande)) grandePhoto.replaceChildren(mention("Photo indisponible."));
+      });
+      grandePhoto.replaceChildren(imageGrande);
+      visionneuse.showModal();
+    });
+    return bouton;
+  }
 
   function date(s) {
     var d = new Date(s);
@@ -186,9 +253,11 @@
 
   function carte(c) {
     var photo = c.photo || {};
+    var photoCatalogue = c.personne ? null : photosParId.get(clePhoto(photo.id)) || photosParNumero.get(clePhoto(photo.numero));
+    if (photoCatalogue?.retiree) photoCatalogue = null;
     var titre = c.personne ? c.personne.nom : "Photo " + (photo.numero || photo.id || "");
     var lien = c.personne ? "/arbre/index.html#" + encodeURIComponent(c.personne.id)
-      : "/phototheque/index.html#" + encodeURIComponent(photo.numero || photo.id || "");
+      : "/phototheque/index.html#" + encodeURIComponent(photoCatalogue?.id || photoCatalogue?.numero || photo.numero || photo.id || "");
     var avis = c.avis || {};
     var changements = valeurs(c.historique);
     var voix = valeurs(avis.liste);
@@ -213,17 +282,21 @@
     if (c.retenue && JSON.stringify(c.propose) !== JSON.stringify(c.retenue)) {
       comparer.push(colonne("Valeur retenue", resume(c.retenue), ""));
     }
+    var contenu = [
+      el("dl", { classe: "comparaison-admin" }, comparer),
+      mention(joindre([(avis.confirme || 0) + " confirmation(s)", (avis.doute || 0) + " doute(s)"])),
+      ...complements,
+      c.statut !== "appliquée" ? formulaire(c) : null
+    ];
     return el("article", { classe: "fiche-admin" }, [
       el("div", { classe: "fiche-admin__tete" }, [
         el("h2", null, [el("a", { href: lien, texte: titre })]),
         el("span", { classe: "statut-admin", "data-statut": c.statut, texte: infos[c.statut] || c.statut })
       ]),
       mention(joindre(["Proposition " + c.id, date(c.cree_le), c.auteur?.nom || c.auteur?.email, c.certitude])),
-      el("dl", { classe: "comparaison-admin" }, comparer),
-      mention(joindre([(avis.confirme || 0) + " confirmation(s)", (avis.doute || 0) + " doute(s)"])),
-      ...complements,
-      c.statut !== "appliquée" ? formulaire(c) : null
-    ]);
+    ].concat(c.personne ? contenu : [el("div", { classe: "fiche-admin__photo" }, [
+      vignettePhoto(photoCatalogue, titre, lien), el("div", null, contenu)
+    ])]));
   }
 
   function rendre(texte) {
