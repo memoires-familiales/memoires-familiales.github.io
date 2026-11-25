@@ -51,6 +51,14 @@
   var nav = document.querySelector("[data-nav]");
   if (!nav) return;
 
+  if (page === "accueil") {
+    var lienRecherche = document.querySelector("[data-lien-recherche]");
+    if (lienRecherche && RECHERCHE_DISPONIBLE) lienRecherche.hidden = false;
+    document.querySelectorAll(".accueil [data-icone]").forEach(function (lien) {
+      lien.prepend(icone(lien.getAttribute("data-icone")));
+    });
+  }
+
   var bouton = document.createElement("button");
   bouton.type = "button";
   bouton.className = "menu-bouton";
@@ -98,7 +106,6 @@
       li.appendChild(a);
       liste.appendChild(li);
     });
-    Array.prototype.forEach.call(document.querySelectorAll("[data-etat-famille]"), function (n) { n.textContent = n.getAttribute("data-etat-famille"); });
   }
 
   nav.textContent = "";

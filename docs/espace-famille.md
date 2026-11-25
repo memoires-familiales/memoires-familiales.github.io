@@ -44,7 +44,7 @@ Offres gratuites : Cloudflare Access jusqu'à 50 utilisateurs ; Cloudflare Pages
 - Le script reprend le sommaire depuis `prive/livre.js` et `prive/livre.json`. Pour retrouver ces fichiers sur un autre poste, les copier dans son dossier local `prive/` depuis le dépôt privé. Si celui-ci contient encore l’ancien sommaire dans `data/`, le script le reprend depuis ce clone de sortie et en fait une copie dans `prive/`.
 - Les fichiers propres au dépôt privé sont conservés : `LISEZ-MOI.md`, `404.html`, `test-acces.txt`, `_headers` (avec `Cache-Control: private, no-store`).
 - Le script refuse d'écrire dans le dépôt public. Le dépôt `espace-famille` ne doit jamais devenir public.
-- Dans la copie, `window.ESPACE_FAMILLE = true` (ajouté en tête de `assets/js/site.js`) remplace l'avis « dossier prive de cet ordinateur » par un avis « réservé aux proches », ajoute « Site public » et « Se déconnecter » au menu, remplace les états de l'accueil par ceux des attributs `data-etat-famille`, et le nom du site porte la mention « Espace famille ».
+- Dans la copie, `window.ESPACE_FAMILLE = true` (ajouté en tête de `assets/js/site.js`) remplace l'avis « dossier prive de cet ordinateur » par un avis « réservé aux proches », ajoute « Site public » et « Se déconnecter » au menu, affiche la recherche et masque le bouton de connexion sur l’accueil, et le nom du site porte la mention « Espace famille ».
 
 ## État au 24 novembre 2026
 

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mamili — Mémoires familiales</title>
-<meta name="description" content="Mamili, Rosalie Luque, née Llerena : le livre de ses souvenirs et l'espace numérique de la famille.">
+<title>Mémoires de Mamili — Mémoires familiales</title>
+<meta name="description" content="Le site qui prolonge le livre de Mamili et rassemble les souvenirs de la famille.">
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/site.css">
@@ -17,78 +17,32 @@
   <nav aria-label="Navigation principale" data-nav><a href="phototheque/index.html">Photothèque</a></nav>
 </header>
 
-<main>
-  <section class="ouverture">
-    <h1>Mamili</h1>
-    <p class="sous-titre">Rosalie Luque, née Llerena</p>
-    <ol class="route" aria-label="Les pays de son histoire">
-      <li>Espagne</li>
-      <li>Algérie</li>
-      <li>Maroc</li>
-      <li>France</li>
-    </ol>
-  </section>
+<main class="accueil">
+  <div class="accueil__introduction">
+    <h1>Mémoires de Mamili</h1>
+    <p>Ce site prolonge le travail commencé avec le livre de Mamili, pour enrichir et transmettre la mémoire de notre famille.</p>
+    <p data-lien-public>
+      <a class="bouton accueil__connexion" href="https://espace-famille.pages.dev/" data-icone="famille">Se connecter à l’espace famille</a>
+    </p>
+  </div>
 
-  <article class="recit">
-    <h2>La mémoire de la famille</h2>
-
-    <p>Mamili, Rosalie Luque, née Llerena, était la mémoire de la famille. Elle aimait raconter, et elle savait faire revivre l'histoire de ses grands-parents, partis d'Espagne pour l'Algérie par amour, celle de son enfance à Palissy, celle de chaque visage des boîtes de photos. Elle avait ses expressions, le sens du détail, et cette manière d'entraîner ceux qui l'écoutaient dans ses souvenirs.</p>
-
-    <p>Sa propre vie l'a menée de l'Algérie au Maroc, puis en France, où il a fallu tout recommencer en 1957.</p>
-
-    <p>Ces souvenirs, elle en a écrit une partie dans ses cahiers, entre une recette, une prière et une chanson. Le reste, elle le racontait, jusque dans ses dernières années.</p>
-
-    <p class="envoi">Ce livre réunit ses cahiers et ses récits.</p>
-  </article>
-
-  <section class="prolonger" aria-labelledby="titre-prolonger">
-    <h2 id="titre-prolonger">Prolonger les souvenirs</h2>
-    <p class="chapeau">Autour du livre, ce site rassemblera peu à peu les photographies, la voix de Mamili et les documents de la famille.</p>
-
-    <div class="rubrique-ouverte">
-      <div>
-        <h3>Les photographies de famille</h3>
-        <p>Les photos des boîtes, des albums et des CD de la famille, numérisées une à une. On peut les chercher par personne, par lieu, par année ou par chapitre du livre.</p>
-        <span class="etat" data-etat-famille="Photos en ligne pour la famille">Espace famille</span>
-      </div>
-      <a class="bouton" href="phototheque/index.html">Découvrir la photothèque</a>
-    </div>
-
-    <ul class="sommaire">
-      <li>
-        <div class="ligne"><h3><a href="livre/index.html">Le livre de Mamili</a></h3><span class="etat" data-etat-famille="Sommaire en ligne">Espace famille</span></div>
-        <p>Le sommaire du livre, chapitre par chapitre, avec les photos et les enregistrements qui s'y rattachent.</p>
-      </li>
-      <li>
-        <div class="ligne"><h3><a href="arbre/index.html">Notre arbre généalogique</a></h3><span class="etat" data-etat-famille="Premières branches disponibles — en cours de consolidation">Espace famille</span></div>
-        <p>Une fiche par personne : ses liens de parenté, ses dates et ses lieux, ses photographies et les documents qui la concernent.</p>
-      </li>
-      <li>
-        <div class="ligne"><h3><a href="voix/index.html">La voix de Mamili</a></h3><span class="etat" data-etat-famille="Extraits en ligne pour la famille">Espace famille</span></div>
-        <p>Des extraits de ses enregistrements, avec leur transcription, rangés selon les chapitres du livre.</p>
-      </li>
-      <li>
-        <div class="ligne"><h3><a href="archives/index.html">Les archives familiales</a></h3><span class="etat">Plus tard</span></div>
-        <p>Actes, lettres, articles et cartes qui éclairent son histoire et celle de la famille.</p>
-      </li>
-      <li>
-        <div class="ligne"><h3><a href="films/index.html">Les films de famille</a></h3><span class="etat">Plus tard</span></div>
-        <p>Les films tournés en famille, une fois numérisés.</p>
-      </li>
-      <li>
-        <div class="ligne"><h3><a href="participer/index.html">Participer</a></h3><span class="etat">Ouvert</span></div>
-        <p>Mettre un nom sur un visage, corriger une date, ajouter un souvenir à une photo.</p>
-      </li>
+  <nav aria-label="Rubriques du site">
+    <ul class="accueil__rubriques" role="list">
+      <li><a class="accueil__rubrique" href="livre/index.html" data-icone="livre">Le livre de Mamili</a></li>
+      <li><a class="accueil__rubrique" href="phototheque/index.html" data-icone="phototheque">Photos de famille</a></li>
+      <li><a class="accueil__rubrique" href="voix/index.html" data-icone="voix">La voix de Mamili</a></li>
+      <li><a class="accueil__rubrique" href="arbre/index.html" data-icone="arbre">Arbre généalogique</a></li>
+      <li><a class="accueil__rubrique" href="recettes/index.html" data-icone="recettes">Recettes de famille</a></li>
+      <li><a class="accueil__rubrique" href="archives/index.html" data-icone="archives">Archives familiales</a></li>
+      <li><a class="accueil__rubrique" href="films/index.html" data-icone="films">Films de famille</a></li>
+      <li data-lien-recherche hidden><a class="accueil__rubrique" href="recherche/index.html" data-icone="recherche">Rechercher dans le site</a></li>
+      <li><a class="accueil__rubrique" href="participer/index.html" data-icone="participer">Participer</a></li>
     </ul>
-
-    <p class="note" data-etat-famille="Les photographies, les enregistrements et les documents de cet espace sont réservés aux proches autorisés. Merci de ne pas les diffuser.">Les photographies, les enregistrements et les documents sont réservés aux proches autorisés.</p>
-    <p data-lien-public><a class="bouton" href="https://espace-famille.pages.dev/">Se connecter à l’espace famille</a></p>
-  </section>
+  </nav>
 </main>
 
 <footer class="pied">
   <p>Mémoires familiales</p>
-  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
 </footer>
 
 <script src="assets/js/site.js"></script>
