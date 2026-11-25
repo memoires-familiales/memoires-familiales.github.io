@@ -6,7 +6,8 @@ const DELAI_ROTATION = 60_000;
 function decoder(texte) {
   if (!/^[A-Za-z0-9_-]+$/.test(texte)) throw new Error("Assertion illisible");
   const base64 = texte.replace(/-/g, "+").replace(/_/g, "/");
-  return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+  const remplissage = "=".repeat((4 - base64.length % 4) % 4);
+  return Uint8Array.from(atob(base64 + remplissage), c => c.charCodeAt(0));
 }
 
 function lireJSON(texte) {
@@ -33,7 +34,10 @@ async function cleSignature(domaine, id) {
 export async function courrielAccess(requete, env) {
   const domaine = String(env.ACCESS_TEAM_DOMAIN || "").trim().replace(/\/$/, "");
   const audience = String(env.ACCESS_AUDIENCE || "").trim();
-  const jeton = requete.headers.get("Cf-Access-Jwt-Assertion") || "";
+  // Certaines requêtes navigateur ne transmettent que le cookie Access.
+  // Il passe par les mêmes contrôles cryptographiques que l’en-tête.
+  const cookie = /(?:^|;\s*)CF_Authorization=([^;]+)/.exec(requete.headers.get("Cookie") || "");
+  const jeton = requete.headers.get("Cf-Access-Jwt-Assertion") || cookie?.[1] || "";
   if (!/^https:\/\/[a-z0-9-]+\.cloudflareaccess\.com$/.test(domaine) || !audience || jeton.length > 16000) return "";
   const morceaux = jeton.split(".");
   if (morceaux.length !== 3) return "";
