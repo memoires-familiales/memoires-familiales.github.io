@@ -84,4 +84,9 @@
     minuterie = setTimeout(rendre, 150);
   });
   rendre();
+  var cible = S.ancre();
+  if (cible && cible.classList.contains("document")) {
+    cible.querySelector("details").open = true;
+    cible.scrollIntoView();
+  }
 })();

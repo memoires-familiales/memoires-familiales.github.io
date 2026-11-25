@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Recherche générale — Mémoires familiales</title>
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/recherche.css">
+</head>
+<body data-racine="../" data-page="recherche">
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale" data-nav><a href="../index.html">Accueil</a></nav>
+</header>
+
+<main class="page page-recherche">
+  <div class="tete">
+    <h1>Recherche générale</h1>
+    <p class="resume">La recherche dans les souvenirs et documents de la famille est accessible après connexion.</p>
+  </div>
+  <p><a class="bouton" href="https://espace-famille.pages.dev/recherche/">Se connecter à l’espace famille</a></p>
+</main>
+
+<template data-rubrique-famille>
+<main class="page page-recherche">
+  <div class="tete">
+    <h1>Recherche générale</h1>
+    <p class="resume">Retrouvez une personne, un lieu, un événement ou un passage dans les contenus de l’espace famille.</p>
+  </div>
+  <form class="formulaire-recherche" aria-label="Recherche générale" role="search" id="formulaire-recherche">
+    <label class="visuellement-cache" for="termes">Termes de recherche</label>
+    <div class="ligne-recherche">
+      <input type="search" id="termes" maxlength="160" autocomplete="off" spellcheck="false"
+             placeholder="Un nom, un lieu, une année…" aria-describedby="perimetre-recherche">
+      <button class="bouton" type="submit">Rechercher</button>
+    </div>
+    <p class="perimetre-recherche" id="perimetre-recherche"></p>
+    <label class="filtre-recherche" id="filtre-recherche" hidden>
+      Type de contenu
+      <select id="type-contenu"><option value="">Toutes les rubriques</option></select>
+    </label>
+  </form>
+  <p class="etat-recherche" id="etat-recherche" role="status" aria-atomic="true">Chargement des rubriques…</p>
+  <div id="resultats-recherche"></div>
+</main>
+<script data-src="../data/demo/livre.js"></script>
+<script data-src="../prive/livre.js"></script>
+<script data-src="../data/demo/photos.js"></script>
+<script data-src="../prive/photos.js"></script>
+<script data-src="../data/demo/voix.js"></script>
+<script data-src="../prive/voix.js"></script>
+<script data-src="../data/demo/arbre.js"></script>
+<script data-src="../prive/arbre.js"></script>
+<script data-src="../data/demo/archives.js"></script>
+<script data-src="../prive/archives.js"></script>
+<script data-src="../data/demo/films.js"></script>
+<script data-src="../prive/films.js"></script>
+<script data-src="../prive/recherche-complements.js"></script>
+<script data-src="../assets/js/recherche.js"></script>
+</template>
+
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

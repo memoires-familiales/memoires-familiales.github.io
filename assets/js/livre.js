@@ -64,10 +64,10 @@
   }
 
   var sommaire = document.getElementById("sommaire");
-  (livre.liminaires || []).forEach(function (l) {
+  (livre.liminaires || []).forEach(function (l, i) {
     var prologue = S.normaliser(l.titre) === "prologue";
     var nv = prologue && extraitsParChapitre[0];
-    sommaire.appendChild(el("div", { classe: "liminaire", id: prologue ? "chapitre-0" : null }, [
+    sommaire.appendChild(el("div", { classe: "liminaire", id: prologue ? "chapitre-0" : "liminaire-" + (i + 1) }, [
       ligne(null, l.titre, l.page),
       nv ? el("div", { classe: "liens-croises" }, [lienVoix(nv, "chapitre-0")]) : null
     ]));
@@ -91,13 +91,13 @@
   }
   if ((livre.annexes || []).length) {
     var annexes = el("section", { classe: "partie", "aria-label": "Annexes" }, [el("h2", { texte: "Annexes" })]);
-    livre.annexes.forEach(function (a) { annexes.appendChild(el("div", { classe: "liminaire" }, [ligne(null, a.titre, a.page)])); });
+    livre.annexes.forEach(function (a, i) {
+      annexes.appendChild(el("div", { classe: "liminaire", id: "annexe-" + (i + 1) }, [ligne(null, a.titre, a.page)]));
+    });
     sommaire.appendChild(annexes);
   }
   if (!sommaire.children.length) sommaire.appendChild(el("p", { classe: "vide-rubrique", texte: "Le sommaire n'est pas encore disponible." }));
 
-  if (location.hash.length > 1) {
-    var cible = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-    if (cible) cible.scrollIntoView();
-  }
+  var cible = S.ancre();
+  if (cible) cible.scrollIntoView();
 })();

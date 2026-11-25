@@ -166,8 +166,10 @@
   selEnr.addEventListener("change", rendre);
   rendre();
 
-  if (location.hash.length > 1) {
-    var cible = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-    if (cible) cible.scrollIntoView();
+  var cible = S.ancre();
+  if (cible) {
+    var transcription = cible.querySelector(".transcription");
+    if (cible.classList.contains("extrait") && transcription) transcription.closest("details").open = true;
+    cible.scrollIntoView();
   }
 })();

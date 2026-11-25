@@ -39,6 +39,8 @@ DEPOT_PUBLIC = "memoires-familiales.github.io"
 EXCLUS_SITE = ("outils/", "docs/", "README.md", "AGENTS.md", ".gitignore", ".nojekyll", "data/")
 CONSERVES = ("_headers", ".gitignore", "LISEZ-MOI.md", "404.html", "test-acces.txt", "_routes.json")
 FICHIERS_LIVRE = ("livre.js", "livre.json")
+COMPLEMENTS_RECHERCHE = "prive/recherche-complements.js"
+PDF_LIVRE = "prive/livre.pdf"
 # rubrique : (fichier de prive/, dossier de médias, jeu vide quand la rubrique n'est pas publiée)
 RUBRIQUES = {
     "voix": ("voix.js", "audio", 'window.VOIX = {"modele":2,"mode":"prive","extraits":[],"exclusions":[]};'),
@@ -128,6 +130,30 @@ def main():
                 break
     if not args.sans_donnees and "prive/livre.js" not in a_copier:
         vides["prive/livre.js"] = 'window.LIVRE = {"modele":1,"mode":"prive","parties":[]};'
+    # Le plein texte est facultatif. On conserve la version publiée si aucun
+    # nouveau fichier de compléments n’est présent sur cet ordinateur.
+    vides[COMPLEMENTS_RECHERCHE] = 'window.RECHERCHE_COMPLEMENTS = {"mode":"prive"};'
+    if not args.sans_donnees:
+        for dossier in (args.prive, sortie / "prive"):
+            complements = dossier / Path(COMPLEMENTS_RECHERCHE).name
+            if complements.is_file():
+                contenu = complements.read_text(encoding="utf-8").strip()
+                prefixe = "window.RECHERCHE_COMPLEMENTS = "
+                if not contenu.startswith(prefixe) or not contenu.endswith(";"):
+                    sys.exit(f"Format inattendu : {complements}. Régénérez le fichier avec outils/indexer_livre.py.")
+                index = json.loads(contenu[len(prefixe):-1])
+                pdf = dossier / Path(PDF_LIVRE).name
+                if index.get("pages") and not pdf.is_file():
+                    sys.exit(f"Le fichier {complements} indexe un PDF absent : {pdf}.")
+                a_copier[COMPLEMENTS_RECHERCHE] = complements
+                del vides[COMPLEMENTS_RECHERCHE]
+                if index.get("pages"):
+                    a_copier[PDF_LIVRE] = pdf
+                break
+        if (sortie / PDF_LIVRE).is_file() and PDF_LIVRE not in a_copier and not args.vider:
+            sys.exit("Le PDF du livre serait retiré de l’espace famille. Vérifiez les fichiers privés de la recherche.")
+    elif (sortie / PDF_LIVRE).is_file():
+        sys.exit("Le dossier de sortie contient déjà le PDF du livre. Utilisez un dossier vide pour --sans-donnees.")
     if not args.sans_donnees:
         if not args.prive.is_dir():
             sys.exit(f"Dossier des données introuvable : {args.prive}")

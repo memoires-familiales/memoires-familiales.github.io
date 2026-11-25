@@ -262,3 +262,43 @@ html { scroll-padding-top: 4.5rem; }
   white-space: nowrap;
 }
 .bandeau nav .lien-espace a { color: var(--cafe-fonce); }
+
+.recherche-bandeau {
+  display: flex;
+  align-items: stretch;
+  flex: 0 1 13rem;
+  min-width: 10rem;
+  min-height: 2.25rem;
+  background: var(--carton);
+  border: 1px solid var(--filet);
+  border-radius: 4px;
+}
+
+.recherche-bandeau input,
+.recherche-bandeau button {
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: var(--encre);
+}
+
+.recherche-bandeau input { flex: 1; min-width: 0; padding: 0.35rem 0 0.35rem 0.6rem; font: 1rem var(--sans); }
+.recherche-bandeau button { display: grid; place-items: center; min-width: 2.5rem; padding: 0.3rem; cursor: pointer; }
+.recherche-bandeau button:hover { background: var(--papier); }
+.recherche-bandeau .icone { display: flex; width: 1.2rem; }
+
+html:has(.bandeau--recherche) { scroll-padding-top: 7rem; }
+
+@media (max-width: 72rem) {
+  .bandeau--recherche nav { margin-left: auto; }
+  .bandeau--recherche nav ul { max-height: calc(100dvh - 6.5rem); }
+}
+
+@media (max-width: 36rem) {
+  .bandeau--recherche { flex-wrap: wrap; gap: 0.45rem 0.6rem; padding-block: 0.55rem; }
+  .recherche-bandeau { flex-basis: 100%; }
+}
+
+@media (max-width: 23rem) {
+  .bandeau .mention-espace { display: block; width: fit-content; margin: 0.1rem 0 0; }
+}

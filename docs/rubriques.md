@@ -196,3 +196,20 @@ Le formulaire envoie la contribution **par e-mail à Samuel**, avec ses pièces 
 **Mise en service (une fois)** : au tout premier envoi, FormSubmit écrit à l'adresse de destination pour demander une confirmation. Il faut cliquer sur le lien d'activation ; les messages arrivent ensuite directement. FormSubmit fournit alors une chaîne aléatoire : la mettre à la place de l'adresse dans `ENVOI.destinataire` masque l'adresse e-mail dans le code du site.
 
 Les contributions en ligne avec comptes et modération viendront plus tard ; elles seront stockées à part des imports.
+
+## Recherche générale
+
+Le bandeau des pages privées ouvre `recherche/index.html`. La page cherche dans les catalogues déjà consultables par toute la famille : sommaire du livre, photos, extraits transcrits, arbre, archives et films. Elle écarte les photos retirées, les audios exclus et les dates masquées par l’arbre. Les termes sont traités dans le navigateur et conservés dans le fragment de l’adresse, après `#`, pour revenir à la recherche. Les résultats ouvrent la fiche, le chapitre, la transcription ou le film correspondant.
+
+La recherche rapproche les accents, les variantes courantes de pluriels et les noms de l’arbre lorsque le nom de naissance, le nom d’usage ou le surnom identifient une seule fiche. En l’absence de résultat, elle essaie aussi les orthographes proches. Pour compléter ces rapprochements, on peut fournir un fichier JSON privé constitué de groupes de synonymes confirmés (noms, surnoms ou anciennes appellations de lieux).
+
+Pour ajouter le texte intégral, partir du PDF définitif approuvé pour l’espace famille. Placer une copie dans `prive/livre.pdf` et extraire son texte en conservant les séparateurs de pages. Le fichier `prive/recherche-complements.js` qui en résulte reste privé :
+
+```bash
+pdftotext -enc UTF-8 prive/livre.pdf prive/livre-pages.txt
+python3 outils/indexer_livre.py prive/livre-pages.txt
+```
+
+Le résultat ouvre la bonne page du PDF. Si les folios imprimés suivent un décalage constant **vérifié**, `--decalage D` indique `folio imprimé − numéro de page PDF`. L’option `--alias prive/alias-recherche.json` ajoute les groupes de synonymes. Elle peut aussi être utilisée seule, sans texte de PDF. Vérifier les limites Cloudflare Pages avant d’ajouter le PDF.
+
+La recherche porte sur les catalogues du tronc commun. Les corrections, enquêtes et futurs contenus réservés à certains groupes nécessiteront un filtrage côté serveur avant de pouvoir être recherchés.

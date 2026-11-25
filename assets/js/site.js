@@ -8,6 +8,7 @@
   var ADRESSE_ESPACE_FAMILLE = "https://espace-famille.pages.dev/";
   // Vrai dans la copie de l'espace famille : outils/preparer_espace_famille.py l'y déclare.
   var ESPACE_FAMILLE = window.ESPACE_FAMILLE === true;
+  var RECHERCHE_DISPONIBLE = ESPACE_FAMILLE || location.protocol === "file:";
 
   var RUBRIQUES = [
     { id: "accueil", titre: "Accueil", chemin: "index.html" },
@@ -29,6 +30,7 @@
     voix: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M5.8 11.2a6.2 6.2 0 0 0 12.4 0"/><path d="M12 17.4V20.5M9.2 20.5h5.6"/>',
     archives: '<rect x="3.5" y="4.5" width="17" height="4.5" rx="1"/><path d="M5 9v10.5h14V9"/><path d="M10 13h4"/>',
     films: '<rect x="4.5" y="3.5" width="15" height="17" rx="1.5"/><path d="M8.5 3.5v17M15.5 3.5v17M4.5 8h4M4.5 12h4M4.5 16h4M15.5 8h4M15.5 12h4M15.5 16h4"/>',
+    recherche: '<circle cx="10.5" cy="10.5" r="5.5"/><path d="m14.5 14.5 4.5 4.5"/>',
     famille: '<rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/><path d="M12 14.5v2.5"/>',
     participer: '<path d="M4.5 19.5 5.6 15 15.8 4.8a2 2 0 0 1 2.9 2.9L8.5 17.9Z"/><path d="m14.2 6.4 2.9 2.9"/><path d="M12 19.5h7.5"/>'
   };
@@ -97,6 +99,36 @@
   nav.appendChild(bouton);
   nav.appendChild(liste);
 
+  var bandeau = nav.closest(".bandeau");
+  if (bandeau && RECHERCHE_DISPONIBLE && page !== "recherche") {
+    var recherche = document.createElement("form");
+    var champ = document.createElement("input");
+    var lancer = document.createElement("button");
+    var adresseRecherche = racine + "recherche/index.html";
+    recherche.className = "recherche-bandeau";
+    recherche.action = adresseRecherche;
+    recherche.setAttribute("role", "search");
+    recherche.setAttribute("aria-label", "Recherche dans l’espace famille");
+    champ.type = "search";
+    champ.placeholder = "Rechercher dans le site";
+    champ.maxLength = 160;
+    champ.autocomplete = "off";
+    champ.spellcheck = false;
+    champ.setAttribute("aria-label", champ.placeholder);
+    lancer.type = "submit";
+    lancer.setAttribute("aria-label", "Ouvrir la recherche générale");
+    lancer.appendChild(icone("recherche"));
+    recherche.appendChild(champ);
+    recherche.appendChild(lancer);
+    recherche.addEventListener("submit", function (evenement) {
+      evenement.preventDefault();
+      var termes = champ.value.trim();
+      location.href = adresseRecherche + (termes ? "#" + new URLSearchParams({ q: termes }) : "");
+    });
+    bandeau.classList.add("bandeau--recherche");
+    bandeau.appendChild(recherche);
+  }
+
   // Dans l'espace famille, le nom du site porte la mention « Espace famille »
   var nomSite = document.querySelector(".bandeau__nom");
   if (ESPACE_FAMILLE && nomSite && !nomSite.querySelector(".mention-espace")) {
@@ -120,7 +152,6 @@
   document.addEventListener("click", function (e) { if (!nav.contains(e.target)) fermer(); });
 
   // Une ombre légère sous la barre quand la page défile
-  var bandeau = nav.closest(".bandeau");
   function ombre() { if (bandeau) bandeau.classList.toggle("defile", window.scrollY > 4); }
   window.addEventListener("scroll", ombre, { passive: true });
   ombre();
@@ -128,6 +159,10 @@
   // Outils partagés par les pages de rubrique
   window.SITE = {
     racine: racine,
+    ancre: function () {
+      try { return document.getElementById(decodeURIComponent(location.hash.slice(1))); }
+      catch (e) { return null; }
+    },
     // Réception des contributions (formulaire « Participer », corrections des photos) par FormSubmit.
     // Après activation, FormSubmit fournit une chaîne aléatoire à mettre à la place de l'adresse.
     contributions: {

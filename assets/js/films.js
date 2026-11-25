@@ -46,4 +46,6 @@
     ]));
   });
   if (!zone.children.length) zone.appendChild(el("p", { classe: "vide-rubrique", texte: "Aucun film n'est encore numérisé." }));
+  var cible = S.ancre();
+  if (cible && cible.parentElement === zone) cible.scrollIntoView();
 })();
