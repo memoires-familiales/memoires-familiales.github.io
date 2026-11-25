@@ -217,10 +217,11 @@ def main():
     for nom, contenu in (("_headers", ENTETES), (".gitignore", ".DS_Store\n"), ("LISEZ-MOI.md", LISEZ_MOI)):
         if not (sortie / nom).exists():
             (sortie / nom).write_text(contenu, encoding="utf-8")
-    # Cloudflare Pages Functions (base des corrections) : ne les lancer que pour /api/*,
-    # les pages et les images restent servies directement (et ne comptent pas dans le quota gratuit).
+    # Seules l’API et la page d’administration passent par Pages Functions.
     if any(r.startswith("functions/") for r in a_copier):
-        (sortie / "_routes.json").write_text(json.dumps({"version": 1, "include": ["/api/*"], "exclude": []}) + "\n",
+        (sortie / "_routes.json").write_text(json.dumps({
+            "version": 1, "include": ["/api/*", "/administration", "/administration/*"], "exclude": []
+        }) + "\n",
                                              encoding="utf-8")
 
     nb = len(a_copier) + len(vides)

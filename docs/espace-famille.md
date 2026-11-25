@@ -55,15 +55,19 @@ Offres gratuites : Cloudflare Access jusqu'à 50 utilisateurs ; Cloudflare Pages
 
 ## La base des corrections (Cloudflare D1)
 
-Les corrections proposées depuis les fiches des photos sont enregistrées dans l'espace famille lui-même : Cloudflare Pages Functions (`functions/api/corrections/[[chemin]].js`, copié par le script avec un `_routes.json` qui limite les fonctions à `/api/*`) et une base Cloudflare D1, gratuite. Derrière Access, seuls les proches y accèdent ; l'adresse de connexion est enregistrée avec chaque proposition (un accès autorisé par adresse IP n'en a pas : le nom saisi suffit).
+Les corrections proposées depuis les photos et les fiches de l’arbre sont enregistrées dans l’espace famille via Pages Functions et la base Cloudflare D1. Les proches continuent de proposer des corrections et de donner leur avis. L’adresse de connexion est enregistrée lorsqu’une assertion Access valide l’identifie.
 
 Mise en place (une fois, dans le tableau de bord Cloudflare) :
 1. **Storage & Databases → D1 → Create** : nom `corrections-famille` (emplacement : Europe de l'Ouest).
 2. **Workers & Pages → espace-famille → Settings → Bindings → Add → D1 database** : nom de la variable `CORRECTIONS`, base `corrections-famille`, pour la production (et l'aperçu si proposé).
-3. **Settings → Variables and Secrets → Add** : `RESPONSABLES` = l'adresse de Samuel (plusieurs adresses séparées par des virgules) : ces personnes peuvent changer le statut d'une proposition.
+3. **Settings → Variables and Secrets** : configurer `ACCESS_TEAM_DOMAIN` (URL HTTPS de l’équipe Access), `ACCESS_AUDIENCE` (AUD de l’application de production) et une adresse unique dans `RESPONSABLES`. `ADMIN_CORRECTIONS_EMAIL` permet de définir explicitement le compte d’administration si nécessaire.
 4. Redéployer (le prochain envoi sur le dépôt privé, ou « Retry deployment » sur le dernier déploiement) : les liaisons ne s'appliquent qu'aux nouveaux déploiements.
 
 Les tables se créent au premier appel. Tant que la base n'est pas reliée, la fenêtre de correction envoie par e-mail (FormSubmit) et la page `participer/corrections.html` le dit.
 
-Adresses : `GET /api/corrections` (liste, `?photo=P0001`), `GET /api/corrections?format=csv` ou `json` (export complet, avec les adresses), `GET /api/corrections/etat`, `POST /api/corrections`, `POST /api/corrections/<id>/avis` (`confirme` ou `doute`, une voix par personne), `POST /api/corrections/<id>/statut` (`proposée`, `confirmée`, `à vérifier`, `appliquée`, `rejetée`, réservé à `RESPONSABLES`). Pour Claude : lire l'export dans un navigateur connecté à l'espace famille (navigateur intégré de l'app Claude), ou que Samuel dépose l'export sur le Drive.
+L’[administration des corrections](https://espace-famille.pages.dev/administration/) compare la valeur sur la fiche ou à la date de la proposition avec la correction proposée. Elle permet d’accepter, de modifier puis accepter, de consigner une précision à obtenir ou de refuser. Le lot CSV ou JSON contient les corrections acceptées à reporter dans les sources. Après report et vérification, l’administrateur peut les marquer comme intégrées.
+
+La page, la liste de modération, les exports et les décisions vérifient côté serveur la signature, l’émetteur, l’audience et la validité du jeton Access, ainsi que l’adresse de l’unique administrateur. L’historique D1 conserve les décisions, dates, motifs et versions retenues. La proposition familiale initiale reste consultable et le tableau n’écrit dans aucun fichier source.
+
+Les appels utilisés par les proches sont `GET /api/corrections` (filtrable avec `?photo=…` ou `?personne=…`), `GET /api/corrections/etat`, `POST /api/corrections` et `POST /api/corrections/<id>/avis`. Leur liste exclut les coordonnées, notes et valeurs retenues pour la modération. Les exports réservés au compte d’administration sont disponibles en CSV ou JSON. `lot=1` sélectionne les corrections acceptées restant à intégrer.
 
