@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recettes de famille — Mémoires familiales</title>
+<meta name="description" content="Le carnet de recettes de la famille, des grandes tablées aux desserts.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/recettes.css">
+</head>
+<body data-racine="../" data-page="recettes">
+<header class="bandeau">
+  <a class="bandeau__nom" href="../index.html">Mémoires familiales</a>
+  <nav aria-label="Navigation principale" data-nav><a href="../index.html">Accueil</a></nav>
+</header>
+<main class="page recettes">
+  <div class="tete">
+    <h1>Recettes de famille</h1>
+    <p class="resume">Les recettes et les carnets de cuisine se consultent dans l’espace famille.</p>
+  </div>
+  <p><a class="bouton" href="https://espace-famille.pages.dev/recettes/">Ouvrir le carnet de recettes</a></p>
+</main>
+<template data-rubrique-famille>
+<main class="page recettes">
+  <div class="tete">
+    <h1>Recettes de famille</h1>
+    <p class="resume">Les grandes tablées, les douceurs et les préparations gardées dans les carnets de la famille.</p>
+  </div>
+  <div class="filtres-recettes" id="filtres-recettes" role="search" aria-label="Rechercher et filtrer les recettes">
+    <label for="q-recettes">Chercher une recette
+      <input id="q-recettes" type="search" placeholder="Titre, ingrédient, prénom…" autocomplete="off">
+    </label>
+    <label for="type-recettes">Catégorie
+      <select id="type-recettes"><option value="">Toutes les catégories</option></select>
+    </label>
+    <label for="recueil-recettes">Recueil
+      <select id="recueil-recettes"><option value="">Tous les recueils</option></select>
+    </label>
+    <label for="etat-recettes">Afficher
+      <select id="etat-recettes">
+        <option value="cuisiner">Fiches avec ingrédients et préparation</option>
+        <option value="tout">Toutes les recettes repérées</option>
+        <option value="completer">Fiches à compléter</option>
+      </select>
+    </label>
+  </div>
+  <p id="compte-recettes" class="recettes__compte" role="status"></p>
+  <div id="liste-recettes"></div>
+</main>
+<script data-src="../prive/recettes.js"></script>
+<script data-src="../assets/js/recettes.js"></script>
+</template>
+<footer class="pied">
+  <p>Mémoires familiales</p>
+  <em>Préserver notre histoire, transmettre nos souvenirs.</em>
+</footer>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

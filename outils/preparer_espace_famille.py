@@ -43,6 +43,8 @@ FICHIERS_LIVRE = ("livre.js", "livre.json")
 COMPLEMENTS_RECHERCHE = "prive/recherche-complements.js"
 PDF_LIVRE = "prive/livre.pdf"
 ICONE_IOS = "apple-touch-icon.png"
+CATALOGUE_RECETTES = "prive/recettes.js"
+MEDIAS_RECETTES = "prive/recettes"
 # rubrique : (fichier de prive/, dossier de médias, jeu vide quand la rubrique n'est pas publiée)
 RUBRIQUES = {
     "voix": ("voix.js", "audio", 'window.VOIX = {"modele":2,"mode":"prive","extraits":[],"exclusions":[]};'),
@@ -126,6 +128,21 @@ def main():
             if source_icone.is_file():
                 a_copier[ICONE_IOS] = source_icone
                 break
+
+    # Le carnet est indépendant de la sélection des rubriques importées.
+    if args.sans_donnees:
+        if (sortie / CATALOGUE_RECETTES).is_file():
+            sys.exit("Le dossier de sortie contient déjà le carnet privé. Utilisez un dossier vide pour --sans-donnees.")
+    else:
+        for dossier in (args.prive, sortie / "prive"):
+            index_recettes = dossier / "recettes.js"
+            if not index_recettes.is_file():
+                continue
+            a_copier[CATALOGUE_RECETTES] = index_recettes
+            for fichier in (dossier / "recettes").glob("*"):
+                if fichier.is_file() and fichier.suffix in (".jpg", ".webp"):
+                    a_copier[f"{MEDIAS_RECETTES}/{fichier.name}"] = fichier
+            break
 
     # L’ancien sommaire du dépôt privé sert de source si le dossier local n’en a pas.
     anciens_livres = {"data/" + fichier for fichier in FICHIERS_LIVRE}
