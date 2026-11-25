@@ -24,6 +24,7 @@ Ce que le script copie :
   - de prive/ : le fichier de données de chaque rubrique choisie, prive/audio/ avec la voix et
     prive/images/ avec la photothèque. Le catalogue de la voix (prive/voix/), les rapports,
     l'historique et les réglages d'import restent sur l'ordinateur.
+  - l’icône iOS, si disponible, est placée à la racine du site privé pour Safari.
 Les fichiers propres au dépôt privé (LISEZ-MOI.md, 404.html, test-acces.txt, _headers) sont conservés.
 Il déclare enfin le mode « espace famille » en tête de assets/js/site.js.
 """
@@ -41,6 +42,7 @@ CONSERVES = ("_headers", ".gitignore", "LISEZ-MOI.md", "404.html", "test-acces.t
 FICHIERS_LIVRE = ("livre.js", "livre.json")
 COMPLEMENTS_RECHERCHE = "prive/recherche-complements.js"
 PDF_LIVRE = "prive/livre.pdf"
+ICONE_IOS = "apple-touch-icon.png"
 # rubrique : (fichier de prive/, dossier de médias, jeu vide quand la rubrique n'est pas publiée)
 RUBRIQUES = {
     "voix": ("voix.js", "audio", 'window.VOIX = {"modele":2,"mode":"prive","extraits":[],"exclusions":[]};'),
@@ -115,6 +117,16 @@ def main():
 
     a_copier = {n: RACINE / n for n in fichiers_du_site()}
     vides = {}
+    icone_en_ligne = sortie / ICONE_IOS
+    if args.sans_donnees:
+        if icone_en_ligne.is_file():
+            sys.exit("Le dossier de sortie contient déjà l’icône privée. Utilisez un dossier vide pour --sans-donnees.")
+    else:
+        for source_icone in (args.prive / ICONE_IOS, icone_en_ligne):
+            if source_icone.is_file():
+                a_copier[ICONE_IOS] = source_icone
+                break
+
     # L’ancien sommaire du dépôt privé sert de source si le dossier local n’en a pas.
     anciens_livres = {"data/" + fichier for fichier in FICHIERS_LIVRE}
     for fichier in FICHIERS_LIVRE:
@@ -226,7 +238,7 @@ def main():
 
     nb = len(a_copier) + len(vides)
     taille = sum(f.stat().st_size for f in sortie.rglob("*") if f.is_file() and ".git" not in f.relative_to(sortie).parts)
-    nb_prive = sum(1 for r in a_copier if r.startswith("prive/"))
+    nb_prive = sum(1 for r in a_copier if r.startswith("prive/") or r == ICONE_IOS)
     print(f"Espace famille assemblé dans {sortie} : {nb} fichiers dont {nb_prive} de données, {taille / 1e6:.1f} Mo")
     if not args.sans_donnees:
         publiees = [r for r in choisies if r in RUBRIQUES]
