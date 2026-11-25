@@ -31,6 +31,7 @@
     archives: '<rect x="3.5" y="4.5" width="17" height="4.5" rx="1"/><path d="M5 9v10.5h14V9"/><path d="M10 13h4"/>',
     films: '<rect x="4.5" y="3.5" width="15" height="17" rx="1.5"/><path d="M8.5 3.5v17M15.5 3.5v17M4.5 8h4M4.5 12h4M4.5 16h4M15.5 8h4M15.5 12h4M15.5 16h4"/>',
     recherche: '<circle cx="10.5" cy="10.5" r="5.5"/><path d="m14.5 14.5 4.5 4.5"/>',
+    administration: '<path d="M12 3.5c-2 1.5-4.4 2.5-7 3v5c0 4.4 2.7 7.7 7 9.5 4.3-1.8 7-5.1 7-9.5v-5c-2.6-.5-5-1.5-7-3Z"/><path d="m9 12 2 2 4-4"/>',
     famille: '<rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/><path d="M12 14.5v2.5"/>',
     participer: '<path d="M4.5 19.5 5.6 15 15.8 4.8a2 2 0 0 1 2.9 2.9L8.5 17.9Z"/><path d="m14.2 6.4 2.9 2.9"/><path d="M12 19.5h7.5"/>'
   };
@@ -57,7 +58,7 @@
 
   var liste = document.createElement("ul");
   liste.id = "menu-principal";
-  RUBRIQUES.forEach(function (r) {
+  function entreeMenu(r) {
     var li = document.createElement("li");
     var a = document.createElement("a");
     a.href = racine + r.chemin;
@@ -65,7 +66,10 @@
     a.appendChild(document.createTextNode(r.titre));
     if (r.id === page) a.setAttribute("aria-current", "page");
     li.appendChild(a);
-    liste.appendChild(li);
+    return li;
+  }
+  RUBRIQUES.forEach(function (r) {
+    liste.appendChild(entreeMenu(r));
   });
 
   if (ADRESSE_ESPACE_FAMILLE && !ESPACE_FAMILLE) {
@@ -98,6 +102,32 @@
   nav.textContent = "";
   nav.appendChild(bouton);
   nav.appendChild(liste);
+
+  if (ESPACE_FAMILLE && location.protocol === "https:" && window.fetch) {
+    var entreeAdmin = entreeMenu({ id: "administration", titre: "Administration", chemin: "administration/" });
+    var verificationAdmin;
+    function verifierMenuAdmin() {
+      verificationAdmin = new AbortController();
+      var signal = verificationAdmin.signal;
+      window.fetch("/api/corrections/etat", {
+        credentials: "same-origin", cache: "no-store", redirect: "error", signal: signal
+      }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).then(function (etat) {
+        if (!signal.aborted && etat?.responsable === true) {
+          liste.insertBefore(entreeAdmin, liste.querySelector(".lien-espace"));
+        }
+      }).catch(function () { /* L’entrée reste masquée si le rôle n’est pas vérifiable. */ });
+    }
+    verifierMenuAdmin();
+    window.addEventListener("pagehide", function () {
+      verificationAdmin.abort();
+      entreeAdmin.remove();
+    });
+    window.addEventListener("pageshow", function (e) {
+      if (e.persisted) verifierMenuAdmin();
+    });
+  }
 
   var bandeau = nav.closest(".bandeau");
   if (bandeau && RECHERCHE_DISPONIBLE && page !== "recherche") {
