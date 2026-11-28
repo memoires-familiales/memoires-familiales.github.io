@@ -3,6 +3,7 @@
   "use strict";
   var S = window.SITE, el = S.el;
   var arbre = window.ARBRE || { personnes: [] };
+  var I = window.IDENTITES;
   var personnes = arbre.personnes || [];
   var parId = {};
   personnes.forEach(function (p) { parId[p.id] = p; });
@@ -20,11 +21,11 @@
   if (S.memeNature(phototheque, arbre)) {
     (phototheque.photos || []).forEach(function (ph) {
       if (ph.retiree) return;
-      (ph.personnes || []).forEach(function (n) { nbPhotos[n] = (nbPhotos[n] || 0) + 1; });
+      (I?.noms(ph.personnes) || ph.personnes || []).forEach(function (n) { nbPhotos[n] = (nbPhotos[n] || 0) + 1; });
     });
   }
 
-  function nom(p) { return [p.prenoms, p.nom_usage || p.nom].filter(Boolean).join(" "); }
+  function nom(p) { return I?.nomDe(p) || [p.prenoms, p.nom_usage || p.nom].filter(Boolean).join(" "); }
   function naissanceNom(p) {
     if (!p.nom_usage || p.nom_usage === p.nom) return "";
     return (p.sexe === "M" ? "né " : p.sexe === "F" ? "née " : "né(e) ") + p.nom;
@@ -126,7 +127,7 @@
     if (p.certitude) ligneFiche(dl, "Fiabilité", el("span", { classe: "etiquette" + (p.certitude === "confirmé" ? " etiquette--prete" : ""), texte: p.certitude === "confirmé" ? "Confirmé par des documents" : "À vérifier" }));
     var appellation = (p.photos || [])[0];
     if (appellation) {
-      var n = nbPhotos[appellation] || 0;
+      var n = nbPhotos[I?.nom(appellation) || appellation] || 0;
       ligneFiche(dl, "Photos", el("a", { href: S.lienPhotos({ p: appellation }), texte: n ? "Voir ses " + S.pluriel(n, "photo", "photos") : "Chercher ses photos" }));
     }
     fiche.appendChild(dl);
@@ -145,7 +146,7 @@
     return (a.nom_usage || a.nom).localeCompare(b.nom_usage || b.nom, "fr") || a.prenoms.localeCompare(b.prenoms, "fr");
   });
   tri.forEach(function (p) {
-    p._texte = S.normaliser([p.prenoms, p.nom, p.nom_usage, p.surnom, (p.photos || []).join(" ")].join(" "));
+    p._texte = S.normaliser([p.prenoms, p.nom, p.nom_usage, p.surnom, ...(p.photos || []), ...(I?.variantes(nom(p)) || [])].join(" "));
     var b = el("button", { type: "button", "data-id": p.id }, [nom(p), el("small", { texte: [p.surnom, dates(p)].filter(Boolean).join(", ") || " " })]);
     b.addEventListener("click", function () {
       afficher(p.id, true);
@@ -154,6 +155,7 @@
     liste.appendChild(el("li", { "data-texte": p._texte }, [b]));
   });
 
+  I?.suggestions(document.getElementById("q-personne"));
   document.getElementById("q-personne").addEventListener("input", function () {
     var mots = S.normaliser(this.value).split(/\s+/).filter(Boolean);
     liste.querySelectorAll("li").forEach(function (li) {

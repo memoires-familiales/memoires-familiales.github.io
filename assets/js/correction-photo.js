@@ -7,6 +7,7 @@
   "use strict";
 
   var SITE = window.SITE || {};
+  var I = window.IDENTITES;
   var normaliser = SITE.normaliser || function (s) {
     return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   };
@@ -41,7 +42,7 @@
   function construireListes(photos) {
     var personnes = {}, lieux = {}, evenements = {};
     photos.forEach(function (p) {
-      (p.personnes || []).forEach(function (n) { personnes[n] = (personnes[n] || 0) + 1; });
+      (I?.noms(p.personnes) || p.personnes || []).forEach(function (n) { personnes[n] = (personnes[n] || 0) + 1; });
       var l = texteLieu(p);
       if (l) lieux[l] = (lieux[l] || 0) + 1;
       if (p.lieu && p.lieu.ville) {
@@ -53,7 +54,11 @@
     function enListe(o) {
       return Object.keys(o).map(function (k) { return { texte: k, nb: o[k], cle: normaliser(k) }; });
     }
-    listes = { personnes: enListe(personnes), lieux: enListe(lieux), evenements: enListe(evenements) };
+    var noms = enListe(personnes).map(function (entree) {
+      entree.variantes = I?.variantes(entree.texte).map(normaliser);
+      return entree;
+    });
+    listes = { personnes: noms, lieux: enListe(lieux), evenements: enListe(evenements) };
   }
 
   // Chaque mot tapé doit commencer un mot du nom (« jo luq » trouve « Joséphine … LUQUE »).
@@ -61,8 +66,10 @@
     var mots = normaliser(saisie).split(/[^a-z0-9]+/).filter(Boolean);
     if (!mots.length) return [];
     return liste.filter(function (e) {
-      var morceaux = e.cle.split(/[^a-z0-9]+/).filter(Boolean);
-      return mots.every(function (m) { return morceaux.some(function (x) { return x.indexOf(m) === 0; }); });
+      return (e.variantes || [e.cle]).some(function (variante) {
+        var morceaux = variante.split(/[^a-z0-9]+/).filter(Boolean);
+        return mots.every(function (m) { return morceaux.some(function (x) { return x.indexOf(m) === 0; }); });
+      });
     }).sort(function (a, b) {
       var pa = a.cle.indexOf(mots[0]) === 0 ? 0 : 1, pb = b.cle.indexOf(mots[0]) === 0 ? 0 : 1;
       return pa - pb || b.nb - a.nb || a.texte.localeCompare(b.texte, "fr");
@@ -105,7 +112,8 @@
           options.unite ? el("small", { texte: e.nb + " " + (e.nb > 1 ? options.unite[1] : options.unite[0]) }) : null
         ]));
       });
-      var exact = choix.some(function (e) { return e.cle === normaliser(saisie); });
+      var exacte = normaliser(saisie);
+      var exact = choix.some(function (e) { return (e.variantes || [e.cle]).includes(exacte); });
       if (saisie && !exact && options.libre) {
         var i = choix.length;
         choix.push({ texte: saisie, nouveau: true });

@@ -45,6 +45,7 @@ PDF_LIVRE = "prive/livre.pdf"
 ICONE_IOS = "apple-touch-icon.png"
 CATALOGUE_RECETTES = "prive/recettes.js"
 MEDIAS_RECETTES = "prive/recettes"
+IDENTITES = "prive/identites.js"
 # rubrique : (fichier de prive/, dossier de médias, jeu vide quand la rubrique n'est pas publiée)
 RUBRIQUES = {
     "voix": ("voix.js", "audio", 'window.VOIX = {"modele":2,"mode":"prive","extraits":[],"exclusions":[]};'),
@@ -127,6 +128,17 @@ def main():
         for source_icone in (args.prive / ICONE_IOS, icone_en_ligne):
             if source_icone.is_file():
                 a_copier[ICONE_IOS] = source_icone
+                break
+
+    # Les appellations confirmées complètent l’arbre dans la recherche et les fiches.
+    if args.sans_donnees:
+        if (sortie / IDENTITES).is_file():
+            sys.exit("Le dossier de sortie contient déjà des identités privées. Utilisez un dossier vide pour --sans-donnees.")
+    else:
+        for dossier in (args.prive, sortie / "prive"):
+            source_identites = dossier / Path(IDENTITES).name
+            if source_identites.is_file():
+                a_copier[IDENTITES] = source_identites
                 break
 
     # Le carnet est indépendant de la sélection des rubriques importées.

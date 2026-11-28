@@ -39,6 +39,14 @@
 .recette__image { width: 5.25rem; height: 4.5rem; object-fit: cover; border-radius: 3px; }
 .recette__titre { display: block; font-size: 1.25rem; line-height: 1.2; }
 .recette__meta { display: block; margin: 0.35rem 0 0; }
+.recette__personnes { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+.recette__personne {
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.5rem;
+  background: var(--papier);
+  color: var(--encre);
+  font: 0.92rem/1.35 var(--sans);
+}
 .recette__contenu { padding: 0.85rem 1rem 1rem; border-top: 1px solid var(--filet); }
 .recette__contenu h3 { margin: 0.65rem 0 0.25rem; font-size: 1.1rem; }
 .recette__contenu ul, .recette__contenu ol { margin: 0; padding-inline-start: 1.4rem; }

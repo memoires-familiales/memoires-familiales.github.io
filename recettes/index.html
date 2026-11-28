@@ -30,13 +30,13 @@
   </div>
   <div class="filtres-recettes" id="filtres-recettes" role="search" aria-label="Rechercher et filtrer les recettes">
     <label for="q-recettes">Chercher une recette
-      <input id="q-recettes" type="search" placeholder="Titre, ingrédient, prénom…" autocomplete="off">
+      <input id="q-recettes" type="search" placeholder="Titre, ingrédient, nom ou surnom…" autocomplete="off">
     </label>
     <label for="type-recettes">Catégorie
       <select id="type-recettes"><option value="">Toutes les catégories</option></select>
     </label>
-    <label for="recueil-recettes">Recueil
-      <select id="recueil-recettes"><option value="">Tous les recueils</option></select>
+    <label for="personne-recettes">Personne
+      <select id="personne-recettes"><option value="">Toutes les attributions</option></select>
     </label>
     <label for="etat-recettes">Afficher
       <select id="etat-recettes">
@@ -50,6 +50,9 @@
   <div id="liste-recettes"></div>
 </main>
 <script data-src="../prive/recettes.js"></script>
+<script data-src="../prive/arbre.js"></script>
+<script data-src="../prive/identites.js"></script>
+<script data-src="../assets/js/identites.js"></script>
 <script data-src="../assets/js/recettes.js"></script>
 </template>
 <footer class="pied">

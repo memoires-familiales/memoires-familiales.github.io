@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var S = window.SITE, el = S.el;
+  var S = window.SITE, el = S.el, I = window.IDENTITES;
   var champ = document.getElementById("termes");
   var filtre = document.getElementById("type-contenu");
   var etat = document.getElementById("etat-recherche");
@@ -11,7 +11,7 @@
 
   var RUBRIQUES = {
     livre: "Le livre", phototheque: "Photothèque", voix: "La voix de Mamili",
-    arbre: "Arbre généalogique", archives: "Archives", films: "Films"
+    arbre: "Arbre généalogique", recettes: "Recettes de famille", archives: "Archives", films: "Films"
   };
   var catalogues = [window.LIVRE, window.PHOTOTHEQUE, window.VOIX, window.ARBRE,
     window.ARCHIVES, window.FILMS, window.RECHERCHE_COMPLEMENTS];
@@ -59,7 +59,8 @@
   function date(d) { return d && (d.libelle || d.annee); }
   function chapitre(c) { return c && joindre([c.numero != null && "Chapitre " + c.numero, c.titre], " — "); }
   function pageImprimée(n) { return n ? "Page imprimée " + n : ""; }
-  function nom(p) { return joindre([p.prenoms, p.nom_usage || p.nom], " "); }
+  function nom(p) { return I?.nomDe(p) || joindre([p.prenoms, p.nom_usage || p.nom], " "); }
+  function noms(valeurs) { return I?.noms(valeurs) || valeurs; }
 
   var livre = catalogue(window.LIVRE);
   (livre.liminaires || []).forEach(function (l, i) {
@@ -90,13 +91,13 @@
     if (p.retiree) return;
     var lieu = p.lieu || {};
     ajouter("phototheque", p.numero || p.id, p.titre || p.evenement || ("Photo " + (p.numero || "")),
-      [p.numero, date(p.date), lieu.precis, lieu.ville, lieu.pays, p.evenement, p.personnes, p.chapitre],
+      [p.numero, date(p.date), lieu.precis, lieu.ville, lieu.pays, p.evenement, noms(p.personnes), p.chapitre],
       [p.legende, p.notes !== p.legende && p.notes, p.autres_mentions, p.mots_cles, p.provenance, p.type]);
   });
 
   (catalogue(window.VOIX).extraits || []).forEach(function (v) {
     if (v.statut === "exclu") return;
-    ajouter("voix", v.id, v.titre, [chapitre(v.chapitre), v.personnes, v.lieux, v.type], [v.transcription, v.resume]);
+    ajouter("voix", v.id, v.titre, [chapitre(v.chapitre), noms(v.personnes), v.lieux, v.type], [v.transcription, v.resume]);
   });
 
   var personnes = catalogue(window.ARBRE).personnes || [];
@@ -109,32 +110,30 @@
 
   var archives = catalogue(window.ARCHIVES);
   (archives.documents || []).forEach(function (d) {
-    ajouter("archives", d.id, d.titre, [(archives.types || {})[d.type], date(d.date), d.lieu, d.personnes, chapitre(d.chapitre)],
+    ajouter("archives", d.id, d.titre, [(archives.types || {})[d.type], date(d.date), d.lieu, noms(d.personnes), chapitre(d.chapitre)],
       [d.description, d.source, d.transcription]);
   });
 
   (catalogue(window.FILMS).films || []).forEach(function (f) {
-    ajouter("films", f.id, f.titre, [date(f.date), f.lieu, f.personnes, chapitre(f.chapitre), f.support],
+    ajouter("films", f.id, f.titre, [date(f.date), f.lieu, noms(f.personnes), chapitre(f.chapitre), f.support],
       [f.description, (f.sequences || []).map(function (s) { return joindre([s.debut, s.titre], " "); })]);
   });
 
-  // On rapproche seulement les appellations précises et sans homonyme connu.
-  var noms = new Map();
-  var groupesPersonnes = personnes.map(function (p) {
-    var groupe = new Set([
-      nom(p), joindre([p.prenoms, p.nom], " "), p.surnom
-    ].concat(p.photos || []).filter(Boolean).map(function (n) { return termes(n).join(" "); }));
-    groupe.forEach(function (n) { noms.set(n, (noms.get(n) || 0) + 1); });
-    return groupe;
+  if (!enDemo) (window.RECETTES?.recettes || []).forEach(function (r) {
+    ajouter("recettes", r.id, r.titre, [noms(r.personnes || [r.personne]), r.categorie],
+      [r.ingredients, r.preparation, r.note, r.alias]);
   });
+
   var alias = new Map();
   function ajouterAlias(groupe) {
     if (groupe.length < 2) return;
     groupe.forEach(function (a) { alias.set(a, new Set([...(alias.get(a) || []), ...groupe])); });
   }
-  groupesPersonnes.forEach(function (groupe) {
-    ajouterAlias(Array.from(groupe).filter(function (n) { return n.includes(" ") && noms.get(n) === 1; }));
+  (I?.groupes || []).forEach(function (groupe) {
+    ajouterAlias(Array.from(new Set(groupe.map(function (n) { return termes(n).join(" "); }))));
   });
+  I?.suggestions(champ);
+
   (compléments.alias || []).filter(Array.isArray).forEach(function (g) {
     ajouterAlias(Array.from(new Set(g.filter(function (a) { return typeof a === "string"; })
       .map(function (a) { return termes(a).join(" "); }).filter(Boolean))));

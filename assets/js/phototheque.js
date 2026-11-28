@@ -6,6 +6,7 @@
   var PAR_PAGE = 48;
   var racine = document.body.getAttribute("data-racine") || "";
   var donnees = window.PHOTOTHEQUE || { photos: [], mode: "demo" };
+  var I = donnees.mode === "demo" ? null : window.IDENTITES;
   var photos = (donnees.photos || []).filter(function (p) { return !p.retiree; });
 
   // ---------------------------------------------------------------- outils
@@ -66,10 +67,11 @@
   photos.forEach(function (p, i) {
     p._ordre = i;
     p._dec = decennie(p);
+    p._personnes = I?.noms(p.personnes) || p.personnes || [];
     p._texte = normaliser([
       p.numero, p.titre, p.date && p.date.libelle, p.date && p.date.annee,
       p.lieu && p.lieu.pays, p.lieu && p.lieu.ville, p.lieu && p.lieu.precis,
-      (p.personnes || []).join(" "), p.autres_mentions, p.evenement, p.chapitre,
+      (I ? p._personnes.flatMap(I.variantes) : p._personnes).join(" "), p.autres_mentions, p.evenement, p.chapitre,
       p.notes, p.legende, (p.mots_cles || []).join(" "), p.provenance, p.type
     ].join(" "));
   });
@@ -88,7 +90,7 @@
     var e = etatVide();
     var u = new URLSearchParams(location.search);
     e.q = u.get("q") || "";
-    e.personnes = u.getAll("p");
+    e.personnes = I?.noms(u.getAll("p")) || u.getAll("p");
     e.lieu = u.get("lieu") || "";
     e.evenement = u.get("evt") || "";
     e.chapitre = u.get("chap") || "";
@@ -120,7 +122,7 @@
       for (var i = 0; i < mots.length; i++) if (p._texte.indexOf(mots[i]) === -1) return false;
     }
     if (sauf !== "personne" && etat.personnes.length) {
-      var pp = p.personnes || [];
+      var pp = p._personnes;
       for (var j = 0; j < etat.personnes.length; j++) if (pp.indexOf(etat.personnes[j]) === -1) return false;
     }
     if (sauf !== "lieu" && etat.lieu) {
@@ -177,7 +179,7 @@
 
   function rendreFiltres() {
     // Personnes : les plus présentes, puis toutes par ordre alphabétique
-    var cp = compter("personne", function (p) { return p.personnes || []; });
+    var cp = compter("personne", function (p) { return p._personnes; });
     etat.personnes.forEach(function (n) { delete cp[n]; });
     var noms = Object.keys(cp);
     var frequents = noms.slice().sort(function (a, b) { return cp[b] - cp[a] || triAlpha(a, b); }).slice(0, 8);
@@ -293,7 +295,7 @@
     var tirage = mini
       ? el("span", { classe: "tirage" }, [el("img", { src: mini, alt: "", loading: "lazy", decoding: "async" })])
       : el("span", { classe: "tirage tirage--absent" }, [el("span", { texte: p.numero || "Photo" })]);
-    var noms = (p.personnes || []).slice(0, 4).join(", ");
+    var noms = p._personnes.slice(0, 4).join(", ");
     var a = el("a", {
       classe: "vignette",
       href: "#" + encodeURIComponent(p.numero || p.id),
@@ -369,7 +371,7 @@
     fig.textContent = "";
     var web = image(p, "web") || image(p, "miniature");
     fig.appendChild(web
-      ? el("img", { src: web, alt: "Photo " + (p.numero || "") + (p.personnes && p.personnes.length ? " avec " + p.personnes.join(", ") : "") })
+      ? el("img", { src: web, alt: "Photo " + (p.numero || "") + (p._personnes.length ? " avec " + p._personnes.join(", ") : "") })
       : el("div", { classe: "tirage tirage--absent" }, [el("span", { texte: "Image non disponible" })]));
 
     var titre = $("fiche-titre");
@@ -380,7 +382,7 @@
     var dl = $("fiche-details");
     dl.textContent = "";
 
-    var personnes = (p.personnes || []).map(function (n) {
+    var personnes = p._personnes.map(function (n) {
       return boutonFiltre(n, function () { etat = etatVide(); etat.personnes = [n]; });
     });
     var blocPersonnes = [];
@@ -485,6 +487,7 @@
     ouvrirFiche(parseInt(a.getAttribute("data-index"), 10), a);
   });
 
+  I?.suggestions($("q"), photos.flatMap(function (p) { return p._personnes; }));
   var minuterie;
   $("q").addEventListener("input", function () {
     clearTimeout(minuterie);
